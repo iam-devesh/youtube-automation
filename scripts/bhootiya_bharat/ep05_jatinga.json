@@ -1,0 +1,131 @@
+{
+  "lang": "hi",
+  "video_type": "short",
+  "template": "mystery",
+  "style": "animated_3d",
+  "privacy": "private",
+  "auto_upload": false,
+  "characters": "",
+  "series": "Bhootiya Bharat",
+  "episode": 5,
+  "title": "Jahan Panchhi Aasmaan Se Girte Hain 🐦 | Jatinga | Bhootiya Bharat Ep 5",
+  "hook_text": "जहाँ पक्षी आसमान से गिरते हैं!",
+  "setting": "Jatinga village, Dima Hasao hills, Assam, Northeast India",
+  "description": "Assam ka ek gaon jahan andheri raaton mein panchhi khud roshni ki taraf udkar gir padte hain.\nSirf isi pahadi par kyun?\n\n#jatinga #mystery #BhootiyaBharat",
+  "tags": [
+    "jatinga",
+    "jatinga birds",
+    "jatinga mystery",
+    "bird mystery assam",
+    "assam",
+    "northeast india",
+    "bird suicide village",
+    "bhootiya bharat",
+    "haunted india",
+    "india mystery",
+    "hindi mystery stories",
+    "rahasya"
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "narration": "असम का एक गाँव... जहाँ रात में पक्षी आसमान से गिर पड़ते हैं।",
+      "ambient": "fog",
+      "image_prompts": [
+        "birds falling from a misty night sky toward a small hill village with glowing lanterns, Assam",
+        "silhouettes of birds circling around a bright lamp in thick fog at night"
+      ],
+      "visual_description": "birds falling from a misty night sky toward a small hill village with glowing lanterns, Assam",
+      "search_query": "birds night sky"
+    },
+    {
+      "scene_number": 2,
+      "narration": "ये है जटिंगा... असम के दीमा हसाओ ज़िले की पहाड़ियों में बसा एक छोटा सा गाँव।",
+      "ambient": "fog",
+      "image_prompts": [
+        "a small green hill village with bamboo and tin-roof houses on a ridge in Assam, misty valleys",
+        "lush green hills of Northeast India covered in rolling clouds"
+      ],
+      "visual_description": "a small green hill village with bamboo and tin-roof houses on a ridge in Assam, misty valleys",
+      "search_query": "misty green hills"
+    },
+    {
+      "scene_number": 3,
+      "narration": "मानसून के आख़िर में, अँधेरी और कोहरे वाली रातों में ये होता है।",
+      "ambient": "fog",
+      "image_prompts": [
+        "a moonless foggy night over the hill village, faint lights in windows, damp air",
+        "heavy fog drifting through bamboo groves at night"
+      ],
+      "visual_description": "a moonless foggy night over the hill village, faint lights in windows, damp air",
+      "search_query": "foggy night forest"
+    },
+    {
+      "scene_number": 4,
+      "narration": "शाम ढलते ही सैकड़ों पक्षी गाँव की रोशनी की ओर झपटते हैं... और गिर जाते हैं।",
+      "ambient": "fog",
+      "image_prompts": [
+        "flocks of birds diving toward bright lanterns held up by villagers on a foggy hilltop",
+        "confused birds lying on wet grass beneath a glowing lamp post in the fog"
+      ],
+      "visual_description": "flocks of birds diving toward bright lanterns held up by villagers on a foggy hilltop",
+      "search_query": "birds flying light"
+    },
+    {
+      "scene_number": 5,
+      "narration": "गाँव वाले इसे आत्माओं का काम मानते थे... और बहुत डरते थे।",
+      "ambient": "fog",
+      "image_prompts": [
+        "Assamese villagers in traditional attire huddled around a fire at night, fearful faces lit by flames",
+        "ghostly spirits imagined in swirling fog above the village, eerie"
+      ],
+      "visual_description": "Assamese villagers in traditional attire huddled around a fire at night, fearful faces lit by flames",
+      "search_query": "village fire night"
+    },
+    {
+      "scene_number": 6,
+      "narration": "फिर वैज्ञानिक आए... और इस रहस्य की परतें खुलने लगीं।",
+      "ambient": "none",
+      "image_prompts": [
+        "Indian ornithologists with binoculars and notebooks studying birds on a hill at dusk",
+        "a scientist's notebook with bird sketches and a lantern on a table"
+      ],
+      "visual_description": "Indian ornithologists with binoculars and notebooks studying birds on a hill at dusk",
+      "search_query": "birdwatching binoculars"
+    },
+    {
+      "scene_number": 7,
+      "narration": "कोहरा और तेज़ हवा पक्षियों को रास्ता भुला देते हैं... और वो रोशनी की ओर खिंचे चले आते हैं।",
+      "ambient": "storm",
+      "image_prompts": [
+        "birds struggling against strong wind and fog over a ridge at night, a bright light below",
+        "a migrating flock losing formation in a misty storm"
+      ],
+      "visual_description": "birds struggling against strong wind and fog over a ridge at night, a bright light below",
+      "search_query": "birds storm wind"
+    },
+    {
+      "scene_number": 8,
+      "narration": "पर सवाल ये है... ये सिर्फ़ इसी पहाड़ी की इसी छोटी सी पट्टी पर क्यों होता है?",
+      "ambient": "fog",
+      "image_prompts": [
+        "a narrow strip of a hill ridge glowing in fog while the rest of the valley is dark",
+        "a lone lamp on a ridge at night with birds circling it"
+      ],
+      "visual_description": "a narrow strip of a hill ridge glowing in fog while the rest of the valley is dark",
+      "search_query": "lonely hill night"
+    },
+    {
+      "scene_number": 9,
+      "narration": "जटिंगा आज भी अपना पूरा राज़ नहीं खोलता... आपको क्या लगता है?",
+      "ambient": "fog",
+      "image_prompts": [
+        "the village on the hill at dawn with mist lifting and a few birds flying away free",
+        "a single feather resting on a wet stone in morning fog"
+      ],
+      "visual_description": "the village on the hill at dawn with mist lifting and a few birds flying away free",
+      "search_query": "misty dawn hills"
+    }
+  ],
+  "voice": "gemini"
+}

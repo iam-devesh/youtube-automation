@@ -1,0 +1,131 @@
+{
+  "lang": "hi",
+  "video_type": "short",
+  "template": "mystery",
+  "style": "animated_3d",
+  "privacy": "private",
+  "auto_upload": false,
+  "characters": "",
+  "series": "Bhootiya Bharat",
+  "episode": 3,
+  "title": "Raat Mein Yahan Jaana Mana Hai 🚫 | Bhangarh Fort | Bhootiya Bharat Ep 3",
+  "hook_text": "रात में यहाँ जाना मना है!",
+  "setting": "Bhangarh Fort, Aravalli hills, Alwar district, Rajasthan, India",
+  "description": "Bharat ka ek kila jahan sarkaar khud kehti hai — suraj dhalne ke baad andar mat jaana.\nAakhir Bhangarh mein raat ko kya hota hai?\n\n#bhangarh #mystery #BhootiyaBharat",
+  "tags": [
+    "bhangarh",
+    "bhangarh fort",
+    "bhangarh fort mystery",
+    "most haunted place in india",
+    "alwar",
+    "haunted fort rajasthan",
+    "bhangarh ki kahani",
+    "bhootiya bharat",
+    "haunted india",
+    "india mystery",
+    "hindi mystery stories",
+    "rahasya"
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "narration": "भारत का एक किला... जहाँ सरकार ख़ुद कहती है, सूरज ढलने के बाद अंदर मत जाना।",
+      "ambient": "fog",
+      "image_prompts": [
+        "a ruined Rajput hill fort at dusk surrounded by dark hills, ominous clouds, no people",
+        "an old stone signboard at a fort gate in the evening, mysterious atmosphere"
+      ],
+      "visual_description": "a ruined Rajput hill fort at dusk surrounded by dark hills, ominous clouds, no people",
+      "search_query": "ancient fort ruins"
+    },
+    {
+      "scene_number": 2,
+      "narration": "ये है भानगढ़... राजस्थान के अलवर ज़िले में, अरावली की पहाड़ियों के बीच।",
+      "ambient": "dust",
+      "image_prompts": [
+        "aerial view of fort ruins and temples in a green valley of the rocky Aravalli hills, Rajasthan",
+        "a stone path leading through old bazaar ruins toward a hilltop palace"
+      ],
+      "visual_description": "aerial view of fort ruins and temples in a green valley of the rocky Aravalli hills, Rajasthan",
+      "search_query": "aravalli hills fort"
+    },
+    {
+      "scene_number": 3,
+      "narration": "1573 में राजा भगवंत दास ने इसे अपने बेटे माधो सिंह के लिए बनवाया था।",
+      "ambient": "none",
+      "image_prompts": [
+        "a grand Rajput fort-palace being built in the 16th century, workers carving stone, royal banners",
+        "a Rajput king in royal attire presenting the new fort to his young son, ceremonial scene"
+      ],
+      "visual_description": "a grand Rajput fort-palace being built in the 16th century, workers carving stone, royal banners",
+      "search_query": "rajasthan palace"
+    },
+    {
+      "scene_number": 4,
+      "narration": "बाज़ार, मंदिर, हवेलियाँ... हज़ारों लोगों से भरा एक शानदार शहर था।",
+      "ambient": "none",
+      "image_prompts": [
+        "a bustling medieval Rajasthani bazaar inside a fort town, merchants, colourful turbans and ghagras, temples behind",
+        "an ornate Hindu stone temple with carved pillars, devotees with lamps, warm evening light"
+      ],
+      "visual_description": "a bustling medieval Rajasthani bazaar inside a fort town, merchants, colourful turbans and ghagras, temples behind",
+      "search_query": "old bazaar india"
+    },
+    {
+      "scene_number": 5,
+      "narration": "कहते हैं, एक तांत्रिक राजकुमारी रत्नावती की सुंदरता पर मोहित हो गया।",
+      "ambient": "fog",
+      "image_prompts": [
+        "a dark sorcerer in black robes watching a royal palace from a hilltop at night, mysterious",
+        "a Rajput princess in a royal palace courtyard with oil lamps, elegant, seen from afar"
+      ],
+      "visual_description": "a dark sorcerer in black robes watching a royal palace from a hilltop at night, mysterious",
+      "search_query": "palace night"
+    },
+    {
+      "scene_number": 6,
+      "narration": "उसने काला जादू किया... पर चाल उल्टी पड़ गई, और मरते-मरते उसने भानगढ़ को श्राप दे दिया।",
+      "ambient": "storm",
+      "image_prompts": [
+        "a sorcerer casting dark magic with glowing smoke on a hilltop, storm clouds swirling over the fort",
+        "a huge boulder rolling down a hill toward a sorcerer in a storm, lightning"
+      ],
+      "visual_description": "a sorcerer casting dark magic with glowing smoke on a hilltop, storm clouds swirling over the fort",
+      "search_query": "dark storm clouds"
+    },
+    {
+      "scene_number": 7,
+      "narration": "कहा जाता है, इसके बाद भानगढ़ उजड़ता चला गया... और आज बस खंडहर बचे हैं।",
+      "ambient": "fog",
+      "image_prompts": [
+        "the roofless ruins of the fort palace overgrown with trees in thick fog",
+        "crumbling temple and broken walls in mist, silent and abandoned"
+      ],
+      "visual_description": "the roofless ruins of the fort palace overgrown with trees in thick fog",
+      "search_query": "fort ruins fog"
+    },
+    {
+      "scene_number": 8,
+      "narration": "आज भी बाहर लगे सरकारी बोर्ड पर लिखा है... सूर्यास्त के बाद प्रवेश वर्जित।",
+      "ambient": "none",
+      "image_prompts": [
+        "an old weathered metal warning signboard at the entrance of fort ruins at sunset, no readable text",
+        "the fort gate closing at dusk with long shadows, a lonely path behind it"
+      ],
+      "visual_description": "an old weathered metal warning signboard at the entrance of fort ruins at sunset, no readable text",
+      "search_query": "warning sign sunset"
+    },
+    {
+      "scene_number": 9,
+      "narration": "क्या ये सिर्फ़ कहानी है... या सच में वहाँ कुछ है? आपको क्या लगता है?",
+      "ambient": "fog",
+      "image_prompts": [
+        "the fort ruins under a full moon at night with mist and bats flying, eerie",
+        "a dark broken doorway of the palace with faint moonlight inside, nobody there"
+      ],
+      "visual_description": "the fort ruins under a full moon at night with mist and bats flying, eerie",
+      "search_query": "haunted ruins night"
+    }
+  ],
+  "voice": "gemini"
+}

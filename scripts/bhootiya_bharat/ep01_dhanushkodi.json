@@ -1,0 +1,135 @@
+{
+  "title": "Raaton-Raat Gayab Hua Shehar 😱 | Dhanushkodi | Bhootiya Bharat Ep 1",
+  "description": "1964 ki ek raat… aur poora shehar samundar mein sama gaya. Ek train bhi kabhi wapas nahi aayi.\nAaj bhi shaam dhalte hi yahan koi nahi rukta. Kya aap rukoge?\n\n#dhanushkodi #ghosttown #mystery #rameswaram #BhootiyaBharat",
+  "tags": [
+    "dhanushkodi",
+    "dhanushkodi mystery",
+    "dhanushkodi ghost town",
+    "bhutiya shahar",
+    "haunted places in india",
+    "ghost town india",
+    "1964 cyclone",
+    "rameswaram",
+    "ram setu",
+    "india mystery",
+    "rahasya",
+    "hindi mystery stories",
+    "unsolved mystery hindi",
+    "abandoned places india",
+    "bhootiya bharat",
+    "haunted india"
+  ],
+  "lang": "hi",
+  "video_type": "short",
+  "template": "mystery",
+  "style": "animated_3d",
+  "privacy": "private",
+  "auto_upload": false,
+  "hook_text": "रातों-रात ग़ायब हुआ शहर!",
+  "characters": "",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "narration": "सोचिए... एक पूरा शहर, जो सिर्फ़ एक रात में समंदर में समा गया।",
+      "ambient": "fog",
+      "visual_description": "ruined coastal town on a sand strip at dusk",
+      "search_query": "abandoned ruins beach",
+      "image_prompts": [
+        "eerie ruins of a roofless coral-stone church and broken houses on a lonely sand strip at dusk, rusted railway tracks disappearing into the sand, nobody around",
+        "crumbling coral-stone wall with empty arched windows, waves crashing behind it, dusk"
+      ]
+    },
+    {
+      "scene_number": 2,
+      "narration": "ये है धनुषकोडी... भारत का आख़िरी छोर, जहाँ से श्रीलंका बस 30 किलोमीटर दूर है।",
+      "ambient": "dust",
+      "visual_description": "narrow sand strip between two seas",
+      "search_query": "sand road sea",
+      "image_prompts": [
+        "aerial view of a long narrow sand spit with calm blue sea on one side and rough sea on the other, a thin road running to its tip",
+        "the road ending at the tip of the sand spit, sea on three sides, an island faintly on the horizon"
+      ]
+    },
+    {
+      "scene_number": 3,
+      "narration": "1964 में यहाँ रौनक थी... स्कूल, चर्च, रेलवे स्टेशन, सब कुछ।",
+      "ambient": "dust",
+      "visual_description": "busy 1960s railway station by the sea",
+      "search_query": "old railway station",
+      "image_prompts": [
+        "a busy small Indian railway station in the 1960s, Tamil passengers in white dhotis and colourful saris, a black steam train, coconut palms",
+        "a lively Tamil fishing village with thatched huts and colourful wooden boats on the beach, coconut palms, a small whitewashed church"
+      ]
+    },
+    {
+      "scene_number": 4,
+      "narration": "फिर आई 22 दिसंबर की वो रात... और समंदर पागल हो गया।",
+      "ambient": "storm",
+      "visual_description": "cyclone over the sea at night",
+      "search_query": "cyclone storm sea",
+      "image_prompts": [
+        "a monstrous cyclone with black spiralling clouds and lightning over a small Tamil coastal village at night, coconut palms bending",
+        "coconut palm trees bent flat by hurricane winds, thatched roofs torn away, lightning, rain"
+      ]
+    },
+    {
+      "scene_number": 5,
+      "narration": "बीस फ़ीट ऊँची लहरें उठीं... और देखते ही देखते पूरा शहर डूब गया।",
+      "ambient": "storm",
+      "visual_description": "giant wave over houses",
+      "search_query": "giant waves crashing",
+      "image_prompts": [
+        "a gigantic wave towering over thatched huts and a small whitewashed church in a South Indian coastal village at night",
+        "flooded village lanes, thatched roofs barely above raging sea water, lightning in the sky"
+      ]
+    },
+    {
+      "scene_number": 6,
+      "narration": "उसी रात एक ट्रेन, सौ से ज़्यादा लोगों के साथ, लहरों में बह गई।",
+      "ambient": "storm",
+      "visual_description": "old train hit by a wave at night",
+      "search_query": "old train railway",
+      "image_prompts": [
+        "an old Indian steam passenger train with glowing windows on a coastal railway line at night, a massive wave crashing into it",
+        "train carriages tipping into the dark stormy sea, lightning, rain"
+      ]
+    },
+    {
+      "scene_number": 7,
+      "narration": "सुबह हुई, तो बस खंडहर बचे थे... सरकार ने कह दिया, अब यहाँ कोई नहीं रहेगा।",
+      "ambient": "fog",
+      "visual_description": "foggy ruins in the morning",
+      "search_query": "abandoned church ruins",
+      "image_prompts": [
+        "misty morning over a roofless ruined coral-stone church and twisted railway tracks half buried in sand, no people",
+        "broken walls of an abandoned railway station and an old water tank in fog, sand everywhere"
+      ]
+    },
+    {
+      "scene_number": 8,
+      "narration": "और कहते हैं... यहीं से भगवान राम ने लंका तक पुल बनाया था।",
+      "ambient": "embers",
+      "visual_description": "stone bridge across the sea at dawn",
+      "search_query": "sandbank shallow sea",
+      "image_prompts": [
+        "a chain of sandbanks and rocks stretching across a calm sea toward a distant island at golden dawn, mythical glow",
+        "ancient stones floating on calm sea water, glowing softly in golden morning light"
+      ]
+    },
+    {
+      "scene_number": 9,
+      "narration": "आज भी शाम ढलते ही यहाँ कोई नहीं रुकता... क्या आप रुकेंगे?",
+      "ambient": "fog",
+      "visual_description": "sunset over ruins and an empty beach",
+      "search_query": "sunset ruins sea",
+      "image_prompts": [
+        "silhouette of a roofless ruined church against a blood-red sunset, empty beach, waves washing in",
+        "a lonely sand road at dusk leading to ruins, sea on both sides, nobody there"
+      ]
+    }
+  ],
+  "setting": "Dhanushkodi, Rameswaram, Tamil Nadu, South India",
+  "series": "Bhootiya Bharat",
+  "episode": 1,
+  "voice": "gemini"
+}

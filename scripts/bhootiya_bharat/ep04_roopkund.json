@@ -1,0 +1,131 @@
+{
+  "lang": "hi",
+  "video_type": "short",
+  "template": "mystery",
+  "style": "animated_3d",
+  "privacy": "private",
+  "auto_upload": false,
+  "characters": "",
+  "series": "Bhootiya Bharat",
+  "episode": 4,
+  "title": "Insaani Kankalon Wali Jheel 💀 | Roopkund | Bhootiya Bharat Ep 4",
+  "hook_text": "कंकालों वाली झील!",
+  "setting": "Roopkund glacial lake, Himalayas, Chamoli, Uttarakhand, India",
+  "description": "Himalaya mein 16,500 feet par ek jheel… jiske kinare saikdon insaani kankaal pade hain.\nYe log kaun the aur ek saath kaise mare?\n\n#roopkund #mystery #BhootiyaBharat",
+  "tags": [
+    "roopkund",
+    "roopkund lake",
+    "skeleton lake",
+    "roopkund mystery",
+    "uttarakhand",
+    "himalaya mystery",
+    "skeleton lake india",
+    "bhootiya bharat",
+    "haunted india",
+    "india mystery",
+    "hindi mystery stories",
+    "rahasya"
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "narration": "हिमालय में एक झील है... जिसके किनारे सैकड़ों इंसानी कंकाल पड़े हैं।",
+      "ambient": "fog",
+      "image_prompts": [
+        "a small frozen glacial lake high in the snowy Himalayas with scattered old bones on the rocky shore, eerie mist",
+        "close view of weathered human bones half buried in snow and rocks by an icy lake"
+      ],
+      "visual_description": "a small frozen glacial lake high in the snowy Himalayas with scattered old bones on the rocky shore, eerie mist",
+      "search_query": "himalaya glacial lake"
+    },
+    {
+      "scene_number": 2,
+      "narration": "ये है रूपकुंड... उत्तराखंड में, लगभग 16,500 फ़ीट की ऊँचाई पर।",
+      "ambient": "fog",
+      "image_prompts": [
+        "aerial view of a tiny lake in a bowl of snowy Himalayan peaks above the clouds",
+        "a steep rocky mountain trail leading up to a hidden glacial lake, clouds below"
+      ],
+      "visual_description": "aerial view of a tiny lake in a bowl of snowy Himalayan peaks above the clouds",
+      "search_query": "snowy himalaya peaks"
+    },
+    {
+      "scene_number": 3,
+      "narration": "1942 में एक फ़ॉरेस्ट रेंजर यहाँ पहुँचा... और उसके होश उड़ गए।",
+      "ambient": "none",
+      "image_prompts": [
+        "an Indian forest ranger in a 1940s uniform with a backpack reaching a snowy mountain lake, shocked",
+        "the ranger's boots stopping beside a skull lying on the snow by the lake"
+      ],
+      "visual_description": "an Indian forest ranger in a 1940s uniform with a backpack reaching a snowy mountain lake, shocked",
+      "search_query": "mountain explorer"
+    },
+    {
+      "scene_number": 4,
+      "narration": "बर्फ़ पिघली, तो झील में और चारों ओर हड्डियाँ ही हड्डियाँ थीं।",
+      "ambient": "none",
+      "image_prompts": [
+        "melting ice revealing hundreds of bones and skulls around a turquoise glacial lake",
+        "bones visible under clear shallow icy water, sunlight on the surface"
+      ],
+      "visual_description": "melting ice revealing hundreds of bones and skulls around a turquoise glacial lake",
+      "search_query": "melting glacier lake"
+    },
+    {
+      "scene_number": 5,
+      "narration": "पहले लोगों को लगा, ये दूसरे विश्व युद्ध में फँसे जापानी सैनिक हैं।",
+      "ambient": "storm",
+      "image_prompts": [
+        "soldiers in 1940s uniforms struggling through a Himalayan blizzard, silhouettes in snow",
+        "an old 1940s military map and compass on a table, dramatic light"
+      ],
+      "visual_description": "soldiers in 1940s uniforms struggling through a Himalayan blizzard, silhouettes in snow",
+      "search_query": "blizzard mountains"
+    },
+    {
+      "scene_number": 6,
+      "narration": "पर जाँच में पता चला... ये कंकाल सैकड़ों साल पुराने हैं।",
+      "ambient": "none",
+      "image_prompts": [
+        "scientists in a lab examining an ancient skull under bright light, bones laid out on a table",
+        "carbon dating samples and old bones in labelled trays, laboratory"
+      ],
+      "visual_description": "scientists in a lab examining an ancient skull under bright light, bones laid out on a table",
+      "search_query": "science laboratory bones"
+    },
+    {
+      "scene_number": 7,
+      "narration": "कई खोपड़ियों पर गहरी चोटें मिलीं... जैसे ऊपर से क्रिकेट बॉल जितने ओले गिरे हों।",
+      "ambient": "storm",
+      "image_prompts": [
+        "a violent hailstorm with huge hailstones falling on travellers on a Himalayan pass, dark sky",
+        "giant hailstones the size of cricket balls bouncing on rocks and snow"
+      ],
+      "visual_description": "a violent hailstorm with huge hailstones falling on travellers on a Himalayan pass, dark sky",
+      "search_query": "hailstorm mountain"
+    },
+    {
+      "scene_number": 8,
+      "narration": "2019 की DNA जाँच ने सबको चौंका दिया... कुछ लोग भूमध्यसागर इलाके के निकले।",
+      "ambient": "none",
+      "image_prompts": [
+        "a glowing DNA double helix over a map connecting the Himalayas to the Mediterranean sea",
+        "ancient travellers from distant lands walking toward snowy Himalayan peaks"
+      ],
+      "visual_description": "a glowing DNA double helix over a map connecting the Himalayas to the Mediterranean sea",
+      "search_query": "dna science"
+    },
+    {
+      "scene_number": 9,
+      "narration": "ये लोग इतनी दूर यहाँ क्यों आए... और कैसे मरे? आज भी कोई नहीं जानता।",
+      "ambient": "fog",
+      "image_prompts": [
+        "the lonely skeleton lake at twilight surrounded by snowy peaks and mist, nobody there",
+        "a single skull on a rock facing the frozen lake under a starry sky"
+      ],
+      "visual_description": "the lonely skeleton lake at twilight surrounded by snowy peaks and mist, nobody there",
+      "search_query": "himalaya twilight"
+    }
+  ],
+  "voice": "gemini"
+}

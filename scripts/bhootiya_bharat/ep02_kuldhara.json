@@ -1,0 +1,131 @@
+{
+  "lang": "hi",
+  "video_type": "short",
+  "template": "mystery",
+  "style": "animated_3d",
+  "privacy": "private",
+  "auto_upload": false,
+  "characters": "",
+  "series": "Bhootiya Bharat",
+  "episode": 2,
+  "title": "Ek Raat Mein Khali Hue 84 Gaon 😨 | Kuldhara | Bhootiya Bharat Ep 2",
+  "hook_text": "रातों-रात ख़ाली हुए 84 गाँव!",
+  "setting": "Kuldhara village near Jaisalmer, Thar desert, Rajasthan, India",
+  "description": "Kehte hain ek hi raat mein 84 gaon ke log sab kuch chhodkar chale gaye… aur jaate-jaate shraap de gaye.\nAaj tak Kuldhara mein koi nahi basa. Kyun?\n\n#kuldhara #mystery #BhootiyaBharat",
+  "tags": [
+    "kuldhara",
+    "kuldhara village",
+    "kuldhara mystery",
+    "cursed village rajasthan",
+    "jaisalmer",
+    "paliwal brahmin",
+    "abandoned village india",
+    "bhootiya bharat",
+    "haunted india",
+    "india mystery",
+    "hindi mystery stories",
+    "rahasya"
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "narration": "कहा जाता है... एक ही रात में 84 गाँव ख़ाली हो गए। और कोई कभी लौटकर नहीं आया।",
+      "ambient": "dust",
+      "image_prompts": [
+        "an abandoned sandstone desert village at dusk, rows of roofless houses, empty lanes, no people",
+        "a lonely broken doorway of a sandstone house with desert wind blowing sand through it"
+      ],
+      "visual_description": "an abandoned sandstone desert village at dusk, rows of roofless houses, empty lanes, no people",
+      "search_query": "abandoned desert village"
+    },
+    {
+      "scene_number": 2,
+      "narration": "ये है कुलधरा... जैसलमेर के पास, थार रेगिस्तान में बसा एक गाँव।",
+      "ambient": "dust",
+      "image_prompts": [
+        "aerial view of a ruined sandstone village in the golden Thar desert with dunes around it",
+        "a dusty desert road leading to a ruined village gate under a hot sky"
+      ],
+      "visual_description": "aerial view of a ruined sandstone village in the golden Thar desert with dunes around it",
+      "search_query": "thar desert village"
+    },
+    {
+      "scene_number": 3,
+      "narration": "यहाँ पालीवाल ब्राह्मण रहते थे... अमीर, मेहनती, और खेती के उस्ताद।",
+      "ambient": "none",
+      "image_prompts": [
+        "a prosperous Rajasthani desert village centuries ago, villagers in white dhotis and colourful turbans and ghagras, wells and green fields",
+        "Rajasthani farmers drawing water from a stepwell, camels and clay pots, golden light"
+      ],
+      "visual_description": "a prosperous Rajasthani desert village centuries ago, villagers in white dhotis and colourful turbans and ghagras, wells and green fields",
+      "search_query": "rajasthan village"
+    },
+    {
+      "scene_number": 4,
+      "narration": "कहते हैं, रियासत के दीवान सालिम सिंह की नज़र गाँव की एक लड़की पर पड़ गई।",
+      "ambient": "none",
+      "image_prompts": [
+        "a stern Rajasthani minister in royal attire and turban on horseback watching a village from a distance, ominous",
+        "a sinister royal palace of Jaisalmer at dusk, golden sandstone, dark clouds"
+      ],
+      "visual_description": "a stern Rajasthani minister in royal attire and turban on horseback watching a village from a distance, ominous",
+      "search_query": "jaisalmer fort"
+    },
+    {
+      "scene_number": 5,
+      "narration": "उसने धमकी दी... शादी नहीं हुई, तो पूरे गाँव पर भारी टैक्स और ज़ुल्म होंगे।",
+      "ambient": "dust",
+      "image_prompts": [
+        "frightened Rajasthani villagers gathered at night by oil lamps, elders talking in whispers",
+        "royal soldiers with spears standing at the edge of a desert village at night"
+      ],
+      "visual_description": "frightened Rajasthani villagers gathered at night by oil lamps, elders talking in whispers",
+      "search_query": "village night lamps"
+    },
+    {
+      "scene_number": 6,
+      "narration": "उसी रात सब चुपचाप चले गए... अपने घर, खेत, सब कुछ छोड़कर।",
+      "ambient": "dust",
+      "image_prompts": [
+        "a long line of Rajasthani families with bullock carts and lanterns leaving a desert village silently at night",
+        "empty houses with doors left open and oil lamps still burning, nobody inside"
+      ],
+      "visual_description": "a long line of Rajasthani families with bullock carts and lanterns leaving a desert village silently at night",
+      "search_query": "night caravan desert"
+    },
+    {
+      "scene_number": 7,
+      "narration": "और जाते-जाते श्राप दे गए... जो यहाँ बसेगा, वो बर्बाद हो जाएगा।",
+      "ambient": "fog",
+      "image_prompts": [
+        "an old Rajasthani village elder raising his hand toward the dark sky casting a curse, lightning in the distance",
+        "ghostly mist rolling through the empty lanes of the abandoned village under moonlight"
+      ],
+      "visual_description": "an old Rajasthani village elder raising his hand toward the dark sky casting a curse, lightning in the distance",
+      "search_query": "ghost village moon"
+    },
+    {
+      "scene_number": 8,
+      "narration": "इतिहासकार कहते हैं, असली वजह शायद पानी की कमी और भारी टैक्स थे।",
+      "ambient": "dust",
+      "image_prompts": [
+        "a dried-up cracked village well in the desert with scorched earth around it",
+        "ancient ledger and coins on a wooden table, symbolising heavy taxes, candlelight"
+      ],
+      "visual_description": "a dried-up cracked village well in the desert with scorched earth around it",
+      "search_query": "dry well desert"
+    },
+    {
+      "scene_number": 9,
+      "narration": "पर सवाल आज भी है... इतने सारे लोग एक ही रात में कहाँ चले गए?",
+      "ambient": "fog",
+      "image_prompts": [
+        "the ruined sandstone village silhouetted against a blood-red desert sunset, nobody there",
+        "a single empty lane of the ruins at dusk with wind blowing sand, eerie silence"
+      ],
+      "visual_description": "the ruined sandstone village silhouetted against a blood-red desert sunset, nobody there",
+      "search_query": "desert ruins sunset"
+    }
+  ],
+  "voice": "gemini"
+}

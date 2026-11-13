@@ -1,0 +1,31 @@
+# Dashboard + pipeline
+flask
+flask-cors
+python-dotenv
+requests
+numpy
+Pillow
+moviepy>=2
+imageio-ffmpeg
+pydub
+mutagen
+
+# Voice: Gemini TTS (primary) + Edge TTS (non-series fallback)
+google-genai
+google-generativeai
+edge-tts>=7.3.1
+
+# Script writing fallback (NVIDIA / OpenAI-compatible endpoint)
+openai
+
+# YouTube upload, playlists, branding
+google-api-python-client
+google-auth-oauthlib
+google-auth-httplib2
+
+# Local AI (Apple Silicon): images (SDXL Lightning), depth parallax, word checks (Whisper)
+torch==2.8.0
+diffusers==0.36.0
+transformers==4.57.6
+accelerate==1.10.1
+mlx-whisper==0.4.3

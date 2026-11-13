@@ -1,0 +1,23 @@
+# ── Secrets (never commit) ──────────────────────────────────────────
+.env
+client_secrets.json
+token.json
+*_token.json
+
+# ── Generated media / runtime state ─────────────────────────────────
+static/outputs/
+logs/
+*.log
+
+# Music is downloaded on demand from incompetech (pipeline/music.py)
+assets/music/library/
+
+# Full-size banner renders (the compressed JPGs in banners_jpg/ are kept)
+assets/brand/banners/
+
+# ── Python / OS ─────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store

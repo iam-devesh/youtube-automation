@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Faceless Studio</title>
+  <meta name="description" content="The Faceless — studio for Hindi mystery Shorts: scripts, AI animation, narration and uploads." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg" />
+  <link rel="apple-touch-icon" href="/static/logo.svg" />
+  <link rel="stylesheet" href="/static/styles.css?v=20261113d" />
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ══════════════════════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <img class="logo-icon" src="/static/logo.svg" alt="" width="42" height="42" />
+      <span class="logo-text"><span class="logo-the">THE</span><span class="logo-name">FACELESS</span></span>
+    </div>
+    <div class="channel-badge">
+      <span class="channel-dot"></span>
+      <span id="channelName">The Faceless</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="#" class="nav-item active" data-section="create" onclick="showSection('create', this)">
+      <span class="nav-icon">✨</span>
+      <span>Create Video</span>
+    </a>
+    <a href="#" class="nav-item" data-section="series" onclick="showSection('series', this)">
+      <span class="nav-icon">📺</span>
+      <span>Series</span>
+    </a>
+    <a href="#" class="nav-item" data-section="jobs" onclick="showSection('jobs', this)">
+      <span class="nav-icon">📋</span>
+      <span>Job Queue</span>
+      <span class="nav-badge" id="jobsBadge" style="display:none">0</span>
+    </a>
+    <a href="#" class="nav-item" data-section="analytics" onclick="showSection('analytics', this)">
+      <span class="nav-icon">📊</span>
+      <span>Analytics</span>
+    </a>
+    <a href="#" class="nav-item" data-section="settings" onclick="showSection('settings', this)">
+      <span class="nav-icon">⚙️</span>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-stats" id="sidebarStats">
+    <div class="stat-mini">
+      <span class="stat-mini-label">Subscribers</span>
+      <span class="stat-mini-value" id="miniSubs">—</span>
+    </div>
+    <div class="stat-mini">
+      <span class="stat-mini-label">Total Views</span>
+      <span class="stat-mini-value" id="miniViews">—</span>
+    </div>
+    <div class="stat-mini">
+      <span class="stat-mini-label">Videos</span>
+      <span class="stat-mini-value" id="miniVideos">—</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════════════════════════ -->
+<main class="main-content">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1 class="page-title" id="pageTitle">Create Video</h1>
+      <span class="page-subtitle">कहानियाँ जो कोई नहीं सुनाता</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost" onclick="loadChannelStats()" id="refreshStatsBtn">
+        <span>↻</span> Refresh Stats
+      </button>
+      <a href="https://studio.youtube.com/channel/UConCDHOp-Cy0RNQps4WbMnw" target="_blank"
+         class="btn btn-outline">
+        <span>▶</span> YouTube Studio
+      </a>
+    </div>
+  </header>
+
+  <!-- ── CREATE VIDEO SECTION ──────────────────────────────────────────── -->
+  <section class="section" id="section-create">
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tabStudio" onclick="switchMode('studio', this)">
+        <span class="mode-tab-icon">🎬</span>
+        <span>Story Studio</span>
+        <span class="mode-tab-badge">NEW</span>
+      </button>
+      <button class="mode-tab" id="tabQuick" onclick="switchMode('quick', this)">
+        <span class="mode-tab-icon">⚡</span>
+        <span>Quick AI Topic</span>
+      </button>
+    </div>
+
+    <!-- ═══ STORY STUDIO MODE ═══ -->
+    <div id="mode-studio">
+
+      <div class="card card-primary">
+        <div class="card-header">
+          <div class="card-icon">🎬</div>
+          <div>
+            <h2 class="card-title">AI Animated Film Studio</h2>
+            <p class="card-desc">Write your story, describe the visuals — AI generates cinematic animated video clips.</p>
+          </div>
+        </div>
+
+        <!-- Film Details -->
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label" for="filmTitle">Film Title</label>
+            <input type="text" id="filmTitle" class="form-input" placeholder="e.g. The Mystery of the Bermuda Triangle" autocomplete="off" />
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label" for="filmDescription">Description (for YouTube)</label>
+            <textarea id="filmDescription" class="form-textarea" rows="2" placeholder="YouTube video description with hashtags..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Video Format</label>
+            <div class="toggle-group" id="studioTypeToggle">
+              <button class="toggle-btn" data-value="long" onclick="setStudioType('long', this)">
+                <span class="toggle-icon">🎬</span>
+                <div>
+                  <div class="toggle-title">Long-form</div>
+                  <div class="toggle-sub">16:9 · Landscape</div>
+                </div>
+              </button>
+              <button class="toggle-btn active" data-value="short" onclick="setStudioType('short', this)">
+                <span class="toggle-icon">⚡</span>
+                <div>
+                  <div class="toggle-title">YouTube Short</div>
+                  <div class="toggle-sub">9:16 · Portrait</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Narration Language</label>
+            <div class="toggle-group" id="langToggle">
+              <button class="toggle-btn active" data-value="hi" onclick="setLang('hi', this)">
+                <span class="toggle-icon">🇮🇳</span>
+                <div>
+                  <div class="toggle-title">Hindi</div>
+                  <div class="toggle-sub">हिंदी</div>
+                </div>
+              </button>
+              <button class="toggle-btn" data-value="en" onclick="setLang('en', this)">
+                <span class="toggle-icon">🇺🇸</span>
+                <div>
+                  <div class="toggle-title">English</div>
+                  <div class="toggle-sub">EN</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Privacy -->
+          <div class="form-group">
+            <label class="form-label" for="studioStyle">Visual Style</label>
+            <select class="form-select" id="studioStyle">
+              <option value="animated_3d" selected>🎬 3D Animated Movie</option>
+              <option value="anime">🌸 Anime</option>
+              <option value="comic">🖋️ Comic / Graphic Novel</option>
+              <option value="stock">📹 Real Stock Footage</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="studioTemplate">Video Template</label>
+            <select class="form-select" id="studioTemplate">
+              <option value="mystery" selected>🕵️ Mystery / Documentary</option>
+              <option value="story">📖 Story / What-if</option>
+              <option value="facts">🔢 Facts / Countdown</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="studioPrivacy">Privacy Status</label>
+            <select class="form-select" id="studioPrivacy">
+              <option value="public">🌐 Public</option>
+              <option value="unlisted">🔗 Unlisted</option>
+              <option value="private" selected>🔒 Private</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="studioTags">Tags (comma-separated)</label>
+            <input type="text" id="studioTags" class="form-input" placeholder="mystery, bermuda, shorts" autocomplete="off" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene Editor -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🎞️</div>
+          <div>
+            <h2 class="card-title">Scenes</h2>
+            <p class="card-desc">Add your story scene-by-scene. Describe the narration and what the animation should show.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="addScene()">
+            ＋ Add Scene
+          </button>
+        </div>
+
+        <div class="scenes-editor" id="scenesEditor">
+          <!-- Scenes will be added here dynamically -->
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="addScene()">
+          <span>＋</span> Add Another Scene
+        </button>
+        <button class="btn btn-primary btn-glow" id="runAnimatedBtn" onclick="runAnimatedPipeline()">
+          <span class="btn-icon">🎬</span>
+          <span>Generate Animated Film</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ QUICK AI TOPIC MODE (existing behavior) ═══ -->
+    <div id="mode-quick" style="display:none">
+      <div class="card card-primary">
+        <div class="card-header">
+          <div class="card-icon">⚡</div>
+          <div>
+            <h2 class="card-title">Quick AI Video</h2>
+            <p class="card-desc">Enter a topic and let AI handle the rest — script, stock footage, voice, and upload.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label" for="topicInput">Video Topic</label>
+            <input type="text" id="topicInput" class="form-input"
+                   placeholder="e.g. Kuldhara ka shraap, Roopkund ki kankal wali jheel..."
+                   autocomplete="off" />
+            <div class="topic-suggestions">
+              <span class="suggestions-label">Suggestions:</span>
+              <button class="chip" onclick="setSuggestion('Kiradu temples Rajasthan curse — log patthar ban jaate hain')">🗿 Kiradu Temples</button>
+              <button class="chip" onclick="setSuggestion('Lonar crater lake Maharashtra — ulka se bani jheel ka rahasya')">☄️ Lonar Crater</button>
+              <button class="chip" onclick="setSuggestion('Shaniwar Wada Pune — raat ki cheekh ka rahasya')">🏯 Shaniwar Wada</button>
+              <button class="chip" onclick="setSuggestion('Magnetic Hill Ladakh — gaadi khud upar chadhti hai')">🧲 Magnetic Hill</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Video Type</label>
+            <div class="toggle-group" id="videoTypeToggle">
+              <button class="toggle-btn" data-value="long" onclick="setVideoType('long', this)">
+                <span class="toggle-icon">🎬</span>
+                <div>
+                  <div class="toggle-title">Long-form</div>
+                  <div class="toggle-sub">5–8 min · 1920×1080</div>
+                </div>
+              </button>
+              <button class="toggle-btn active" data-value="short" onclick="setVideoType('short', this)">
+                <span class="toggle-icon">⚡</span>
+                <div>
+                  <div class="toggle-title">YouTube Short</div>
+                  <div class="toggle-sub">~60 sec · 1080×1920</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="styleSelect">Visual Style</label>
+            <select class="form-select" id="styleSelect">
+              <option value="animated_3d" selected>🎬 3D Animated Movie</option>
+              <option value="anime">🌸 Anime</option>
+              <option value="comic">🖋️ Comic / Graphic Novel</option>
+              <option value="stock">📹 Real Stock Footage</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="templateSelect">Video Template</label>
+            <select class="form-select" id="templateSelect">
+              <option value="mystery" selected>🕵️ Mystery / Documentary</option>
+              <option value="story">📖 Story / What-if</option>
+              <option value="facts">🔢 Facts / Countdown</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="privacySelect">Privacy</label>
+            <select class="form-select" id="privacySelect">
+              <option value="public">🌐 Public</option>
+              <option value="unlisted">🔗 Unlisted</option>
+              <option value="private" selected>🔒 Private</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <div class="toggle-switch-row">
+              <div>
+                <div class="toggle-switch-label">Auto Upload to YouTube</div>
+                <div class="toggle-switch-desc">Requires client_secrets.json.</div>
+              </div>
+              <label class="switch" id="autoUploadToggle">
+                <input type="checkbox" id="autoUploadCheck" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-secondary" id="previewScriptBtn" onclick="previewScript()">
+            <span>📝</span> Preview Script Only
+          </button>
+          <button class="btn btn-primary" id="runPipelineBtn" onclick="runPipeline()">
+            <span class="btn-icon">🚀</span>
+            <span>Run Full Pipeline</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Script Preview (hidden) -->
+      <div class="card" id="scriptPreviewCard" style="display:none">
+        <div class="card-header">
+          <div class="card-icon">📝</div>
+          <div>
+            <h2 class="card-title" id="scriptTitle">Generated Script</h2>
+            <p class="card-desc" id="scriptMeta"></p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="runPipelineFromPreview()" id="buildFromScriptBtn">
+            🚀 Build Video
+          </button>
+        </div>
+        <div class="scenes-list" id="scenesList"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── SERIES SECTION ─────────────────────────────────────────────────── -->
+  <section class="section" id="section-series" style="display:none">
+    <div class="jobs-header">
+      <h2 class="section-title">Series</h2>
+      <button class="btn btn-ghost" onclick="loadSeries()">↻ Refresh</button>
+    </div>
+    <div id="seriesBusy" class="series-busy" style="display:none"></div>
+    <div id="seriesList" class="series-list">
+      <div class="empty-state"><div class="empty-icon">📺</div><p>Loading series…</p></div>
+    </div>
+  </section>
+
+  <!-- ── JOB QUEUE SECTION ──────────────────────────────────────────────── -->
+  <section class="section" id="section-jobs" style="display:none">
+    <div class="jobs-header">
+      <h2 class="section-title">Job Queue</h2>
+      <button class="btn btn-ghost" onclick="loadJobs()">↻ Refresh</button>
+    </div>
+    <div class="jobs-list" id="jobsList">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <p>No jobs yet. Create your first video!</p>
+        <button class="btn btn-primary" onclick="showSection('create', document.querySelector('[data-section=create]'))">
+          ✨ Create Video
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ANALYTICS SECTION ──────────────────────────────────────────────── -->
+  <section class="section" id="section-analytics" style="display:none">
+    <h2 class="section-title">Channel Analytics</h2>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value" id="statSubs">—</div>
+        <div class="stat-label">Subscribers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👁️</div>
+        <div class="stat-value" id="statViews">—</div>
+        <div class="stat-label">Total Views</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎬</div>
+        <div class="stat-value" id="statVideos">—</div>
+        <div class="stat-label">Total Videos</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 24px;">
+      <div class="card-header">
+        <div class="card-icon">🎬</div>
+        <h2 class="card-title">Recent Videos</h2>
+      </div>
+      <div class="recent-videos-list" id="recentVideosList">
+        <div class="loading-pulse">Loading recent videos...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SETTINGS SECTION ──────────────────────────────────────────────── -->
+  <section class="section" id="section-settings" style="display:none">
+    <h2 class="section-title">Settings & Setup Guide</h2>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔑</div>
+        <div>
+          <h2 class="card-title">API Keys Setup</h2>
+          <p class="card-desc">Configure your API keys in <code>config.py</code> or <code>.env</code> file</p>
+        </div>
+      </div>
+      <div class="settings-list">
+
+        <div class="setting-item">
+          <div class="setting-icon">🤖</div>
+          <div class="setting-info">
+            <div class="setting-name">Google Gemini API Key</div>
+            <div class="setting-desc">Free at <a href="https://ai.google.dev" target="_blank">ai.google.dev</a> · Used for AI script generation</div>
+          </div>
+          <div class="setting-status status-required">Required</div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-icon">📸</div>
+          <div class="setting-info">
+            <div class="setting-name">Pexels API Key</div>
+            <div class="setting-desc">Free at <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a> · 200 req/hr · Used for stock images</div>
+          </div>
+          <div class="setting-status status-optional">Optional</div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-icon">🔒</div>
+          <div class="setting-info">
+            <div class="setting-name">YouTube OAuth (client_secrets.json)</div>
+            <div class="setting-desc">Download from <a href="https://console.cloud.google.com/" target="_blank">console.cloud.google.com</a> · Required for uploading</div>
+          </div>
+          <div class="setting-status status-required">Required for Upload</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 24px;">
+      <div class="card-header">
+        <div class="card-icon">📦</div>
+        <div>
+          <h2 class="card-title">Installation</h2>
+          <p class="card-desc">Run these commands to set up the environment</p>
+        </div>
+      </div>
+      <div class="code-steps">
+        <div class="code-step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-label">Install FFmpeg (required by MoviePy)</div>
+            <pre class="code-block">brew install ffmpeg</pre>
+          </div>
+        </div>
+        <div class="code-step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-label">Install Python dependencies</div>
+            <pre class="code-block">cd youtube-automation
+pip install -r requirements.txt</pre>
+          </div>
+        </div>
+        <div class="code-step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-label">Set your API keys in .env</div>
+            <pre class="code-block">GEMINI_API_KEY=your_key_here
+PEXELS_API_KEY=your_key_here</pre>
+          </div>
+        </div>
+        <div class="code-step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <div class="step-label">Start the dashboard server</div>
+            <pre class="code-block">python server.py</pre>
+          </div>
+        </div>
+        <div class="code-step">
+          <span class="step-num">5</span>
+          <div class="step-content">
+            <div class="step-label">Open the dashboard</div>
+            <pre class="code-block">http://localhost:5055</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ JOB DETAIL MODAL ══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="jobModal" onclick="closeJobModal(event)">
+  <div class="modal" id="jobModalContent">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Job Details</h2>
+      <span class="status-badge" id="modalStatus">running</span>
+    </div>
+    <div class="modal-body">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="modalProgress" style="width:0%"></div>
+        </div>
+        <span class="progress-pct" id="modalProgressPct">0%</span>
+      </div>
+      <div class="step-log" id="modalStepLog"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═════════════════════════════════════════════════════════════════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/app.js?v=20261113d"></script>
+<!-- ═══ EPISODE PLAYER ════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="playerModal" style="display:none" onclick="if(event.target===this) closePlayer()">
+  <div class="player-box">
+    <button class="player-close" onclick="closePlayer()" aria-label="Close">✕</button>
+    <video id="playerVideo" controls playsinline></video>
+    <div class="player-meta" id="playerMeta"></div>
+  </div>
+</div>
+</body>
+</html>
