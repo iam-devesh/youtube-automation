@@ -13,7 +13,7 @@ import threading
 import numpy as np
 from PIL import Image, ImageFilter
 
-DEPTH_MODEL = "depth-anything/Depth-Anything-V2-Small-hf"
+DEPTH_MODEL = "depth-anything/Depth-Anything-V2-Base-hf"     # Base: cleaner edges than Small
 _depth = [None]
 _lock = threading.Lock()
 
@@ -44,8 +44,10 @@ def depth_map(img: Image.Image) -> np.ndarray:
     return a
 
 
-def parallax_clip(image_path, w, h, duration, variant=0):
-    """MoviePy VideoClip: camera move with depth parallax over a still image."""
+def parallax_clip(image_path, w, h, duration, variant=0, haze=0.18, focus_pull=True):
+    """MoviePy VideoClip: camera move with depth parallax over a still image, plus
+    depth-aware atmosphere (drifting haze that thickens with distance) and a slow
+    lens focus pull (shallow depth of field moving from background to foreground)."""
     import torch
     import torch.nn.functional as F
     from moviepy import VideoClip
@@ -63,12 +65,26 @@ def parallax_clip(image_path, w, h, duration, variant=0):
 
     src = torch.from_numpy(np.asarray(img, np.float32) / 255.0).permute(2, 0, 1)[None].to(dev)
     dsrc = torch.from_numpy(dep)[None, None].to(dev)
+    # subject depth = typical depth in the centre of the frame (where the shot's subject sits)
+    hh, ww = dep.shape
+    subject = float(np.median(dep[hh // 4: hh * 3 // 4, ww // 4: ww * 3 // 4]))
+    # shallow depth of field: a blurred copy, blended in by distance from the focal depth
+    soft = torch.from_numpy(np.asarray(img.filter(ImageFilter.GaussianBlur(max(3, img.width // 160))),
+                                       np.float32) / 255.0).permute(2, 0, 1)[None].to(dev)
+    # drifting haze: low-frequency noise, scrolled slowly; tinted from the image's own shadows
+    rng = np.random.default_rng(int(abs(hash(str(image_path))) % 2**32))
+    nz = Image.fromarray((rng.random((max(8, sh // 48), max(8, sw // 48))) * 255).astype(np.uint8))
+    nz = nz.resize((sw, sh), Image.BICUBIC).filter(ImageFilter.GaussianBlur(max(6, sw // 40)))
+    noise = torch.from_numpy(np.asarray(nz, np.float32) / 255.0)[None, None].to(dev)
+    tint = torch.from_numpy(np.percentile(np.asarray(img, np.float32).reshape(-1, 3) / 255.0, 35, axis=0)
+                            ).view(1, 3, 1, 1).to(dev) * 0.6 + 0.25
 
     ys = torch.linspace(-1, 1, h, device=dev)
     xs = torch.linspace(-1, 1, w, device=dev)
     gy, gx = torch.meshgrid(ys, xs, indexing="ij")
     win = 1.0 / over                               # half-extent of the visible window
-    mode = variant % 5     # 0 dolly-in · 1 orbit right · 2 orbit left · 3 crane up · 4 dolly-out
+    mode = variant % 7     # 0 dolly-in · 1 orbit R · 2 orbit L · 3 crane up · 4 dolly-out
+                           # 5 push-in + orbit · 6 slow pull-back reveal
 
     def frame(t):
         p = min(max(t / max(duration, 0.01), 0.0), 1.0)
@@ -78,10 +94,17 @@ def parallax_clip(image_path, w, h, duration, variant=0):
         base = torch.stack([bx, by], dim=-1)[None]
         d = F.grid_sample(dsrc, base, mode="bilinear", padding_mode="zeros", align_corners=True)[0, 0]
         near = d - 0.5
-        if mode in (0, 4):
-            z = 0.16 * (p if mode == 0 else 1 - p)
+        if mode in (0, 4, 6):
+            amp = 0.16 if mode != 6 else 0.22
+            z = amp * (p if mode == 0 else 1 - p)
             k = 1.0 / (1.0 + z * (0.4 + 1.2 * d))  # near things grow faster than far things
             sx, sy = bx * k, by * k
+        elif mode == 5:
+            z = 0.12 * p
+            k = 1.0 / (1.0 + z * (0.4 + 1.2 * d))
+            cam = (p - 0.5) * 2
+            sx = bx * k * 0.97 + cam * (0.01 + 0.05 * near)
+            sy = by * k * 0.97
         elif mode in (1, 2):
             cam = (p - 0.5) * 2 * (1 if mode == 1 else -1)
             sx = bx * 0.96 + cam * (0.015 + 0.075 * near)
@@ -93,6 +116,17 @@ def parallax_clip(image_path, w, h, duration, variant=0):
         # clamp = "border" padding (MPS doesn't support padding_mode="border")
         grid = torch.stack([sx.clamp(-1, 1), sy.clamp(-1, 1)], dim=-1)[None]
         out = F.grid_sample(src, grid, mode="bilinear", padding_mode="zeros", align_corners=True)
+        dd = F.grid_sample(dsrc, grid, mode="bilinear", padding_mode="zeros", align_corners=True)
+        if focus_pull:                             # rack focus settles ON the subject
+            fz = subject - 0.12 * (1 - p)
+            blur_amt = (((dd - fz).abs() - 0.18) * 1.6).clamp(0, 0.5)   # subject zone stays sharp
+            sb = F.grid_sample(soft, grid, mode="bilinear", padding_mode="zeros", align_corners=True)
+            out = out * (1 - blur_amt) + sb * blur_amt
+        if haze > 0:                               # thicker with distance, drifting sideways
+            drift = torch.stack([(sx + 0.10 * p - 0.05).clamp(-1, 1), sy.clamp(-1, 1)], dim=-1)[None]
+            n = F.grid_sample(noise, drift, mode="bilinear", padding_mode="zeros", align_corners=True)
+            amt = (haze * (1 - dd) ** 1.5 * (0.55 + 0.9 * n)).clamp(0, 0.6)
+            out = out * (1 - amt) + tint * amt
         return (out[0].permute(1, 2, 0).clamp(0, 1) * 255).to(torch.uint8).cpu().numpy()
 
     return VideoClip(frame_function=frame, duration=duration)

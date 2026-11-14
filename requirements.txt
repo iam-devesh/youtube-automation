@@ -23,9 +23,8 @@ google-api-python-client
 google-auth-oauthlib
 google-auth-httplib2
 
-# Local AI (Apple Silicon): images (SDXL Lightning), depth parallax, word checks (Whisper)
+# Local AI (Apple Silicon): depth parallax (torch + transformers), word checks (Whisper on MLX).
+# Images: Z-Image Turbo runs in a separate Python 3.12 env (.venv-mflux) — see config.py
 torch==2.8.0
-diffusers==0.36.0
 transformers==4.57.6
-accelerate==1.10.1
 mlx-whisper==0.4.3

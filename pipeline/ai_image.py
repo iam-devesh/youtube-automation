@@ -3,8 +3,8 @@ pipeline/ai_image.py
 AI image generation for the "animated movie" look. Providers, in order:
 
   1. Gemini image model (IMAGE_MODEL)  — best quality; needs billing enabled on the Gemini key
-  2. Local model on this Mac (LOCAL_IMAGE_MODEL, Apple-Silicon GPU via PyTorch MPS)
-                                       — free, unlimited, private, no logo (~7 GB one-time download)
+  2. Z-Image Turbo on this Mac (LOCAL_IMAGE_MODEL, MLX 4-bit in .venv-mflux)
+                                       — free, unlimited, private, no logo (~6 GB one-time download)
   3. Pollinations.ai                   — with POLLINATIONS_TOKEN: fast, no logo, better models
                                          without a token: free, 1 image / 45 s, small logo
 
@@ -34,8 +34,8 @@ except ImportError:
 
 # Visual style presets — prepended to every shot prompt so the whole video looks like one film.
 STYLES = {
-    "animated_3d": ("3D animated feature film style, stylized expressive cartoon characters, "
-                    "soft global illumination, rich cinematic colour, detailed animated movie frame"),
+    "animated_3d": ("3D animated feature film style, stylized like a modern animated movie, "
+                    "soft global illumination, detailed animated movie frame"),
     "anime": ("anime film style, hand-painted detailed backgrounds, dramatic cel-shaded lighting, "
               "expressive characters, cinematic anime movie frame"),
     "comic": ("graphic-novel illustration style, bold ink outlines, dramatic shadows, "
@@ -50,29 +50,33 @@ _last_free_call = [0.0]
 FREE_INTERVAL = 46.0
 
 
-def style_prompt(style: str, shot: str, characters: str = "", setting: str = "") -> str:
+# Mood per video template (Z-Image follows mood words closely; it ignores negative prompts)
+MOODS = {
+    "mystery": "Mood: eerie, mysterious and moody; dim light, muted desaturated colours, haze or fog, deep shadows.",
+    "story": "Mood: warm, emotional, cinematic golden light.",
+    "facts": "Mood: bright, clean, vivid and clear.",
+}
+PEOPLE = ("person", "people", "man", "men", "woman", "women", "boy", "girl", "child", "children", "kid",
+          "villager", "fisherman", "fishermen", "soldier", "crowd", "family", "priest", "king", "queen",
+          "prince", "princess", "tantric", "ranger", "scientist", "traveller", "traveler", "pilgrim",
+          "figure", "silhouette", "character", "he ", "she ", "they ")
+
+
+def style_prompt(style: str, shot: str, characters: str = "", setting: str = "", aspect: str = "9:16",
+                 template: str = "mystery") -> str:
     base = STYLES.get(style, STYLES["animated_3d"])
     where = f" Setting: {setting}; every person, building and landscape must match this place and era." if setting else ""
-    chars = f" Recurring characters (keep identical): {characters}." if characters else ""
-    return f"{base}. Scene: {shot}.{where}{chars} Vertical cinematic composition. {NEGATIVE}."
-
-
-LOCAL_STYLES = {
-    "animated_3d": "3d animated movie still, pixar style cartoon render, cinematic lighting",
-    "anime": "anime movie still, detailed painted background, cel shading, cinematic lighting",
-    "comic": "graphic novel panel, bold ink lines, dramatic shadows, muted colours",
-}
-
-
-def local_style_prompt(style: str, shot: str, characters: str = "", setting: str = "") -> str:
-    """
-    Local SDXL reads only ~77 tokens: style first, then the setting (so place/ethnicity
-    always survives truncation — SDXL otherwise drifts to Western faces and towns), then the shot.
-    """
-    chars = f", {characters}" if characters and any(
-        k in shot.lower() for k in ("fisherman", "boy", "girl", "man", "woman", "character", "he ", "she ")) else ""
-    where = f", {setting}" if setting else ""
-    return f"{LOCAL_STYLES.get(style, LOCAL_STYLES['animated_3d'])}{where}, {shot}{chars}"
+    text = f" {shot.lower()} "
+    for neg in ("no people", "no one", "nobody", "no person", "no humans", "without people", "deserted", "empty"):
+        text = text.replace(neg, " ")
+    has_people = any(k in text for k in PEOPLE)
+    if has_people:
+        chars = f" Recurring characters (keep identical): {characters}." if characters else ""
+    else:                                   # Z-Image adds people unless told the scene is empty
+        chars = " Empty, deserted scene: no people, no figures, no characters."
+    mood = " " + MOODS.get(template, MOODS["mystery"])
+    frame = "Vertical 9:16" if aspect == "9:16" else "Wide 16:9"
+    return f"{base}. Scene: {shot}.{where}{chars}{mood} {frame} cinematic composition. {NEGATIVE}."
 
 
 def _unavailable(err) -> bool:
@@ -96,66 +100,67 @@ def _gemini(prompt, out_path, aspect):
     raise RuntimeError("Gemini returned no image")
 
 
-_local_pipe = [None]
 _local_lock = threading.Lock()
 
 
-def _local_pipeline(log):
-    if _local_pipe[0] is None:
-        import torch
-        from diffusers import StableDiffusionXLPipeline, DPMSolverMultistepScheduler
-        if not torch.backends.mps.is_available() and not torch.cuda.is_available():
-            raise RuntimeError("no GPU (MPS/CUDA) available for local image generation")
-        device = "mps" if torch.backends.mps.is_available() else "cuda"
-        log(f"  🖥️  Loading local image model {LOCAL_IMAGE_MODEL} (first run downloads ~7 GB)...")
-        pipe = StableDiffusionXLPipeline.from_pretrained(
-            LOCAL_IMAGE_MODEL, torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
-        pipe.scheduler = DPMSolverMultistepScheduler.from_config(
-            pipe.scheduler.config, algorithm_type="sde-dpmsolver++", use_karras_sigmas=True)
-        pipe = pipe.to(device)
-        # SDXL's VAE overflows in fp16 (→ NaN → black image), notably on Apple MPS.
-        # Decode in float32; the UNet stays fp16 so speed/memory barely change.
-        pipe.vae.to(torch.float32)
-        pipe.vae.config.force_upcast = False
-        # NOTE: no enable_attention_slicing() — on Apple MPS at 768x1344 it yields NaN latents
-        # (all-black images). 16 GB of unified memory is enough without it.
-        _local_pipe[0] = (pipe, device)
-    return _local_pipe[0]
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ZIMAGE_PY = os.path.join(ROOT, ".venv-mflux", "bin", "python")
+ZIMAGE_WORKER = os.path.join(ROOT, "pipeline", "zimage_worker.py")
+_worker = [None]
+
+
+def _zimage_proc(log):
+    """Start (once) the Z-Image Turbo worker: a separate Python 3.12 + MLX process that keeps
+    the model loaded between images."""
+    import json
+    import subprocess
+    p = _worker[0]
+    if p is not None and p.poll() is None:
+        return p
+    if not os.path.exists(ZIMAGE_PY):
+        raise RuntimeError("Z-Image env missing (.venv-mflux) — see SETUP.md")
+    log(f"  🖥️  Loading local image model Z-Image Turbo ({LOCAL_IMAGE_MODEL})...")
+    p = subprocess.Popen([ZIMAGE_PY, ZIMAGE_WORKER], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                         stderr=subprocess.DEVNULL, text=True, bufsize=1,
+                         env=dict(os.environ, ZIMAGE_MODEL=LOCAL_IMAGE_MODEL))
+    hello = json.loads(p.stdout.readline() or '{"ok": false, "error": "worker exited"}')
+    if not hello.get("ready"):
+        p.kill()
+        raise RuntimeError(hello.get("error", "Z-Image worker failed to start"))
+    log(f"  🖥️  Z-Image Turbo ready (loaded in {hello.get('load_seconds')} s)")
+    _worker[0] = p
+    return p
 
 
 def _local(prompt, out_path, aspect, seed, log):
-    import torch
+    """Z-Image Turbo on this Mac (MLX, 4-bit): 704x1232 (or 1232x704), 6 steps — ~75 s/image on
+    an M5; looks as good as 8 steps at 768x1344 (tested), 30% faster."""
+    import json
     with _local_lock:                       # one generation at a time on the GPU
-        pipe, device = _local_pipeline(log)
-        # Lightning model: 4 steps, no classifier-free guidance (guidance 1.0 = one UNet pass
-        # per step). 640x1152 keeps it ~25 s/image on an M-series Mac with 16 GB; the video
-        # builder upscales with its Ken Burns move.
-        w, h = (640, 1152) if aspect == "9:16" else (1152, 640)
-        gen = torch.Generator("cpu").manual_seed(int(seed))
-        latents = pipe(prompt=prompt, width=w, height=h, num_inference_steps=4,
-                       guidance_scale=1.0, generator=gen, output_type="latent").images
-        with torch.no_grad():
-            latents = latents.to(torch.float32) / pipe.vae.config.scaling_factor
-            decoded = pipe.vae.decode(latents, return_dict=False)[0]
-        img = pipe.image_processor.postprocess(decoded, output_type="pil")[0]
-    if img.getextrema() == ((0, 0), (0, 0), (0, 0)):
+        p = _zimage_proc(log)
+        w, h = (704, 1232) if aspect == "9:16" else (1232, 704)
+        p.stdin.write(json.dumps({"prompt": prompt, "width": w, "height": h, "seed": int(seed),
+                                  "steps": 6, "out": out_path}) + "\n")
+        p.stdin.flush()
+        r = json.loads(p.stdout.readline() or '{"ok": false, "error": "worker exited"}')
+    if not r.get("ok"):
+        raise RuntimeError(r.get("error", "Z-Image failed"))
+    from PIL import Image
+    if Image.open(out_path).convert("L").getextrema()[1] < 8:
         raise RuntimeError("local model produced a black image")
-    img.save(out_path, quality=95)
     return out_path
 
 
 def unload_local():
-    """Free the local model's ~7 GB before the memory-hungry render step."""
-    if _local_pipe[0] is not None:
-        _local_pipe[0] = None
-        import gc
-        gc.collect()
+    """Stop the image worker (frees its ~8 GB) before the memory-hungry render step."""
+    p = _worker[0]
+    _worker[0] = None
+    if p is not None and p.poll() is None:
         try:
-            import torch
-            if torch.backends.mps.is_available():
-                torch.mps.empty_cache()
+            p.stdin.close()
+            p.wait(timeout=20)
         except Exception:
-            pass
+            p.kill()
 
 
 def _pollinations(prompt, out_path, aspect, seed, log):
@@ -189,7 +194,7 @@ def _pollinations(prompt, out_path, aspect, seed, log):
 
 
 def generate_image(prompt: str, out_path: str, aspect: str = "9:16", seed: int = 0,
-                   log=print, local_prompt: str = None) -> str:
+                   log=print) -> str:
     """Return out_path on success, or None if every provider failed."""
     if os.path.exists(out_path) and os.path.getsize(out_path) > 5000:
         return out_path          # resume: already generated in an earlier (interrupted) run
@@ -207,7 +212,7 @@ def generate_image(prompt: str, out_path: str, aspect: str = "9:16", seed: int =
                 log(f"  ⚠️  Gemini image failed: {str(e)[:120]}")
     if LOCAL_IMAGES and "local" not in _disabled:
         try:
-            return _local(local_prompt or prompt, out_path, aspect, seed, log)
+            return _local(prompt, out_path, aspect, seed, log)
         except Exception as e:
             _disabled.add("local")
             log(f"  ⚠️  Local image model unavailable ({str(e)[:140]}) — using Pollinations")

@@ -60,7 +60,7 @@ def get_template(name):
 
 # ─── Per-frame look (done by ffmpeg filters at the final encode — fast, in C) ──
 
-def ffmpeg_look(tpl, w, h, total):
+def ffmpeg_look(tpl, w, h, total, offset=0.0):
     """Colour grade, vignette, grain and progress bar as an ffmpeg -vf chain."""
     parts = []
     if tpl["grade"] == "mystery":
@@ -75,7 +75,9 @@ def ffmpeg_look(tpl, w, h, total):
         parts.append(f"noise=alls={tpl['grain']}:allf=t")
     r, g, b = tpl["bar"]
     bar_h = max(6, h // 240)
-    parts.append(f"drawbox=x=0:y=0:w=iw*t/{total:.3f}:h={bar_h}:color=0x{r:02X}{g:02X}{b:02X}@1:t=fill")
+    # offset: where this piece starts in the whole video (chapters) — the bar runs across all of it
+    parts.append(f"drawbox=x=0:y=0:w=iw*(t+{offset:.3f})/{total:.3f}:h={bar_h}:"
+                 f"color=0x{r:02X}{g:02X}{b:02X}@1:t=fill")
     return ",".join(parts)
 
 

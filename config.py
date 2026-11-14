@@ -76,10 +76,13 @@ IMAGE_MODEL = os.getenv("IMAGE_MODEL", "gemini-3.1-flash-image")
 # Get a key at https://enter.pollinations.ai to remove both limits.
 POLLINATIONS_TOKEN = os.getenv("POLLINATIONS_TOKEN", "")
 POLLINATIONS_MODEL = os.getenv("POLLINATIONS_MODEL", "flux")
-# Free local AI images on this Mac's GPU (Apple Silicon / CUDA). Needs: pip install torch diffusers
-# transformers accelerate. Model licence: OpenRAIL++ (commercial use allowed).
+# Free local AI images on this Mac's GPU: Z-Image Turbo (Apache-2.0, commercial use allowed) via
+# mflux/MLX in its own env:  ~/.local/bin/uv venv --python 3.12 .venv-mflux &&
+#                            ~/.local/bin/uv pip install --python .venv-mflux/bin/python mflux
 LOCAL_IMAGES = os.getenv("LOCAL_IMAGES", "true").lower() in ("1", "true", "yes")
-LOCAL_IMAGE_MODEL = os.getenv("LOCAL_IMAGE_MODEL", "Lykon/dreamshaper-xl-lightning")
+# Z-Image Turbo (4-bit, MLX) — fetch with: python3 fetch_model.py mflux-community/z-image-turbo-mflux-q4 models/z-image-turbo-q4
+LOCAL_IMAGE_MODEL = os.getenv("LOCAL_IMAGE_MODEL", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                  "models", "z-image-turbo-q4"))
 # Default look: "animated_3d" | "anime" | "comic" | "stock" (real stock footage)
 VISUAL_STYLE = os.getenv("VISUAL_STYLE", "animated_3d")
 

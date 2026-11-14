@@ -62,7 +62,7 @@ never treated as finished.
 - **One heavy job at a time:** renders and Prepare jobs share one queue, which is saved to disk
   (`static/outputs/.render.pending.json`) and survives restarts. The local image model and the
   video render must never run together on 16 GB.
-- **Local models, no quotas:** images (SDXL Lightning, MPS) and checking (Whisper
+- **Local models, no quotas:** images (Z-Image Turbo 4-bit, MLX, ~75 s/image) and checking (Whisper
   large-v3-turbo, MLX). The only cloud dependencies are the Gemini voice and, optionally,
   script writing.
 - **Hold switch:** `touch static/outputs/.render.hold` stops new renders from starting (for

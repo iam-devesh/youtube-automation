@@ -8,6 +8,7 @@ Why libass for text: Pillow (used by MoviePy's TextClip) mis-shapes Devanagari
 unless built with libraqm. libass uses HarfBuzz, so Hindi renders correctly.
 """
 
+import json
 import os
 import sys
 import subprocess
@@ -439,7 +440,7 @@ def mix_audio_track(voice_wav, music, total, out_wav, log=print):
     return margin
 
 
-def _burn_subtitles(raw_path, ass_path, out_path, look="", audio=None):
+def _burn_subtitles(raw_path, ass_path, out_path, look="", audio=None, normalize=True):
     """
     Final encode: template look (grade/vignette/grain/progress bar) + captions.
     `audio`: a finished mix (wav) to use instead of the raw render's audio.
@@ -456,8 +457,10 @@ def _burn_subtitles(raw_path, ass_path, out_path, look="", audio=None):
     if audio:
         cmd = [FFMPEG_BIN, "-y", "-i", raw_path, "-i", audio, "-map", "0:v", "-map", "1:a",
                "-vf", vf, "-shortest"] + enc
-    else:
+    elif normalize:
         cmd = [FFMPEG_BIN, "-y", "-i", raw_path, "-vf", vf, "-af", "loudnorm=I=-14:TP=-1.0:LRA=11"] + enc
+    else:                                         # chapters: keep the audio as is (mixed at the end)
+        cmd = [FFMPEG_BIN, "-y", "-i", raw_path, "-vf", vf, "-ac", "2"] + enc
     res = subprocess.run(cmd, cwd=os.path.dirname(ass_path), capture_output=True, text=True)
     if res.returncode != 0:
         raise RuntimeError(res.stderr[-800:])
@@ -488,6 +491,199 @@ def master_loudness(path, target=-14.0):
     return float(m[-1]) + gain
 
 
+# ─── Chapters (long videos) ──────────────────────────────────────────────────
+# A long video is rendered as ~1-minute chapters. Each chapter is built, graded, captioned,
+# CHECKED and saved on its own with a fingerprint of its inputs; re-running the render reuses
+# every chapter whose fingerprint still matches, so a failure or a crash costs one chapter,
+# never the whole video. The chapters are then joined WITHOUT re-encoding the picture, and
+# only the soundtrack (music + loudness) is processed for the whole video.
+
+CHAPTER_SECONDS = float(os.getenv("CHAPTER_SECONDS", "55"))
+CHAPTER_VERSION = "1"            # bump when chapter rendering changes → old chapters are rebuilt
+
+
+def plan_chapters(script, audio_results, tpl):
+    """[(first scene index, last+1)] — from script["chapters"] (scene counts) if given, else
+    greedy groups of ~CHAPTER_SECONDS that never split a scene."""
+    n = min(len(script.get("scenes", [])), len(audio_results))
+    if script.get("chapters"):
+        out, i = [], 0
+        for c in script["chapters"]:
+            k = int(c["scenes"] if isinstance(c, dict) else c)
+            out.append((i, min(i + k, n)))
+            i += k
+        if i < n:
+            out.append((i, n))
+        return [c for c in out if c[0] < c[1]]
+    out, start, acc = [], 0, 0.0
+    for i in range(n):
+        acc += audio_results[i]["duration"] + tpl["tail"] - tpl["overlap"]
+        if acc >= CHAPTER_SECONDS and i + 1 < n:
+            out.append((start, i + 1))
+            start, acc = i + 1, 0.0
+    out.append((start, n))
+    return out
+
+
+def _fingerprint(obj):
+    import hashlib
+    return hashlib.sha1(json.dumps(obj, sort_keys=True, ensure_ascii=False, default=str).encode()).hexdigest()
+
+
+def _file_sig(p):
+    paths = p if isinstance(p, list) else [p]
+    return [(os.path.basename(x), os.path.getsize(x), int(os.path.getmtime(x)))
+            for x in paths if x and os.path.exists(x)]
+
+
+def assemble_chapters(script: dict, image_paths: list, audio_results: list,
+                      job_id: str, progress_callback=None, checklist=None) -> str:
+    """Long-video assembler (see the section comment above). Returns the output .mp4 path."""
+    from pipeline import qa
+    template_name = (script.get("template") or T.DEFAULT_TEMPLATE).lower()
+    tpl = T.get_template(template_name)
+    video_type = script.get("video_type", "long")
+    title = script.get("title", "Untitled Video")
+    scenes = script.get("scenes", [])
+    w, h = _dims(video_type)
+    overlap = tpl["overlap"]
+    out_dir = os.path.join(OUTPUT_DIR, job_id)
+    ch_dir = os.path.join(out_dir, "chapters")
+    os.makedirs(ch_dir, exist_ok=True)
+    checklist = checklist or qa.for_job(job_id)
+    n = min(len(scenes), len(image_paths), len(audio_results))
+    chapters = plan_chapters(script, audio_results[:n], tpl)
+    # timeline of the WHOLE video (needed for the global progress bar + final checks)
+    starts, t = [], 0.0
+    for i in range(n):
+        starts.append(t)
+        t += audio_results[i]["duration"] + tpl["tail"] - overlap
+    total = t + overlap
+    numbered = range(1, n - 1) if n >= 4 else range(1, n)
+    print(f"  📚 {len(chapters)} chapters for {n} scenes (~{total / 60:.1f} min)", flush=True)
+
+    done_paths = []
+    for k, (a, b) in enumerate(chapters):
+        mp4 = os.path.join(ch_dir, f"ch_{k + 1:02d}.mp4")
+        meta_path = mp4[:-4] + ".json"
+        key = _fingerprint({
+            "v": CHAPTER_VERSION, "w": w, "h": h, "tpl": template_name, "k": k, "first": k == 0,
+            "offset": round(starts[a], 3), "total": round(total, 3),
+            "scenes": [{"text": audio_results[i].get("narration") or scenes[i].get("narration", ""),
+                        "audio": _file_sig(audio_results[i]["audio_path"]),
+                        "dur": round(audio_results[i]["duration"], 3),
+                        "media": _file_sig(image_paths[i]), "ambient": scenes[i].get("ambient")}
+                       for i in range(a, b)]})
+        try:
+            meta = json.load(open(meta_path))
+        except Exception:
+            meta = {}
+        if meta.get("key") == key and meta.get("passed") and os.path.exists(mp4):
+            print(f"  ♻️  Chapter {k + 1}/{len(chapters)}: unchanged and checked — reused", flush=True)
+            done_paths.append(mp4)
+            continue
+        if progress_callback:
+            progress_callback(k + 1, len(chapters) + 1, f"Rendering chapter {k + 1}/{len(chapters)}")
+        print(f"  🎬 Chapter {k + 1}/{len(chapters)}: scenes {a + 1}-{b}", flush=True)
+        clips, info, cursor = [], [], 0.0
+        for i in range(a, b):
+            au = audio_results[i]
+            try:
+                clip = build_scene_clip(tpl, image_paths[i], au["audio_path"], au["duration"], w, h, i,
+                                        video_type, ambient=scenes[i].get("ambient"))
+            except Exception as e:
+                raise RuntimeError(f"scene {i + 1} media failed: {e}")
+            if clips and overlap > 0:
+                clip = clip.with_effects([vfx.CrossFadeIn(overlap)])
+            clips.append(clip)
+            info.append({"start": cursor, "duration": au["duration"], "words": au.get("words") or [],
+                         "narration": au.get("narration") or scenes[i].get("narration", ""),
+                         "number": (i if tpl["layout"] == "card" and i in numbered else None)})
+            cursor += clip.duration - overlap
+        ch = concatenate_videoclips(clips, method="compose", padding=-overlap if overlap else 0)
+        local_starts = [s_["start"] for s_ in info]
+        layers = [ch.audio]
+        if k == 0:
+            layers.append(_stereo(T.impact(), 0.30).with_start(0))
+        sfx = T.whoosh() if tpl["sfx"] == "whoosh" else T.pop()
+        for j, st in enumerate(local_starts):
+            if j == 0 and k == 0:
+                continue
+            lead = 0.28 if tpl["sfx"] == "whoosh" else 0.0
+            layers.append(_stereo(sfx, 0.12 if tpl["sfx"] == "whoosh" else 0.18).with_start(max(st - lead, 0)))
+        ch = ch.with_audio(CompositeAudioClip(layers).with_duration(ch.duration))
+        ch_total = ch.duration
+        ass_path = mp4[:-4] + ".ass"
+        with open(ass_path, "w", encoding="utf-8") as f:
+            f.write(build_ass(tpl, title, info, w, h, video_type, ch_total,
+                              hook_text=script.get("hook_text") if k == 0 else None,
+                              cta_line=None, template_name=template_name))
+        sub = audio_results[a:b]
+        spans = qa.check_captions(checklist, ass_path, sub, ch_total, local_starts)
+        raw = mp4[:-4] + "_raw.mp4"
+        ch.write_videofile(raw, fps=FPS, codec="libx264", audio_codec="aac", audio_bitrate="192k",
+                           preset="veryfast", threads=4, ffmpeg_params=["-crf", "16", "-pix_fmt", "yuv420p"],
+                           logger=None)
+        ch.close()
+        look = T.ffmpeg_look(tpl, w, h, total, offset=starts[a])
+        _burn_subtitles(raw, ass_path, mp4, look, normalize=False)
+        try:
+            qa.check_chapter(checklist, k + 1, mp4, raw, look, spans, sub, local_starts, w, h)
+        except qa.ChecklistFailed:
+            os.replace(mp4, mp4[:-4] + "_rejected.mp4")
+            raise
+        finally:
+            if os.path.exists(raw):
+                os.remove(raw)
+        json.dump({"key": key, "passed": True, "scenes": [a + 1, b], "seconds": round(ch_total, 2)},
+                  open(meta_path, "w"))
+        done_paths.append(mp4)
+
+    # ── join (no picture re-encode) + one soundtrack pass for the whole video ──
+    if progress_callback:
+        progress_callback(len(chapters) + 1, len(chapters) + 1, "Joining chapters + music")
+    import unicodedata
+    safe_title = "".join(c for c in title if c.isalnum() or c in " _-"
+                         or unicodedata.category(c).startswith("M"))[:50].strip() or "video"
+    out_path = os.path.join(out_dir, f"{safe_title}.mp4")
+    joined = os.path.join(out_dir, "_joined.mp4")
+    lst = os.path.join(ch_dir, "_list.txt")
+    with open(lst, "w") as f:
+        f.writelines(f"file '{os.path.abspath(p_)}'\n" for p_ in done_paths)
+    subprocess.run([FFMPEG_BIN, "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", lst,
+                    "-c", "copy", "-movflags", "+faststart", joined], check=True)
+    real_total = qa._probe(joined)["duration"] or total
+    music_path, credit = music.track_for(template_name, key=title)
+    if credit and credit not in script.get("description", ""):
+        script["description"] = (script.get("description", "").rstrip() + "\n\n" + credit).strip()
+    voice_wav = os.path.join(out_dir, "_voice.wav")
+    mixed = os.path.join(out_dir, "_mix.wav")
+    subprocess.run([FFMPEG_BIN, "-y", "-v", "error", "-i", joined, "-vn", "-ac", "2", "-ar", "48000", voice_wav],
+                   check=True)
+    margin = None
+    if music_path:
+        margin = mix_audio_track(voice_wav, music_path, real_total, mixed)
+    else:
+        subprocess.run([FFMPEG_BIN, "-y", "-v", "error", "-i", voice_wav, "-af",
+                        "loudnorm=I=-14:TP=-1.0:LRA=11", "-ar", "48000", mixed], check=True)
+    subprocess.run([FFMPEG_BIN, "-y", "-v", "error", "-i", joined, "-i", mixed, "-map", "0:v", "-map", "1:a",
+                    "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-shortest",
+                    "-movflags", "+faststart", out_path], check=True)
+    master_loudness(out_path)
+    for f in (joined, voice_wav, mixed, lst, os.path.join(out_dir, "_music_stem.wav")):
+        if os.path.exists(f):
+            os.remove(f)
+    try:
+        qa.check_final(checklist, out_path, None, "", None, [], audio_results[:n], margin, w, h, starts,
+                       burn_checked_per_chapter=True)
+    except qa.ChecklistFailed:
+        os.replace(out_path, os.path.join(out_dir, "_rejected.mp4"))
+        raise
+    print(f"  📋 Checklist: all {len(checklist.items)} checks passed", flush=True)
+    print(f"  ✅ Video saved: {out_path}")
+    return out_path
+
+
 # ─── Main Assembler ───────────────────────────────────────────────────────────
 
 def assemble_video(script: dict, image_paths: list, audio_results: list,
@@ -500,6 +696,8 @@ def assemble_video(script: dict, image_paths: list, audio_results: list,
     """
     if not MOVIEPY_AVAILABLE:
         raise RuntimeError("MoviePy v2 is not installed. Run: pip install 'moviepy>=2'")
+    if script.get("video_type", "long") != "short" or script.get("chapters"):
+        return assemble_chapters(script, image_paths, audio_results, job_id, progress_callback, checklist)
 
     template_name = (script.get("template") or T.DEFAULT_TEMPLATE).lower()
     tpl = T.get_template(template_name)

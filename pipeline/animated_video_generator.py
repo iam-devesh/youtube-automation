@@ -127,7 +127,8 @@ def generate_clips_for_script(script: dict, job_id: str, video_type: str = "shor
         if enabled["veo"]:
             try:
                 log(f"  🎬 Scene {sn}: generating animation with {VEO_MODEL}...")
-                prompt = ai_image.style_prompt(style, _shot_prompts(scene, 1)[0], characters, setting)
+                prompt = ai_image.style_prompt(style, _shot_prompts(scene, 1)[0], characters, setting, aspect,
+                                                script.get("template", "mystery"))
                 path = _veo_clip(prompt, os.path.join(media_dir, f"scene_{sn:02d}.mp4"), aspect, log)
                 counts["veo"] += 1
             except BackendUnavailable as e:
@@ -147,10 +148,9 @@ def generate_clips_for_script(script: dict, job_id: str, video_type: str = "shor
             for k, shot in enumerate(_shot_prompts(scene, n)):
                 log(f"  🎨 Scene {sn}: AI {style} image {k + 1}/{n}...")
                 out = ai_image.generate_image(
-                    ai_image.style_prompt(style, shot, characters, setting),
+                    ai_image.style_prompt(style, shot, characters, setting, aspect, script.get("template", "mystery")),
                     os.path.join(media_dir, f"scene_{sn:02d}_{k + 1}.jpg"),
-                    aspect, seed=seed_base + i * 10 + k, log=log,
-                    local_prompt=ai_image.local_style_prompt(style, shot, characters, setting))
+                    aspect, seed=seed_base + i * 10 + k, log=log)
                 if out:
                     imgs.append(out)
             if imgs:

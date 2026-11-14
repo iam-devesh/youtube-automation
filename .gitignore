@@ -19,5 +19,7 @@ assets/brand/banners/
 __pycache__/
 *.pyc
 .venv/
+.venv-*/
 venv/
 .DS_Store
+models/

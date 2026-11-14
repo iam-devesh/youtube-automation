@@ -429,7 +429,8 @@ def check_sync(cl, S, spans, audio, starts, step=0.05):
 
 
 # ─── Stage 5: final video ─────────────────────────────────────────────────────
-def check_final(cl, out_path, raw_path, look, ass_path, spans, audio, margin, w, h, starts=None):
+def check_final(cl, out_path, raw_path, look, ass_path, spans, audio, margin, w, h, starts=None,
+                burn_checked_per_chapter=False):
     S = "5 Final video"
     ok = os.path.exists(out_path) and os.path.getsize(out_path) > 500_000
     cl.check(S, "video file written", ok)
@@ -458,18 +459,6 @@ def check_final(cl, out_path, raw_path, look, ass_path, spans, audio, margin, w,
         if f is None or f.mean() < 10:
             dark.append(round(float(t), 1))
     cl.check(S, "no black frames", not dark, f"dark at {dark}s" if dark else "")
-    # captions really burned in: same frame with vs. without the caption layer must differ in
-    # the caption band far more than elsewhere (the grade alone changes the frame uniformly)
-    burned = []
-    picks = [s for s in spans if s[1] - s[0] >= 0.4][:: max(len(spans) // 4, 1)][:4]
-    for a, b in picks:
-        t = (a + b) / 2
-        fin = _frame(out_path, t)
-        ref = _frame(raw_path, t, vf=look or None) if raw_path and os.path.exists(raw_path) else None
-        if fin is None or ref is None:
-            continue
-        d = np.abs(fin - ref).mean(axis=(1, 2))           # per-row difference
-        burned.append(float(d.max() / (np.median(d) + 1e-3)))
     # every word audible in the FINISHED video (after cutting, mixing with music, mastering)
     if starts:
         try:
@@ -485,7 +474,60 @@ def check_final(cl, out_path, raw_path, look, ass_path, spans, audio, margin, w,
         except Exception as e:
             cl.check(S, "every word audible in the final video", False,
                      f"could not verify (transcription failed: {str(e)[:80]})")
+    # captions really burned in: same frame with vs. without the caption layer must differ in
+    # the caption band far more than elsewhere (the grade alone changes the frame uniformly)
+    if burn_checked_per_chapter:
+        cl.check(S, "captions burned into the picture", True, "checked in every chapter")
+    else:
+        burned = []
+        picks = [s for s in spans if s[1] - s[0] >= 0.4][:: max(len(spans) // 4, 1)][:4]
+        for a, b in picks:
+            t = (a + b) / 2
+            fin = _frame(out_path, t)
+            ref = _frame(raw_path, t, vf=look or None) if raw_path and os.path.exists(raw_path) else None
+            if fin is None or ref is None:
+                continue
+            d = np.abs(fin - ref).mean(axis=(1, 2))           # per-row difference
+            burned.append(float(d.max() / (np.median(d) + 1e-3)))
+        cl.check(S, "captions burned into the picture",
+                 bool(burned) and sum(r > 4 for r in burned) >= max(1, len(burned) - 1),
+                 f"caption contrast {', '.join(f'{r:.0f}x' for r in burned)}" if burned else "could not compare")
+    cl.gate(S)
+
+
+# ─── Chapter check (long videos) ──────────────────────────────────────────────
+def check_chapter(cl, k, out_path, raw_path, look, spans, audio, starts, w, h):
+    """One chapter of a long video, before it is accepted and saved: picture, no black frames,
+    every word audible + nothing repeated in each scene, captions burned in."""
+    S = f"5 Chapter {k}"
+    ok = os.path.exists(out_path) and os.path.getsize(out_path) > 100_000
+    cl.check(S, "chapter file written", ok)
+    if not ok:
+        cl.gate(S)
+    p = _probe(out_path)
+    cl.check(S, f"resolution {w}x{h}, 30 fps", (p["w"], p["h"]) == (w, h) and p["fps"] and abs(p["fps"] - 30) < 0.5,
+             f"{p['w']}x{p['h']} {p['fps']} fps")
+    cl.check(S, "video quality (bitrate)", (p["kbps"] or 0) >= MIN_VIDEO_KBPS, f"{p['kbps']} kb/s")
+    dark = []
+    for t in np.arange(0.5, max(p["duration"] - 0.5, 1), 4.0):
+        f = _frame(out_path, t)
+        if f is None or f.mean() < 10:
+            dark.append(round(float(t), 1))
+    cl.check(S, "no black frames", not dark, f"dark at {dark}s" if dark else "")
+    x = _pcm(out_path)
+    segs = [x[int(st * 24000): int((st + a["duration"]) * 24000)] for a, st in zip(audio, starts)]
+    bad = [f"scene {i + 1}: {sc * 100:.0f}% ({' '.join(m)})"
+           for i, (sc, m) in enumerate(verify_words([a.get("narration") or "" for a in audio], segs,
+                                                    min_recall=ISOLATED_MIN)) if sc < ISOLATED_MIN]
+    cl.check(S, "every word audible, nothing repeated", not bad, "; ".join(bad))
+    burned = []
+    for a_, b_ in [s_ for s_ in spans if s_[1] - s_[0] >= 0.4][:: max(len(spans) // 3, 1)][:3]:
+        fin = _frame(out_path, (a_ + b_) / 2)
+        ref = _frame(raw_path, (a_ + b_) / 2, vf=look or None)
+        if fin is not None and ref is not None:
+            d = np.abs(fin - ref).mean(axis=(1, 2))
+            burned.append(float(d.max() / (np.median(d) + 1e-3)))
     cl.check(S, "captions burned into the picture",
              bool(burned) and sum(r > 4 for r in burned) >= max(1, len(burned) - 1),
-             f"caption contrast {', '.join(f'{r:.0f}x' for r in burned)}" if burned else "could not compare")
+             ", ".join(f"{r:.0f}x" for r in burned) if burned else "could not compare")
     cl.gate(S)
