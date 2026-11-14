@@ -1,0 +1,17 @@
+{
+  "series": "Series name",
+  "narrator": {"voice": "Charon", "voice_direction": "deep, low, suspenseful documentary narrator"},
+  "characters": [
+    {
+      "id": "dyatlov",
+      "name": "इगोर डायटलॉव",
+      "role": "group leader, 23, radio-engineering student",
+      "want": "finish the hardest route of the season",
+      "fear": "letting his friends down",
+      "speech_habit": "short, calm instructions; never raises his voice",
+      "voice": "Orus",
+      "voice_direction": "young, steady, quiet authority",
+      "look": "a 23-year-old Russian man, lean, short light-brown hair, clean-shaven, serious grey eyes, thick grey wool sweater under a dark blue canvas anorak, fur-lined cap, wooden skis"
+    }
+  ]
+}

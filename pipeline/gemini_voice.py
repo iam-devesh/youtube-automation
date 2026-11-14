@@ -303,12 +303,16 @@ def _alignment_ok(x, texts, al):
     whole-take alignment hears ≥85% of every scene's words, and each scene cut — checked
     alone — still has ≥70% of its words and repeats nothing from its neighbours."""
     from pipeline import qa
-    weak = [f"{i + 1}:{s * 100:.0f}%" for i, s in enumerate(al["scores"]) if s < qa.MIN_RECALL]
-    if weak:
-        return False, "words not heard in scenes " + " ".join(weak)
+    lost = [f"{i + 1}:{s * 100:.0f}%" for i, s in enumerate(al["scores"]) if s < qa.ISOLATED_MIN]
+    if lost:
+        return False, "words not heard in scenes " + " ".join(lost)
+    # a scene just under 85% in the whole-take pass (a word or two spelled differently in a
+    # long take) gets a second hearing ALONE, where it must reach the full 85%
+    weak = {i for i, s in enumerate(al["scores"]) if s < qa.MIN_RECALL}
     segs = [x[int(al["cuts"][i] * SR): int(al["cuts"][i + 1] * SR)] for i in range(len(texts))]
     iso = qa.verify_words(texts, segs, tries=2, min_recall=qa.ISOLATED_MIN)
-    bad = [f"{i + 1}: {' '.join(m)}" for i, (sc, m) in enumerate(iso) if sc < qa.ISOLATED_MIN]
+    bad = [f"{i + 1}: {sc * 100:.0f}% {' '.join(m)}" for i, (sc, m) in enumerate(iso)
+           if sc < (qa.MIN_RECALL if i in weak else qa.ISOLATED_MIN)]
     return (not bad), "; ".join(bad)
 
 
