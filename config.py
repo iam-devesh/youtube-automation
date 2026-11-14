@@ -43,8 +43,8 @@ CHANNEL_HASHTAGS = ["#TheFaceless", "#Shorts"]
 CHANNEL_TAGS = ["the faceless", "thefaceless", "hindi stories", "hinglish"]
 
 # ─── Video Settings ───────────────────────────────────────────────────────────
-VIDEO_WIDTH = 1920
-VIDEO_HEIGHT = 1080
+VIDEO_WIDTH = 2560          # long videos: 1440p (YouTube serves >=1440p uploads in its higher-quality codec)
+VIDEO_HEIGHT = 1440
 SHORT_WIDTH = 1080
 SHORT_HEIGHT = 1920
 FPS = 30

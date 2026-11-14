@@ -564,7 +564,7 @@ PENDING_FILE = os.path.join(OUTPUT_DIR, ".render.pending.json")
 
 def _pending():
     try:
-        return [p for p in json.load(open(PENDING_FILE)) if os.path.exists(p)]
+        return [p for p in json.load(open(PENDING_FILE)) if os.path.exists(p.split("::")[-1])]   # "prepare::<path>" items too
     except Exception:
         return []
 
