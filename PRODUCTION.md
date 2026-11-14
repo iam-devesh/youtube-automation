@@ -31,6 +31,12 @@ Prepare a whole series in one go (overnight is fine). Render once the badge on e
 - **Rejected takes are kept** in `<job>/_rejected_take_*`. Before recording again, the pipeline
   builds the narration from the best version of each scene across the saved takes. Same
   narrator, no extra quota. Ep5 was made this way.
+- **Only the bad scenes are re-recorded.** When a take fails on a few scenes (up to a fifth of
+  them), just those scenes plus their neighbours are recorded again in one short request and
+  spliced in. A slurred line in a 10-minute video costs seconds of voice quota, not a new take.
+- **Extra speech is rejected.** If the voice says anything that isn't in the script (Gemini once
+  read its own instructions aloud), that scene fails.
+- **Long recordings** are transcribed in ~60 s pieces and matched to the script in order.
 - **No Edge fallback for series** (`"voice": "gemini"` in each episode JSON). If the voice
   quota runs out, the episode waits and retries every 10 min, for up to 2 hours.
 
@@ -78,3 +84,13 @@ never treated as finished.
 | `Gemini voice required … not available` | 3 takes and splicing still missing a scene | Check `render.log` for the missing words. Often an unusual word: rewrite it, then Prepare again |
 | `3 Visuals: … black/blank` | An image failed | Delete that image in `<job>/clips/` and Prepare again (only that image is redone) |
 | `5 Final video: …` | Render problem (rare) | Render again. Voice and images are reused |
+
+## Long videos
+
+- 16:9, `"video_type": "long"`, written with the content-writer skill (`.claude/skills/`).
+- Rendered in ~55 s chapters: a change re-renders only its chapter.
+- Music: 2–3 tracks of the same mood, crossfaded (no 2-minute loop), all credited.
+- Thumbnail: `thumbnail.jpg` (1280×720) from the script's `thumbnail` field, uploaded with the
+  video. Custom thumbnails need a phone-verified YouTube channel.
+- YouTube chapters from `chapter_titles`, with times from the real voice, in the description.
+- Prepare a 10-min video overnight, on the charger: ~150 images × ~77 s ≈ 3 h.

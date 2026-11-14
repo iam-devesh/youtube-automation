@@ -232,4 +232,15 @@ def align_take(x, texts):
             e = max(s + 0.05, min(e, b - a))
             out.append((s, e, ref[i][1]))
         words.append(out)
-    return {"cuts": cuts, "scores": scores, "missing": missing, "words": words, "heard": len(hyp)}
+    # extra speech: heard words that match no script word, beyond what misspellings explain
+    # (each misheard word leaves one unmatched heard word AND one missing script word). Catches
+    # the voice reading its instructions aloud, or adding lines that aren't in the script.
+    used = set(match.values())
+    extra = []
+    for si in range(scenes):
+        a, b = cuts[si], cuts[si + 1]
+        loose = [hyp[j][2] for j in range(len(hyp)) if j not in used and a <= hyp[j][0] < b]
+        n_extra = len(loose) - len(missing[si])
+        extra.append(loose if n_extra > max(3, 0.3 * len(scored[si])) else [])
+    return {"cuts": cuts, "scores": scores, "missing": missing, "words": words, "heard": len(hyp),
+            "extra": extra}

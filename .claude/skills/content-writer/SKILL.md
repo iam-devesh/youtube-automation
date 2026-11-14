@@ -81,6 +81,14 @@ description's YouTube timestamps can be filled in after Prepare, when real timin
 - Fixed fields: `"lang": "hi"`, `"template": "mystery"`, `"style": "animated_3d"`,
   `"voice": "gemini"`, `"privacy": "private"`, `"auto_upload": false`.
 
+Long videos also get:
+- `chapter_titles`: 4–8 YouTube chapters, Hinglish, `[{"title": "Kata hua tent", "scene": 1}, …]`.
+  The first is scene 1. Times are filled in from the real voice timings at render, and each
+  chapter must be at least 10 s long.
+- `thumbnail`: `{"scene": N, "image": 1, "text": "2–5 Hindi words", "side": "left"}`. Pick the
+  most striking image. The text must be different from the title: it adds curiosity, it doesn't
+  repeat. The image's subject should sit on the side opposite the text.
+
 Copy the field layout from an existing episode (`scripts/bhootiya_bharat/ep01_dhanushkodi.json`).
 
 ## 5. Validate before handing over

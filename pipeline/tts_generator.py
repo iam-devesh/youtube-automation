@@ -157,37 +157,49 @@ def generate_tts_for_script(script: dict, job_id: str, lang: str = "en") -> List
 
 def _gemini_only(script, job_id, max_wait_min=120):
     """Episode set to "voice": "gemini" (same narrator as the rest of the series): never fall
-    back to Edge. A take that fails the word check is re-recorded; when the free quota is used
-    up, wait for it to reset and try again (up to max_wait_min), else fail the render."""
+    back to Edge. When a take fails the word check on a FEW scenes, only those scenes are
+    re-recorded (a patch take) and spliced in; otherwise a new full take is recorded. When the
+    free quota is used up, wait for it to reset and try again (up to max_wait_min)."""
     import time as _t
-    from pipeline.gemini_voice import narrate_script
-    import glob as _g
-    n_takes = lambda: len(_g.glob(os.path.join(OUTPUT_DIR, job_id, "_rejected_take_*", "narration.wav")))
-    deadline, takes, spliced_at = _t.time() + max_wait_min * 60, 0, -1
-    if not os.path.exists(os.path.join(OUTPUT_DIR, job_id, "audio", "narration.wav")):
-        from pipeline.gemini_voice import splice_takes      # saved takes first — no new recording
-        spliced_at = n_takes()
-        try:
-            splice_takes(script, job_id)
-        except Exception as e:
-            print(f"  ⚠️  Splicing saved takes failed ({str(e)[:120]})", flush=True)
+    from pipeline import gemini_voice as gv
+    deadline, takes = _t.time() + max_wait_min * 60, 0
+    n_scenes = len(script.get("scenes", []))
+    st = {"tried": None, "patches": 0}
+    narration = os.path.join(OUTPUT_DIR, job_id, "audio", "narration.wav")
+
+    def patch_or_splice():
+        """Saved recordings first (no quota); then a patch take for the scenes still missing."""
+        if os.path.exists(narration):
+            return
+        sig = len(gv._sources(job_id))
+        if not sig:
+            return
+        if sig != st["tried"]:
+            st["tried"] = sig
+            if gv.splice_takes(script, job_id):
+                return
+        missing = gv.splice_missing(job_id) or []
+        if missing and len(missing) <= max(3, n_scenes // 5) and st["patches"] < 3:
+            st["patches"] += 1
+            gv.record_patch(script, job_id, missing, script.get("template", "mystery"))
+            st["tried"] = len(gv._sources(job_id))
+            gv.splice_takes(script, job_id)
+        # else: too many scenes missing (or 3 patches used): narrate_script records a full take
+
     while True:
         try:
-            return narrate_script(script, job_id, script.get("template", "mystery"))
+            patch_or_splice()
+            return gv.narrate_script(script, job_id, script.get("template", "mystery"))
         except Exception as e:
             msg = str(e)
             quota = "quota" in msg.lower() or "429" in msg or "RESOURCE_EXHAUSTED" in msg
             takes += 0 if quota else 1
-            if takes >= 3 or _t.time() > deadline:
+            if takes >= 3 + st["patches"] or _t.time() > deadline:
                 raise RuntimeError(f"Gemini voice required for this episode but not available: {msg[:200]}")
-            if not quota and n_takes() > spliced_at:   # a new take since the last splice → combine
-                spliced_at = n_takes()
-                from pipeline.gemini_voice import splice_takes
-                if splice_takes(script, job_id):
-                    continue                           # narrate_script re-checks the spliced take
-            wait = 600 if quota else 60
+            wait = 600 if quota else 5
             print(f"  ⏳ Gemini voice {'quota used up' if quota else 'take rejected'} ({msg[:120]}) — "
-                  f"retrying in {wait // 60} min (Gemini voice only, no Edge fallback)", flush=True)
+                  f"retrying in {max(wait // 60, 1) if quota else 0} min (Gemini voice only, no Edge fallback)",
+                  flush=True)
             _t.sleep(wait)
 
 

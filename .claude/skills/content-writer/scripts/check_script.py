@@ -70,6 +70,13 @@ def main(path):
         cl.check(S, "enough images for each long-video scene (~1 per 4 s)", not thin,
                  f"add prompts to scenes {thin}" if thin else "")
         cl.check(S, "long video 3–20 min", 180 <= secs <= 1200, f"~{secs / 60:.1f} min")
+        ch = script.get("chapter_titles") or []
+        sc = [int(c.get("scene", 0)) for c in ch]
+        cl.check(S, "4–8 chapter_titles, first at scene 1, in order", 4 <= len(ch) <= 8 and sc[:1] == [1]
+                 and sc == sorted(set(sc)) and max(sc) <= len(scenes), f"{len(ch)} chapters, scenes {sc}")
+        th = script.get("thumbnail") or {}
+        cl.check(S, "thumbnail: scene + 2–5 Hindi words", 1 <= int(th.get("scene", 0)) <= len(scenes)
+                 and 2 <= len((th.get("text") or "").split()) <= 5, str(th)[:80])
 
     images = sum(len(s.get("image_prompts") or []) for s in scenes)
     bad = [i for i in cl.items if not i["ok"]]

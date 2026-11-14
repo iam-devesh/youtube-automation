@@ -166,7 +166,8 @@ def _run_pipeline(job_id: str, topic: str, video_type: str,
                     step_msg=f"✅ Video built: {os.path.basename(video_path)}")
 
         # Thumbnail = first scene image
-        thumbnail_path = None   # media may be video clips; let YouTube pick a frame
+        thumbnail_path = (os.path.join(os.path.dirname(video_path), "thumbnail.jpg")
+                          if os.path.exists(os.path.join(os.path.dirname(video_path), "thumbnail.jpg")) else None)
 
         result = {
             "script": script,
@@ -247,7 +248,8 @@ def _run_animated_pipeline(job_id: str, script: dict, video_type: str,
         _update_job(job_id, progress=92,
                     step_msg=f"✅ Animated film built: {os.path.basename(video_path)}")
 
-        thumbnail_path = None   # media may be video clips; let YouTube pick a frame
+        thumbnail_path = (os.path.join(os.path.dirname(video_path), "thumbnail.jpg")
+                          if os.path.exists(os.path.join(os.path.dirname(video_path), "thumbnail.jpg")) else None)
 
         result = {
             "script": script,
@@ -500,7 +502,9 @@ def _start_upload(label, video_path, meta, privacy, series=None, on_done=None):
     def work():
         _bind_worker(job_id)
         try:
-            res = upload_video(video_path, meta, None, privacy, progress_callback=progress)
+            thumb = os.path.join(os.path.dirname(video_path), "thumbnail.jpg")   # long videos only
+            res = upload_video(video_path, meta, thumb if os.path.exists(thumb) else None, privacy,
+                               progress_callback=progress)
             _update_job(job_id, step_msg=f"✅ Uploaded: {res['video_url']}")
             if on_done:
                 for msg in on_done(res) or []:

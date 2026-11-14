@@ -306,6 +306,9 @@ def _alignment_ok(x, texts, al):
     lost = [f"{i + 1}:{s * 100:.0f}%" for i, s in enumerate(al["scores"]) if s < qa.ISOLATED_MIN]
     if lost:
         return False, "words not heard in scenes " + " ".join(lost)
+    extra = [f"{i + 1}: {' '.join(e[:8])}…" for i, e in enumerate(al.get("extra") or []) if e]
+    if extra:
+        return False, "speech that is not in the script in scenes " + "; ".join(extra)
     # a scene just under 85% in the whole-take pass (a word or two spelled differently in a
     # long take) gets a second hearing ALONE, where it must reach the full 85%
     weak = {i for i, s in enumerate(al["scores"]) if s < qa.MIN_RECALL}
@@ -414,52 +417,97 @@ def _pause_points(x, lo, hi):
             if lo < (regions[i][1] + regions[i + 1][0]) / 2 < hi]
 
 
-def splice_takes(script: dict, job_id: str, log=print):
-    """Build a narration from the episode's rejected Gemini takes (same narrator, same voice):
-    each scene is taken from a take in which that scene passed the word check. Writes
-    audio/narration.wav + cuts.json and returns True when every scene is covered — no new
-    recording (no quota) needed."""
+def _sources(job_id):
+    """Saved recordings of an episode: full rejected takes, then patch takes (only some scenes).
+    [(name, wav path, scene indices or None for a full take)]"""
     import glob
+    out = [(os.path.basename(os.path.dirname(p)), p, None)
+           for p in sorted(glob.glob(os.path.join(OUTPUT_DIR, job_id, "_rejected_take_*", "narration.wav")))]
+    for p in sorted(glob.glob(os.path.join(OUTPUT_DIR, job_id, "_patch_take_*", "narration.wav"))):
+        try:
+            idx = json.load(open(os.path.join(os.path.dirname(p), "scenes.json")))
+            out.append((os.path.basename(os.path.dirname(p)), p, idx))
+        except Exception:
+            pass
+    return out
+
+
+def _check_source(x, texts, wav_path, log=print):
+    """Per-scene (score, missing) + cuts of one recording, against ITS texts. A scene counts
+    only if both the whole-take alignment and the scene heard alone pass (as _alignment_ok).
+    Cached next to the recording: recordings never change, and a long take takes minutes."""
+    import hashlib
+    from pipeline import qa
+    key = hashlib.sha1(json.dumps(texts, ensure_ascii=False).encode()).hexdigest()
+    cache = os.path.join(os.path.dirname(wav_path), "check.json")
+    try:
+        c = json.load(open(cache))
+        if c.get("key") == key:
+            return c["cuts"], [tuple(r) for r in c["res"]]
+    except Exception:
+        pass
+    from pipeline.align import align_take
+    al = align_take(x, texts)
+    cuts = al["cuts"]
+    segs = [x[int(cuts[i] * SR): int(cuts[i + 1] * SR)] for i in range(len(texts))]
+    iso = qa.verify_words(texts, segs, tries=2, min_recall=qa.ISOLATED_MIN)
+    res = []
+    for i, (s, m) in enumerate(zip(al["scores"], al["missing"])):
+        need = qa.MIN_RECALL if s < qa.MIN_RECALL else qa.ISOLATED_MIN    # same second-hearing rule
+        extra = (al.get("extra") or [[]] * len(texts))[i]
+        ok = s >= qa.ISOLATED_MIN and iso[i][0] >= need and not extra
+        res.append((max(s, iso[i][0]) if ok else 0.0,
+                    m if ok else (m + iso[i][1] + ([f"[extra speech: {' '.join(extra[:6])}]"] if extra else []))))
+    json.dump({"key": key, "cuts": cuts, "res": res}, open(cache, "w"), ensure_ascii=False)
+    return cuts, res
+
+
+def splice_missing(job_id):
+    """Scene indices (0-based) the last splice attempt had no good recording for."""
+    try:
+        return json.load(open(os.path.join(OUTPUT_DIR, job_id, "_splice_missing.json")))
+    except Exception:
+        return None
+
+
+def splice_takes(script: dict, job_id: str, log=print):
+    """Build a narration from the episode's saved Gemini recordings (same narrator, same
+    voice): each scene is taken from a recording in which that scene passed the word check.
+    Recordings are full rejected takes and patch takes (just the scenes that failed, see
+    record_patch). Writes audio/narration.wav + cuts.json and returns True when every scene
+    is covered; otherwise saves the uncovered scenes (splice_missing) and returns False."""
     from pipeline import qa
     texts = [(s.get("narration") or "").strip() for s in script.get("scenes", [])]
-    takes = sorted(glob.glob(os.path.join(OUTPUT_DIR, job_id, "_rejected_take_*", "narration.wav")))
-    if len(takes) < 2:
+    sources = _sources(job_id)
+    if not sources:
         return False
-    best = [None] * len(texts)                     # (score, take index, segment)
-    loaded = [(ti, _pcm(p)) for ti, p in enumerate(takes)]
-    covered = lambda: all(b and b[0] >= qa.MIN_RECALL for b in best)
-    for repair in (False, True):                   # quick pass with the natural cuts, then repair
-        for ti, x in loaded:
-            if covered():
-                break
-            todo = [i for i, b in enumerate(best) if not b or b[0] < qa.MIN_RECALL]
-            log(f"  🧩 {'Repairing cuts in' if repair else 'Checking'} take {ti + 1}/{len(takes)} "
-                f"(scenes still needed: {', '.join(str(i + 1) for i in todo)})...")
-            try:
-                if repair:
-                    cuts, res = _repair_cuts(x, texts, _find_cuts(x, texts), log=log)
-                else:
-                    from pipeline.align import align_take
-                    al = align_take(x, texts)
-                    cuts = al["cuts"]
-                    segs = [x[int(cuts[i] * SR): int(cuts[i + 1] * SR)] for i in range(len(texts))]
-                    iso = qa.verify_words(texts, segs, tries=2, min_recall=qa.ISOLATED_MIN)
-                    # a scene counts only if BOTH checks pass (same rule as _alignment_ok)
-                    res = [(s if iso[i][0] >= qa.ISOLATED_MIN else 0.0, m + (iso[i][1] if iso[i][0] < qa.ISOLATED_MIN else []))
-                           for i, (s, m) in enumerate(zip(al["scores"], al["missing"]))]
-                log(f"     take {ti + 1}: " + " ".join(f"{i + 1}:{sc * 100:.0f}%" for i, (sc, _) in enumerate(res)))
-            except Exception as e:
-                log(f"  ⚠️  Take {ti + 1} unusable for splicing ({str(e)[:80]})")
-                continue
-            for i, (sc, _) in enumerate(res):
-                if best[i] is None or sc > best[i][0]:
-                    best[i] = (sc, ti, x[int(cuts[i] * SR): int(cuts[i + 1] * SR)])
-        if covered():
+    best = [None] * len(texts)                     # (score, source name, segment)
+    ok_ = lambda b: b is not None and b[0] >= qa.ISOLATED_MIN
+    for name, path, idx in sources:
+        todo = [i for i, b in enumerate(best) if not ok_(b)]
+        if not todo:
             break
-    missing = [i + 1 for i, b in enumerate(best) if not b or b[0] < qa.MIN_RECALL]
+        ids = idx if idx is not None else list(range(len(texts)))
+        if not set(ids) & set(todo):
+            continue
+        log(f"  🧩 Checking {name} (scenes still needed: {', '.join(str(i + 1) for i in todo)})...")
+        try:
+            x = _pcm(path)
+            cuts, res = _check_source(x, [texts[i] for i in ids], path, log)
+        except Exception as e:
+            log(f"  ⚠️  {name} unusable for splicing ({str(e)[:80]})")
+            continue
+        for k, i in enumerate(ids):
+            sc = res[k][0]
+            if best[i] is None or sc > best[i][0]:
+                best[i] = (sc, name, x[int(cuts[k] * SR): int(cuts[k + 1] * SR)])
+    missing = [i for i, b in enumerate(best) if not ok_(b)]
+    json.dump(missing, open(os.path.join(OUTPUT_DIR, job_id, "_splice_missing.json"), "w"))
     if missing:
-        log(f"  ⚠️  Splicing takes: no good take yet for scenes {missing}")
+        log(f"  ⚠️  Splicing: no good recording yet for scenes {[i + 1 for i in missing]}")
         return False
+    if len({b[1] for b in best}) < 2:
+        return False                               # one rejected take alone: nothing to combine
     audio_dir = os.path.join(OUTPUT_DIR, job_id, "audio")
     os.makedirs(audio_dir, exist_ok=True)
     full = np.concatenate([b[2] for b in best])
@@ -473,11 +521,36 @@ def splice_takes(script: dict, job_id: str, log=print):
         w.setframerate(SR)
         w.writeframes(pcm.tobytes())
     json.dump(cuts, open(os.path.join(audio_dir, "cuts.json"), "w"))
-    json.dump({"takes": [os.path.basename(os.path.dirname(takes[b[1]])) for b in best]},
-              open(os.path.join(audio_dir, "spliced.json"), "w"))
-    log(f"  🧩 Narration spliced from {len(set(b[1] for b in best))} Gemini takes "
-        f"(scene → take: {', '.join(f'{i + 1}→{b[1] + 1}' for i, b in enumerate(best))})")
+    json.dump({"takes": [b[1] for b in best]}, open(os.path.join(audio_dir, "spliced.json"), "w"))
+    used = sorted({b[1] for b in best})
+    log(f"  🧩 Narration spliced from {len(used)} recordings: " + "; ".join(
+        f"{n}: scenes {', '.join(str(i + 1) for i, b in enumerate(best) if b[1] == n)}" for n in used))
     return True
+
+
+def record_patch(script: dict, job_id: str, scene_idx, template: str = "mystery", log=print):
+    """Re-record ONLY the given scenes (0-based) in one short Gemini request, saved as
+    <job>/_patch_take_<time>/ for splice_takes. A long video with one slurred scene costs a
+    few seconds of voice quota instead of a whole new 10-minute take."""
+    # each failed scene is recorded WITH its neighbours: a 1-line request makes the voice model
+    # read its instructions aloud (seen), and context keeps the delivery like the full take.
+    # Neighbours are only spare copies; splice_takes picks the best recording of every scene.
+    n = len(script["scenes"])
+    scene_idx = sorted({j for i in scene_idx for j in (i - 1, i, i + 1) if 0 <= j < n})
+    texts = [(script["scenes"][i].get("narration") or "").strip() for i in scene_idx]
+    d = os.path.join(OUTPUT_DIR, job_id, f"_patch_take_{int(time.time())}")
+    os.makedirs(d, exist_ok=True)
+    raw, full = os.path.join(d, "narration_raw.wav"), os.path.join(d, "narration.wav")
+    log(f"  🎙️  Re-recording only scenes {', '.join(str(i + 1) for i in scene_idx)} (patch take)...")
+    try:
+        _speak_retry("\n\n".join(_tts_texts(texts, log)), template, raw, log)
+        _process(raw, full)
+    except Exception:
+        import shutil
+        shutil.rmtree(d, ignore_errors=True)
+        raise
+    json.dump(list(scene_idx), open(os.path.join(d, "scenes.json"), "w"))
+    return d
 
 
 def narrate_script(script: dict, job_id: str, template: str = "mystery", log=print):

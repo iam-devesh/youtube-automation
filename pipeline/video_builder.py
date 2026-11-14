@@ -653,7 +653,7 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
     subprocess.run([FFMPEG_BIN, "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", lst,
                     "-c", "copy", "-movflags", "+faststart", joined], check=True)
     real_total = qa._probe(joined)["duration"] or total
-    music_path, credit = music.track_for(template_name, key=title)
+    music_path, credit = music.playlist_for(template_name, title, real_total, out_dir)
     if credit and credit not in script.get("description", ""):
         script["description"] = (script.get("description", "").rstrip() + "\n\n" + credit).strip()
     voice_wav = os.path.join(out_dir, "_voice.wav")
@@ -670,7 +670,8 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
                     "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-shortest",
                     "-movflags", "+faststart", out_path], check=True)
     master_loudness(out_path)
-    for f in (joined, voice_wav, mixed, lst, os.path.join(out_dir, "_music_stem.wav")):
+    for f in (joined, voice_wav, mixed, lst, os.path.join(out_dir, "_music_stem.wav"),
+              os.path.join(out_dir, "_music_playlist.mp3")):
         if os.path.exists(f):
             os.remove(f)
     try:
@@ -680,8 +681,41 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
         os.replace(out_path, os.path.join(out_dir, "_rejected.mp4"))
         raise
     print(f"  📋 Checklist: all {len(checklist.items)} checks passed", flush=True)
+    if video_type != "short":
+        try:                                       # never fails a finished, checked video
+            from pipeline.thumbnail import make_thumbnail
+            make_thumbnail(script, job_id)
+        except Exception as e:
+            print(f"  ⚠️  Thumbnail skipped: {e}", flush=True)
+        _add_chapter_times(script, starts)
     print(f"  ✅ Video saved: {out_path}")
     return out_path
+
+
+def _add_chapter_times(script, starts):
+    """YouTube chapters from script["chapter_titles"] = [{"title": "...", "scene": N}, …] and
+    the real scene start times, written into the description after its first paragraph.
+    YouTube's rules: first at 0:00, at least 3, each at least 10 s long; otherwise skipped."""
+    marks = script.get("chapter_titles") or []
+    if len(marks) < 3 or "\n0:00 " in "\n" + script.get("description", ""):
+        return
+    rows, last = [], None
+    for i, m in enumerate(marks):
+        sn = int(m.get("scene", 1))
+        t = 0.0 if i == 0 else starts[min(max(sn - 1, 0), len(starts) - 1)]
+        if last is not None and t - last < 10:
+            print(f"  ⚠️  Chapter \"{m.get('title')}\" is under 10 s after the previous one — merged", flush=True)
+            continue
+        s = int(t)
+        stamp = f"{s // 3600}:{s % 3600 // 60:02d}:{s % 60:02d}" if s >= 3600 else f"{s // 60}:{s % 60:02d}"
+        rows.append(f"{stamp} {m.get('title', '').strip()}")
+        last = t
+    if len(rows) < 3:
+        print("  ⚠️  Fewer than 3 usable chapters — description left without chapters", flush=True)
+        return
+    parts = (script.get("description") or "").split("\n\n", 1)
+    script["description"] = "\n\n".join([parts[0], "\n".join(rows)] + parts[1:])
+    print(f"  📑 {len(rows)} YouTube chapters added to the description", flush=True)
 
 
 # ─── Main Assembler ───────────────────────────────────────────────────────────
