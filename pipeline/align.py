@@ -122,6 +122,54 @@ def _cut_before_onset(x, a, b, frame=0.02, lead=0.12):
     return max(start + 0.02, onset - lead)
 
 
+def _dp_match(ref_c, hyp_c):
+    """{ref index: hyp index} from a global monotonic alignment (Levenshtein with soft matches)."""
+    sim_cache = {}
+
+    def sub(x, y):
+        if x == y and x:
+            return 0.0
+        if not x or not y:
+            return 1.0
+        k = (x, y)
+        if k not in sim_cache:
+            sim_cache[k] = 0.4 if difflib.SequenceMatcher(None, x, y).ratio() >= 0.6 else 1.0
+        return sim_cache[k]
+
+    n, m = len(ref_c), len(hyp_c)
+    prev = [float(j) for j in range(m + 1)]
+    back = []                                      # per row: bytes of 0=diag 1=up(skip ref) 2=left(skip hyp)
+    for i in range(1, n + 1):
+        cur = [float(i)] + [0.0] * m
+        bp = bytearray(m + 1)
+        bp[0] = 1
+        r = ref_c[i - 1]
+        for j in range(1, m + 1):
+            d = prev[j - 1] + sub(r, hyp_c[j - 1])
+            u = prev[j] + 1.0
+            l = cur[j - 1] + 1.0
+            if d <= u and d <= l:
+                cur[j] = d
+            elif u <= l:
+                cur[j], bp[j] = u, 1
+            else:
+                cur[j], bp[j] = l, 2
+        back.append(bp)
+        prev = cur
+    match, i, j = {}, n, m
+    while i > 0 and j > 0:
+        mv = back[i - 1][j]
+        if mv == 0:
+            if sub(ref_c[i - 1], hyp_c[j - 1]) < 1.0:
+                match[i - 1] = j - 1
+            i, j = i - 1, j - 1
+        elif mv == 1:
+            i -= 1
+        else:
+            j -= 1
+    return match
+
+
 def align_take(x, texts):
     """
     x: narration take (float32, 24 kHz). texts: per-scene script lines.
@@ -143,38 +191,12 @@ def align_take(x, texts):
         toks = _norm_tokens(w)
         hyp_c.append(_canon(toks[0]) if toks else "")
 
-    # match: exact canon blocks, then fuzzy pairing inside the replaced spans.
-    # Long takes are matched in order, BLOCK scenes at a time, each against the stretch of heard
-    # words that follows the previous block. A whole-script match lets a repeated line pair with
-    # the wrong part of the take and derail every scene after it.
+    # match: one global, order-preserving alignment of every script word against every heard word
+    # (edit distance). Exact canon match costs 0, a sound-alike (ratio ≥ 0.6) 0.4, anything else 1.
+    # Earlier designs failed on long takes: a whole-script SequenceMatcher can pair a repeated line
+    # with the wrong place; 12-scene blocks lost their place when a common word matched far ahead.
     ref_c = [c or "" for _, _, c in ref]
-    match = {}                                     # ref index → hyp index
-    BLOCK = 12
-    first_ref = [next(i for i, r in enumerate(ref) if r[0] == si) for si in range(len(texts))] + [len(ref)]
-    j_next = 0
-    for b0 in range(0, len(texts), BLOCK):
-        r0, r1 = first_ref[b0], first_ref[min(b0 + BLOCK, len(texts))]
-        h0 = j_next
-        h1 = len(hyp_c) if b0 + BLOCK >= len(texts) else min(len(hyp_c), h0 + int((r1 - r0) * 1.6) + 20)
-        sm = difflib.SequenceMatcher(None, ref_c[r0:r1], hyp_c[h0:h1], autojunk=False)
-        for tag, i1, i2, j1, j2 in sm.get_opcodes():
-            i1, i2, j1, j2 = i1 + r0, i2 + r0, j1 + h0, j2 + h0
-            if tag == "equal":
-                for k in range(i2 - i1):
-                    match[i1 + k] = j1 + k
-            elif tag == "replace":
-                j = j1
-                for i in range(i1, i2):
-                    best, bj = 0.0, None
-                    for jj in range(j, min(j2, j + 3)):
-                        r = difflib.SequenceMatcher(None, ref_c[i], hyp_c[jj]).ratio()
-                        if r > best:
-                            best, bj = r, jj
-                    if bj is not None and best >= 0.6:
-                        match[i] = bj
-                        j = bj + 1
-        got = [match[i] for i in range(r0, r1) if i in match]
-        j_next = max(got) + 1 if got else min(len(hyp_c), h0 + (r1 - r0))
+    match = _dp_match(ref_c, hyp_c)                # ref index → hyp index
     # split/joined compounds: a ref word whose canon is a prefix of an already-matched hyp word
     # (लौटकर ↔ लौट कर) counts as heard
     scenes = len(texts)
@@ -239,7 +261,11 @@ def align_take(x, texts):
     extra = []
     for si in range(scenes):
         a, b = cuts[si], cuts[si + 1]
-        loose = [hyp[j][2] for j in range(len(hyp)) if j not in used and a <= hyp[j][0] < b]
+        own = "".join(ref[i][2] or "" for i in idx[si])     # the scene's own words, joined
+        # numbers ("16 ,500") and pieces of the scene's own words (उत्तराखंड → उत्तरा खंड) aren't extra
+        loose = [hyp[j][2] for j in range(len(hyp)) if j not in used and a <= hyp[j][0] < b
+                 and not any(ch.isdigit() for ch in hyp[j][2])
+                 and not (hyp_c[j] and len(hyp_c[j]) >= 2 and hyp_c[j] in own)]
         n_extra = len(loose) - len(missing[si])
         extra.append(loose if n_extra > max(3, 0.3 * len(scored[si])) else [])
     return {"cuts": cuts, "scores": scores, "missing": missing, "words": words, "heard": len(hyp),

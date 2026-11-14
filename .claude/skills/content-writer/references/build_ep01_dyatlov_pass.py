@@ -202,7 +202,7 @@ S = [
      "the puzzled investigators", "puzzled investigator",
      ["a Soviet investigator in a long coat staring at a report in disbelief, lamp light",
       "a close-up of a typed report with the words underlined in red pencil"]),
-    ("ल्यूडमिला की जीभ और आँखें ग़ायब थीं... जो शायद बहते पानी और जानवरों की वजह से हुआ।", "fog",
+    ("ल्यूडमिला के चेहरे पर भी गहरी चोटें थीं... जो शायद बहते पानी और जानवरों की वजह से हुईं।", "fog",
      "a stream flowing under the snow", "stream under snow",
      ["a dark stream flowing under ice and snow at the bottom of a ravine, nobody around",
       "a fox walking through a snowy forest at dusk"]),
