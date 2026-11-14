@@ -300,23 +300,27 @@ def _find_cuts(x, texts):
 
 def _alignment_ok(x, texts, al):
     """The ONE acceptance rule for a take (used by recording and by splicing alike): the
-    whole-take alignment hears ≥85% of every scene's words, and each scene cut — checked
-    alone — still has ≥70% of its words and repeats nothing from its neighbours."""
+    whole-take alignment hears ≥70% of every scene's words, no scene has speech that isn't in
+    the script, and each scene cut — checked alone — has ≥70% of its words (≥85% if it was
+    under 85% in the whole-take pass) and repeats nothing from its neighbours.
+    Returns (ok, why, {0-based indices of the failing scenes})."""
     from pipeline import qa
-    lost = [f"{i + 1}:{s * 100:.0f}%" for i, s in enumerate(al["scores"]) if s < qa.ISOLATED_MIN]
-    if lost:
-        return False, "words not heard in scenes " + " ".join(lost)
-    extra = [f"{i + 1}: {' '.join(e[:8])}…" for i, e in enumerate(al.get("extra") or []) if e]
-    if extra:
-        return False, "speech that is not in the script in scenes " + "; ".join(extra)
-    # a scene just under 85% in the whole-take pass (a word or two spelled differently in a
-    # long take) gets a second hearing ALONE, where it must reach the full 85%
+    lost = {i for i, s in enumerate(al["scores"]) if s < qa.ISOLATED_MIN}
+    extra = {i for i, e in enumerate(al.get("extra") or []) if e}
+    if lost or extra:
+        why = []
+        if lost:
+            why.append("words not heard in scenes " + " ".join(
+                f"{i + 1}:{al['scores'][i] * 100:.0f}%" for i in sorted(lost)))
+        if extra:
+            why.append("speech that is not in the script in scenes " + "; ".join(
+                f"{i + 1}: {' '.join(al['extra'][i][:8])}…" for i in sorted(extra)))
+        return False, " · ".join(why), lost | extra
     weak = {i for i, s in enumerate(al["scores"]) if s < qa.MIN_RECALL}
     segs = [x[int(al["cuts"][i] * SR): int(al["cuts"][i + 1] * SR)] for i in range(len(texts))]
     iso = qa.verify_words(texts, segs, tries=2, min_recall=qa.ISOLATED_MIN)
-    bad = [f"{i + 1}: {sc * 100:.0f}% {' '.join(m)}" for i, (sc, m) in enumerate(iso)
-           if sc < (qa.MIN_RECALL if i in weak else qa.ISOLATED_MIN)]
-    return (not bad), "; ".join(bad)
+    bad = {i for i, (sc, m) in enumerate(iso) if sc < (qa.MIN_RECALL if i in weak else qa.ISOLATED_MIN)}
+    return (not bad), "; ".join(f"{i + 1}: {iso[i][0] * 100:.0f}% {' '.join(iso[i][1])}" for i in sorted(bad)), bad
 
 
 def _cut_by_words(x, texts, cuts, log=print):
@@ -325,13 +329,19 @@ def _cut_by_words(x, texts, cuts, log=print):
     alignment can't place every scene. Returns (cuts, [(score, missing)])."""
     try:
         from pipeline.align import align_take
+        from pipeline.qa import MIN_RECALL as qa_min
         al = align_take(x, texts)
-        ok, why = _alignment_ok(x, texts, al)
+        ok, why, bad = _alignment_ok(x, texts, al)
         if ok:
             log(f"  ✂️  Scenes cut by words (Whisper alignment): "
                 f"{' '.join(f'{c:.2f}' for c in al['cuts'][1:-1])}")
             return al["cuts"], list(zip(al["scores"], al["missing"]))
-        log(f"  ⚠️  Word alignment rejected ({why}) — trying pause cuts")
+        # the words were heard and placed: a failing scene is a real problem with the take (a line
+        # skipped or slurred), which pause-guessing can't fix. Reject now; the voice step then
+        # re-records only those scenes (patch take).
+        log(f"  ⚠️  Word check failed ({why})")
+        return al["cuts"], [(0.0 if (i in bad or sc < qa_min) else sc, m)
+                            for i, (sc, m) in enumerate(zip(al["scores"], al["missing"]))]
     except Exception as e:
         log(f"  ⚠️  Word alignment unavailable ({str(e)[:100]}) — using pause cuts")
     return _repair_cuts(x, texts, cuts, log)
