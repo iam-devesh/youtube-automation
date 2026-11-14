@@ -1,0 +1,932 @@
+{
+  "lang": "hi",
+  "video_type": "long",
+  "template": "mystery",
+  "style": "anime",
+  "privacy": "private",
+  "auto_upload": false,
+  "voice": "gemini",
+  "series": "Ansuljhe Rahasya",
+  "episode": 1,
+  "title": "Dyatlov Pass 😱 9 Log, Ek Kata Hua Tent | Ansuljhe Rahasya Ep 1",
+  "hook_text": "टेंट अंदर से कटा था!",
+  "setting": "northern Ural Mountains, Soviet Russia, winter 1959; the mountain scenes are remote wilderness with no buildings",
+  "characters": "the hikers are young Soviet students in 1959 winter hiking gear: thick knitted wool sweaters, padded canvas anoraks, fur-lined hats, wooden skis, heavy canvas backpacks",
+  "description": "1959 ki ek raat, Russia ke barfeele pahadon par 9 tajurbekaar hikers ne apna tent andar se kaata aur nange paon andhere mein bhaag gaye. Koi zinda nahi lauta.\nYeti, secret test, orange golay ya avalanche? Asli tathya aur nayi research ke saath.\n\n#dyatlovpass #unsolvedmystery #AnsuljheRahasya",
+  "tags": [
+    "dyatlov pass",
+    "dyatlov pass incident",
+    "dyatlov pass hindi",
+    "dyatlov pass mystery",
+    "unsolved mystery hindi",
+    "unsolved mysteries",
+    "russia mystery",
+    "ural mountains",
+    "hikers mystery",
+    "ansuljhe rahasya",
+    "rahasya",
+    "duniya ke rahasya",
+    "mystery in hindi",
+    "dead mountain"
+  ],
+  "chapter_titles": [
+    {
+      "title": "Kata hua tent",
+      "scene": 1
+    },
+    {
+      "title": "Woh 10 dost",
+      "scene": 8
+    },
+    {
+      "title": "Aakhri raat",
+      "scene": 20
+    },
+    {
+      "title": "Talaash",
+      "scene": 28
+    },
+    {
+      "title": "Khaai ka raaz",
+      "scene": 41
+    },
+    {
+      "title": "Theories: Yeti se secret test tak",
+      "scene": 52
+    },
+    {
+      "title": "Avalanche ka sach?",
+      "scene": 63
+    },
+    {
+      "title": "Aaj bhi sawaal",
+      "scene": 75
+    }
+  ],
+  "thumbnail": {
+    "scene": 2,
+    "image": 2,
+    "text": "अंदर से किसने काटा?",
+    "side": "left"
+  },
+  "scenes": [
+    {
+      "scene_number": 1,
+      "narration": "फ़रवरी 1959... रूस के बर्फ़ीले पहाड़ों पर एक टेंट मिलता है... पूरा ख़ाली।",
+      "ambient": "dust",
+      "visual_description": "an empty half-collapsed tent on a snowy mountain slope",
+      "search_query": "snow tent mountain",
+      "image_prompts": [
+        "a long low canvas ridge tent pitched on a bare snowy mountain slope, half collapsed and covered in snow, grey winter sky, bare white slope, nobody around",
+        "close-up of a snow-covered canvas tent roof sagging under snow, wind blowing snow across it, nobody around"
+      ]
+    },
+    {
+      "scene_number": 2,
+      "narration": "टेंट को अंदर से चाकू से काटा गया था... जैसे कोई बाहर निकलने के लिए बेताब हो।",
+      "ambient": "dust",
+      "visual_description": "long knife cuts in a tent wall, cut from inside",
+      "search_query": "torn tent canvas",
+      "image_prompts": [
+        "close-up of long ragged knife slashes in the canvas wall of a tent, cut from the inside, snow drifting in, nobody around",
+        "inside a dark canvas tent looking out through long slashes in the wall at a snowy night, nobody around"
+      ]
+    },
+    {
+      "scene_number": 3,
+      "narration": "अंदर सब कुछ वैसे ही पड़ा था... जूते, गर्म कपड़े, खाना, सब।",
+      "ambient": "none",
+      "visual_description": "abandoned belongings inside a tent",
+      "search_query": "abandoned boots snow",
+      "image_prompts": [
+        "inside an abandoned canvas tent: a row of leather boots, wool jackets, canvas backpacks and a tin of food, frost on everything, nobody around",
+        "a pair of felt winter boots left standing in the snow beside a tent entrance, nobody around"
+      ]
+    },
+    {
+      "scene_number": 4,
+      "narration": "और बाहर बर्फ़ पर पैरों के निशान थे... नंगे पाँव, या सिर्फ़ मोज़ों में।",
+      "ambient": "dust",
+      "visual_description": "bare footprints in snow leading downhill",
+      "search_query": "footprints snow",
+      "image_prompts": [
+        "a line of footprints in deep snow leading downhill away from a tent into the dark, nobody around",
+        "close-up of bare-foot and sock prints pressed into fresh snow, nobody around"
+      ]
+    },
+    {
+      "scene_number": 5,
+      "narration": "बाहर तापमान था... शून्य से लगभग 30 डिग्री नीचे।",
+      "ambient": "dust",
+      "visual_description": "a frozen thermometer and an icy windswept ridge",
+      "search_query": "frozen thermometer",
+      "image_prompts": [
+        "close-up of an old 1950s mercury thermometer covered in frost, the red line far below zero",
+        "icy wind whipping snow over a bare mountain ridge at night, nobody around"
+      ]
+    },
+    {
+      "scene_number": 6,
+      "narration": "9 तजुर्बेकार लोग... आधी रात को अपना टेंट छोड़कर अँधेरे में क्यों भागे?",
+      "ambient": "dust",
+      "visual_description": "nine small figures running down a dark snowy slope",
+      "search_query": "night snow mountain",
+      "image_prompts": [
+        "nine small dark figures of hikers hurrying down a snowy mountain slope at night, seen from far away, a tent behind them",
+        "a dark snowy mountain slope under a black sky, a faint tent far away, nobody around"
+      ]
+    },
+    {
+      "scene_number": 7,
+      "narration": "ये है डायटलॉव पास की कहानी... दुनिया के सबसे अजीब रहस्यों में से एक।",
+      "ambient": "fog",
+      "visual_description": "a remote snowy mountain pass in the Urals",
+      "search_query": "ural mountains winter",
+      "image_prompts": [
+        "wide view of a remote snowy mountain pass in the northern Ural Mountains at dusk, low clouds, nobody around",
+        "a lone snowy mountain with a rounded bare top under heavy clouds, nobody around"
+      ]
+    },
+    {
+      "scene_number": 8,
+      "narration": "जनवरी 1959... सोवियत रूस का शहर, स्वेर्दलोव्स्क।",
+      "ambient": "dust",
+      "visual_description": "a snowy 1950s Soviet city street",
+      "search_query": "soviet city winter",
+      "image_prompts": [
+        "a snowy 1950s Soviet city street with an old tram, Russian people in heavy winter coats and fur hats, grey buildings",
+        "a large grey Soviet institute building in winter with students in coats walking in front"
+      ]
+    },
+    {
+      "scene_number": 9,
+      "narration": "यहाँ के एक इंजीनियरिंग कॉलेज के कुछ छात्र... एक मुश्किल सफ़र की तैयारी कर रहे थे।",
+      "ambient": "none",
+      "visual_description": "students packing ski gear in a 1950s room",
+      "search_query": "students preparing hike",
+      "image_prompts": [
+        "young Soviet students in wool sweaters packing canvas backpacks, wooden skis leaning on the wall, a map on the table, 1950s room",
+        "close-up of hands spreading a hand-drawn route map of mountains on a wooden table, a compass and pencil"
+      ]
+    },
+    {
+      "scene_number": 10,
+      "narration": "उनका लीडर था 23 साल का इगोर डायटलॉव... शांत, समझदार, और पहाड़ों का माहिर।",
+      "ambient": "none",
+      "visual_description": "portrait of the young expedition leader",
+      "search_query": "young man portrait",
+      "image_prompts": [
+        "portrait of a 23-year-old Russian man, lean, short light-brown hair, clean-shaven, calm serious grey eyes, thick grey knitted wool sweater under a dark blue canvas anorak, fur-lined cap, standing in a snowy forest holding a ski pole, looking ahead with determination",
+        "a 23-year-old Russian man, lean, short light-brown hair, clean-shaven, calm serious grey eyes, thick grey knitted wool sweater under a dark blue canvas anorak, fur-lined cap, pointing at a mountain route on a map while his friends listen"
+      ]
+    },
+    {
+      "scene_number": 11,
+      "narration": "मंज़िल थी ओटोर्टेन पहाड़... उत्तरी यूराल में, जहाँ सर्दियों में कोई नहीं जाता।",
+      "ambient": "fog",
+      "visual_description": "a remote frozen mountain in the northern Urals",
+      "search_query": "snowy mountain wilderness",
+      "image_prompts": [
+        "a remote bare snowy mountain in the northern Ural Mountains under a pale winter sun, endless frozen forest below, nobody around",
+        "endless frozen taiga forest covered in snow stretching to the horizon, nobody around"
+      ]
+    },
+    {
+      "scene_number": 12,
+      "narration": "ये सफ़र सबसे मुश्किल दर्जे का था... पर टीम में सब तजुर्बेकार स्की चलाने वाले थे।",
+      "ambient": "dust",
+      "visual_description": "experienced skiers crossing a frozen landscape",
+      "search_query": "cross country skiing",
+      "image_prompts": [
+        "a line of young Soviet hikers on wooden skis with heavy canvas backpacks crossing a white frozen landscape",
+        "close-up of old wooden skis and leather boots gliding through deep snow"
+      ]
+    },
+    {
+      "scene_number": 13,
+      "narration": "कुल 10 लोग थे... 8 लड़के और 2 लड़कियाँ, ल्यूडमिला और ज़िना।",
+      "ambient": "none",
+      "visual_description": "ten young hikers posing together",
+      "search_query": "group of friends winter",
+      "image_prompts": [
+        "a group photo of ten young Soviet hikers in 1959 winter gear standing together in the snow, smiling, two of them young women with braided hair",
+        "two smiling young Russian women in knitted hats and wool sweaters, braided hair, snowy forest behind them"
+      ]
+    },
+    {
+      "scene_number": 14,
+      "narration": "सबसे बड़े थे 38 साल के सेम्योन... बाकी सब 20 से 24 साल के।",
+      "ambient": "none",
+      "visual_description": "an older experienced hiker among young students",
+      "search_query": "older man winter",
+      "image_prompts": [
+        "a 38-year-old Russian man with a strong jaw, dark hair and a weathered face, in a padded anorak, among younger students",
+        "young Soviet students laughing around a small campfire in the snow, 1959"
+      ]
+    },
+    {
+      "scene_number": 15,
+      "narration": "23 जनवरी को वो ट्रेन से निकले... गाने गाते, मज़ाक करते हुए।",
+      "ambient": "none",
+      "visual_description": "students singing on a 1950s train",
+      "search_query": "old train winter",
+      "image_prompts": [
+        "young Soviet hikers singing and laughing inside a crowded 1950s wooden train carriage, one playing a mandolin, skis on the luggage rack",
+        "a black steam train crossing a snowy Russian plain in 1959"
+      ]
+    },
+    {
+      "scene_number": 16,
+      "narration": "आख़िरी गाँव से आगे... सिर्फ़ बर्फ़ थी, और जंगल।",
+      "ambient": "dust",
+      "visual_description": "a small remote village at the edge of the forest",
+      "search_query": "remote village snow",
+      "image_prompts": [
+        "a tiny remote Russian logging village of wooden huts buried in snow at the edge of a dark forest",
+        "a snowy forest trail disappearing between tall dark pine trees, nobody around"
+      ]
+    },
+    {
+      "scene_number": 17,
+      "narration": "28 जनवरी को यूरी युडिन की तबीयत ख़राब हो गई... घुटनों और जोड़ों में दर्द।",
+      "ambient": "none",
+      "visual_description": "a young hiker in pain holding his knee",
+      "search_query": "man knee pain",
+      "image_prompts": [
+        "a young Soviet hiker in a wool hat sitting on a log in the snow holding his aching knee, his friends looking concerned",
+        "close-up of a young man's tired face wincing in pain, frost on his eyebrows"
+      ]
+    },
+    {
+      "scene_number": 18,
+      "narration": "वो वापस लौट गया... और यही फ़ैसला उसकी जान बचा गया।",
+      "ambient": "fog",
+      "visual_description": "one hiker skiing back alone as the group goes on",
+      "search_query": "lone skier",
+      "image_prompts": [
+        "one lone hiker skiing back alone through the forest while a group of nine continues the other way in the distance",
+        "a lone figure on skis disappearing into a misty snowy forest"
+      ]
+    },
+    {
+      "scene_number": 19,
+      "narration": "उसने अपने दोस्तों को अलविदा कहा... और फिर कभी उन्हें ज़िंदा नहीं देखा।",
+      "ambient": "fog",
+      "visual_description": "friends saying goodbye in the snow",
+      "search_query": "friends goodbye",
+      "image_prompts": [
+        "young hikers waving goodbye to a friend in a snowy forest, their breath steaming in the cold",
+        "nine hikers walking away in a line into a white misty forest, seen from behind"
+      ]
+    },
+    {
+      "scene_number": 20,
+      "narration": "अब 9 लोग बचे थे... वो कई दिन स्की पर आगे बढ़ते रहे।",
+      "ambient": "dust",
+      "visual_description": "nine hikers skiing through the taiga",
+      "search_query": "skiers forest",
+      "image_prompts": [
+        "nine young hikers on wooden skis in a line moving through a frozen taiga forest, heavy backpacks",
+        "the hikers resting by a campfire at night in the snowy forest, a canvas tent behind them"
+      ]
+    },
+    {
+      "scene_number": 21,
+      "narration": "उनकी डायरी और कैमरे की तस्वीरों में... सब कुछ ठीक दिखता है।",
+      "ambient": "none",
+      "visual_description": "an old diary and camera in the snow",
+      "search_query": "old diary camera",
+      "image_prompts": [
+        "close-up of an open handwritten diary and an old 1950s film camera on a backpack in the snow",
+        "a black and white style photo of smiling young hikers in the snow, an old camera in the foreground"
+      ]
+    },
+    {
+      "scene_number": 22,
+      "narration": "31 जनवरी को उन्होंने एक जगह फ़ालतू सामान छिपाया... वापसी के लिए।",
+      "ambient": "none",
+      "visual_description": "hikers storing supplies in a snow cache",
+      "search_query": "supplies cache snow",
+      "image_prompts": [
+        "young hikers hiding spare food and gear in a wooden platform cache under the snow at the edge of a forest",
+        "close-up of tins of food and a spare ski stored under branches in the snow"
+      ]
+    },
+    {
+      "scene_number": 23,
+      "narration": "1 फ़रवरी की शाम मौसम बिगड़ गया... तेज़ हवा, बर्फ़ीला तूफ़ान।",
+      "ambient": "dust",
+      "visual_description": "a blizzard hitting the hikers",
+      "search_query": "blizzard mountain",
+      "image_prompts": [
+        "nine hikers struggling uphill in a fierce blizzard, snow blowing sideways, almost zero visibility",
+        "a fierce snowstorm sweeping over a bare mountain slope at dusk, nobody around"
+      ]
+    },
+    {
+      "scene_number": 24,
+      "narration": "वो रास्ता भटककर एक नंगी ढलान पर पहुँच गए... एक पहाड़, जिसे मानसी लोग खोलात स्याखल कहते हैं।",
+      "ambient": "fog",
+      "visual_description": "a bare, treeless mountain slope in the storm",
+      "search_query": "bare mountain slope",
+      "image_prompts": [
+        "a bare treeless snowy mountain slope under a dark grey sky, nine tiny hikers on it, seen from far away",
+        "the rounded bare top of a lonely snowy mountain in mist, nobody around"
+      ]
+    },
+    {
+      "scene_number": 25,
+      "narration": "कहते हैं, उनकी भाषा में इसका मतलब है... मुर्दा पहाड़।",
+      "ambient": "fog",
+      "visual_description": "a dark, eerie mountain in mist",
+      "search_query": "dark mountain mist",
+      "image_prompts": [
+        "an eerie dark snowy mountain half hidden in black clouds, a cold blue moon, nobody around",
+        "a Mansi reindeer herder in fur clothing looking at a distant dark mountain, reindeer behind him"
+      ]
+    },
+    {
+      "scene_number": 26,
+      "narration": "उन्होंने ढलान की बर्फ़ काटकर समतल जगह बनाई... और वहीं टेंट लगा दिया।",
+      "ambient": "dust",
+      "visual_description": "hikers digging into the slope to pitch a tent",
+      "search_query": "pitching tent snow",
+      "image_prompts": [
+        "young hikers with shovels cutting a flat ledge into a snowy slope and pitching a long canvas tent, wind blowing snow",
+        "a long low canvas ridge tent pitched on a bare snowy mountain slope at dusk, skis stuck in the snow next to it"
+      ]
+    },
+    {
+      "scene_number": 27,
+      "narration": "उस रात कुछ ऐसा हुआ... जिसके बाद उनमें से कोई वापस नहीं लौटा।",
+      "ambient": "dust",
+      "visual_description": "a lone tent on a dark slope at night",
+      "search_query": "tent at night",
+      "image_prompts": [
+        "a long low canvas ridge tent pitched on a bare snowy mountain slope at night, a faint lantern glow inside, black sky, wind and snow",
+        "a dark snowy slope at night with the tent tiny in the distance, a sense of dread, nobody around"
+      ]
+    },
+    {
+      "scene_number": 28,
+      "narration": "डायटलॉव को 12 फ़रवरी तक लौटकर ख़बर भेजनी थी... पर कोई ख़बर नहीं आई।",
+      "ambient": "none",
+      "visual_description": "families waiting for a telegram",
+      "search_query": "waiting telegram",
+      "image_prompts": [
+        "an old 1950s Soviet post office counter with a telegram form and an empty waiting bench",
+        "a worried Russian mother in a headscarf looking out of a frosted window"
+      ]
+    },
+    {
+      "scene_number": 29,
+      "narration": "घर वालों की चिंता बढ़ी... और 20 फ़रवरी को खोज शुरू हुई।",
+      "ambient": "dust",
+      "visual_description": "a search party setting out",
+      "search_query": "search party snow",
+      "image_prompts": [
+        "a Soviet search party of students and soldiers on skis setting out into the snowy forest, 1959",
+        "an old military helicopter flying low over snowy mountains"
+      ]
+    },
+    {
+      "scene_number": 30,
+      "narration": "26 फ़रवरी को खोजी दल को ढलान पर उनका टेंट मिला... आधा गिरा हुआ, बर्फ़ से ढका।",
+      "ambient": "dust",
+      "visual_description": "searchers discovering the half-buried tent",
+      "search_query": "searchers find tent",
+      "image_prompts": [
+        "searchers on skis discovering a half-collapsed snow-covered canvas tent on a bare mountain slope",
+        "two searchers kneeling beside the buried tent, brushing snow off the canvas"
+      ]
+    },
+    {
+      "scene_number": 31,
+      "narration": "टेंट अंदर से कटा हुआ था... और अंदर उनका सारा सामान पड़ा था।",
+      "ambient": "none",
+      "visual_description": "the slashed tent and gear inside",
+      "search_query": "torn tent inside",
+      "image_prompts": [
+        "close-up of the slashed tent wall with long cuts made from the inside",
+        "searchers pulling boots, jackets and backpacks out of the tent, shocked faces"
+      ]
+    },
+    {
+      "scene_number": 32,
+      "narration": "पैरों के निशान ढलान से नीचे जंगल की ओर जाते थे... करीब डेढ़ किलोमीटर दूर।",
+      "ambient": "dust",
+      "visual_description": "footprints leading down toward a distant forest",
+      "search_query": "footprints toward forest",
+      "image_prompts": [
+        "a trail of footprints running down a long snowy slope toward a dark forest edge far below, nobody around",
+        "close-up of footprints frozen into the snow crust, wind-carved"
+      ]
+    },
+    {
+      "scene_number": 33,
+      "narration": "अजीब बात ये थी... कहा गया कि निशान भागने के नहीं, आराम से चलने जैसे थे।",
+      "ambient": "dust",
+      "visual_description": "orderly lines of footprints",
+      "search_query": "footprints in line",
+      "image_prompts": [
+        "several neat parallel lines of footprints walking calmly down a snowy slope, nobody around",
+        "a searcher crouching to study the footprints, puzzled"
+      ]
+    },
+    {
+      "scene_number": 34,
+      "narration": "जंगल के किनारे, एक बड़े चीड़ के पेड़ के नीचे... बुझी हुई आग मिली।",
+      "ambient": "fog",
+      "visual_description": "a big pine tree with the remains of a small fire",
+      "search_query": "pine tree fire snow",
+      "image_prompts": [
+        "a huge lone pine tree at the edge of a snowy forest, the black remains of a small fire in the snow below it",
+        "close-up of charred branches of a burnt-out campfire in the snow"
+      ]
+    },
+    {
+      "scene_number": 35,
+      "narration": "वहीं दो लोग मिले... सिर्फ़ अंदर के कपड़ों में, ठंड से जमे हुए।",
+      "ambient": "fog",
+      "visual_description": "searchers standing in silence under the pine",
+      "search_query": "search party silence",
+      "image_prompts": [
+        "searchers standing in silence with bowed heads under a big pine tree in the snow, seen from far away",
+        "two still shapes covered with a blanket in the snow under a pine tree, seen from far, peaceful, nothing graphic"
+      ]
+    },
+    {
+      "scene_number": 36,
+      "narration": "पेड़ की टहनियाँ 5 मीटर ऊँचाई तक टूटी हुई थीं... जैसे कोई ऊपर चढ़कर टेंट की तरफ़ देखना चाहता हो।",
+      "ambient": "fog",
+      "visual_description": "broken branches high up a pine tree",
+      "search_query": "broken branches tree",
+      "image_prompts": [
+        "looking up a tall pine tree with branches broken off high up the trunk, snow falling",
+        "a view from high in a pine tree toward a dark snowy slope far away"
+      ]
+    },
+    {
+      "scene_number": 37,
+      "narration": "पेड़ और टेंट के बीच... तीन और लोग मिले, डायटलॉव, ज़िना और रुस्तम।",
+      "ambient": "dust",
+      "visual_description": "three spots on the slope between the tree and the tent",
+      "search_query": "snowy slope searchers",
+      "image_prompts": [
+        "three small markers planted in the snow along a long slope between a forest and a distant tent, searchers walking among them",
+        "searchers with probes walking in a line across a snowy slope"
+      ]
+    },
+    {
+      "scene_number": 38,
+      "narration": "तीनों का रुख़ टेंट की ओर था... जैसे वो वापस लौटने की कोशिश कर रहे थे।",
+      "ambient": "dust",
+      "visual_description": "a slope leading back up to the tent",
+      "search_query": "uphill snow slope",
+      "image_prompts": [
+        "view up a long snowy slope toward a tiny tent on the ridge, three faint trails crawling upward",
+        "a lone figure crawling uphill through deep snow toward a distant tent at night, seen from far"
+      ]
+    },
+    {
+      "scene_number": 39,
+      "narration": "डॉक्टरों ने कहा... इन पाँचों की मौत ठंड से हुई।",
+      "ambient": "none",
+      "visual_description": "a 1950s Soviet doctor writing a report",
+      "search_query": "doctor report",
+      "image_prompts": [
+        "a 1950s Soviet doctor in a white coat writing a report at a desk under a lamp",
+        "close-up of a typed Soviet report with a stamp, a fountain pen on top"
+      ]
+    },
+    {
+      "scene_number": 40,
+      "narration": "पर बाकी 4 लोग कहाँ थे?... ये सवाल 2 महीने तक बना रहा।",
+      "ambient": "dust",
+      "visual_description": "an endless snowy forest hiding the missing four",
+      "search_query": "snowy forest",
+      "image_prompts": [
+        "an endless snowy forest under grey sky, searchers small in the distance, nobody close",
+        "a calendar on a wooden wall flipping from February to May"
+      ]
+    },
+    {
+      "scene_number": 41,
+      "narration": "4 मई को, जब बर्फ़ पिघलने लगी... पेड़ से थोड़ा आगे एक खाई में वो चारों मिले।",
+      "ambient": "fog",
+      "visual_description": "a ravine in a melting spring forest",
+      "search_query": "ravine melting snow",
+      "image_prompts": [
+        "a deep snowy ravine with a stream in a forest during spring thaw, searchers at its edge looking down",
+        "melting snow revealing a stream at the bottom of a forest ravine, nobody around"
+      ]
+    },
+    {
+      "scene_number": 42,
+      "narration": "वो 4 मीटर बर्फ़ के नीचे दबे थे... और बाकियों से बेहतर कपड़ों में थे।",
+      "ambient": "fog",
+      "visual_description": "searchers digging in deep snow",
+      "search_query": "digging snow",
+      "image_prompts": [
+        "searchers digging a deep pit in the snow at the bottom of a ravine with shovels",
+        "a heap of warm clothing, a wool sweater and a fur hat lying on the snow"
+      ]
+    },
+    {
+      "scene_number": 43,
+      "narration": "ल्यूडमिला ने अपने दोस्त की जली और फटी पैंट पहन रखी थी।",
+      "ambient": "none",
+      "visual_description": "burned and torn trousers",
+      "search_query": "torn clothes",
+      "image_prompts": [
+        "close-up of burned and torn wool trousers lying on the snow",
+        "a torn jacket wrapped like a bandage, lying on the snow"
+      ]
+    },
+    {
+      "scene_number": 44,
+      "narration": "और यहीं से... कहानी और डरावनी हो जाती है।",
+      "ambient": "fog",
+      "visual_description": "a dark ravine in the forest",
+      "search_query": "dark forest ravine",
+      "image_prompts": [
+        "a dark forest ravine at dusk, mist rising from the snow, nobody around",
+        "searchers' lanterns glowing in a dark ravine at night"
+      ]
+    },
+    {
+      "scene_number": 45,
+      "narration": "दो लोगों की पसलियाँ बुरी तरह टूटी थीं... एक की खोपड़ी में गहरी चोट थी।",
+      "ambient": "none",
+      "visual_description": "an X-ray style image of broken ribs",
+      "search_query": "x ray ribs",
+      "image_prompts": [
+        "an old medical X-ray film of a human chest with cracked ribs, held against a light box",
+        "a 1950s forensic doctor frowning at an X-ray film"
+      ]
+    },
+    {
+      "scene_number": 46,
+      "narration": "डॉक्टर ने कहा, ऐसी चोटें... तेज़ रफ़्तार कार की टक्कर जैसी हैं।",
+      "ambient": "none",
+      "visual_description": "a doctor explaining the injuries",
+      "search_query": "doctor explaining",
+      "image_prompts": [
+        "a 1950s Soviet forensic doctor in a white coat explaining something to an investigator in a dim office",
+        "an old 1950s Soviet car crashed into a snowbank, symbolic"
+      ]
+    },
+    {
+      "scene_number": 47,
+      "narration": "पर शरीर पर बाहर से... कोई घाव नहीं था।",
+      "ambient": "none",
+      "visual_description": "the puzzled investigators",
+      "search_query": "puzzled investigator",
+      "image_prompts": [
+        "a Soviet investigator in a long coat staring at a report in disbelief, lamp light",
+        "a close-up of a typed report with the words underlined in red pencil"
+      ]
+    },
+    {
+      "scene_number": 48,
+      "narration": "ल्यूडमिला की जीभ और आँखें ग़ायब थीं... जो शायद बहते पानी और जानवरों की वजह से हुआ।",
+      "ambient": "fog",
+      "visual_description": "a stream flowing under the snow",
+      "search_query": "stream under snow",
+      "image_prompts": [
+        "a dark stream flowing under ice and snow at the bottom of a ravine, nobody around",
+        "a fox walking through a snowy forest at dusk"
+      ]
+    },
+    {
+      "scene_number": 49,
+      "narration": "और जाँच में कुछ कपड़ों पर... रेडिएशन के निशान भी मिले।",
+      "ambient": "none",
+      "visual_description": "a geiger counter near clothing",
+      "search_query": "geiger counter",
+      "image_prompts": [
+        "an old 1950s Geiger counter with a glowing dial held near a wool sweater on a lab table",
+        "a Soviet laboratory in 1959 with glass jars and an old radiation meter"
+      ]
+    },
+    {
+      "scene_number": 50,
+      "narration": "मई 1959 में केस बंद कर दिया गया... मौत की वजह लिखी गई, एक ज़बरदस्त प्राकृतिक ताक़त।",
+      "ambient": "none",
+      "visual_description": "a case file being closed and stamped",
+      "search_query": "case file stamp",
+      "image_prompts": [
+        "a thick Soviet case file being closed and stamped with a red stamp on a desk",
+        "the closed file tied with string, placed on a shelf among many others"
+      ]
+    },
+    {
+      "scene_number": 51,
+      "narration": "फ़ाइलें गुप्त रख दी गईं... और यहीं से शुरू हुईं, दशकों तक चलने वाली थ्योरीज़।",
+      "ambient": "fog",
+      "visual_description": "a secret archive",
+      "search_query": "secret archive",
+      "image_prompts": [
+        "long dark rows of shelves in a secret Soviet archive, a single bulb, nobody around",
+        "dust floating in a beam of light over old secret files"
+      ]
+    },
+    {
+      "scene_number": 52,
+      "narration": "पहली थ्योरी... बर्फ़ीला आदमी, यानी यती।",
+      "ambient": "fog",
+      "visual_description": "a huge shadowy figure in a snowy forest",
+      "search_query": "yeti forest",
+      "image_prompts": [
+        "a huge hairy shadowy figure standing between snowy pine trees in the mist, barely visible",
+        "giant footprints in the snow leading into a dark forest, nobody around"
+      ]
+    },
+    {
+      "scene_number": 53,
+      "narration": "कुछ लोग कहते हैं, उनकी आख़िरी तस्वीरों में जंगल में एक अजीब आकृति दिखती है... पर इसका कोई सबूत नहीं।",
+      "ambient": "fog",
+      "visual_description": "a blurry old photo with a strange figure",
+      "search_query": "blurry old photo",
+      "image_prompts": [
+        "a blurry old black and white photograph of a snowy forest with a vague dark figure between the trees",
+        "a magnifying glass over an old blurry photograph on a table"
+      ]
+    },
+    {
+      "scene_number": 54,
+      "narration": "दूसरा शक गया मानसी शिकारियों पर... पर वहाँ किसी और के पैरों के निशान थे ही नहीं।",
+      "ambient": "dust",
+      "visual_description": "Mansi hunters with reindeer",
+      "search_query": "reindeer herders",
+      "image_prompts": [
+        "Mansi hunters in traditional fur clothing with reindeer sleds in a snowy forest",
+        "a clean snowy slope with only one set of tracks, nobody around"
+      ]
+    },
+    {
+      "scene_number": 55,
+      "narration": "और डॉक्टर ने कहा... इतनी ताक़त की चोट किसी इंसान के बस की नहीं।",
+      "ambient": "none",
+      "visual_description": "the forensic doctor shaking his head",
+      "search_query": "doctor serious",
+      "image_prompts": [
+        "a 1950s forensic doctor shaking his head, looking serious, in a dim office",
+        "a massive snowy mountain towering over a tiny forest, nobody around"
+      ]
+    },
+    {
+      "scene_number": 56,
+      "narration": "तीसरी थ्योरी... आसमान में नारंगी गोले।",
+      "ambient": "none",
+      "visual_description": "glowing orange spheres in the night sky",
+      "search_query": "orange lights sky",
+      "image_prompts": [
+        "glowing orange spheres floating in the black night sky over snowy mountains, nobody around",
+        "a single bright orange ball of light high above a dark snowy forest"
+      ]
+    },
+    {
+      "scene_number": 57,
+      "narration": "उसी रात, करीब 50 किलोमीटर दूर, एक और दल ने आसमान में चमकते नारंगी गोले देखे थे।",
+      "ambient": "none",
+      "visual_description": "another group of hikers watching lights in the sky",
+      "search_query": "people watching sky",
+      "image_prompts": [
+        "a group of Soviet hikers at their campfire pointing up at glowing orange spheres in the northern night sky",
+        "close-up of a young hiker's amazed face lit by an orange glow"
+      ]
+    },
+    {
+      "scene_number": 58,
+      "narration": "कुछ लोग मानते हैं, ये सेना का कोई गुप्त परीक्षण था... और रेडिएशन यहीं से आया।",
+      "ambient": "embers",
+      "visual_description": "a secret military rocket test",
+      "search_query": "rocket launch night",
+      "image_prompts": [
+        "a Soviet military rocket streaking across a night sky over snowy mountains, leaving a glowing trail",
+        "a secret Soviet military base in the snow at night, searchlights"
+      ]
+    },
+    {
+      "scene_number": 59,
+      "narration": "पर इसका कोई पक्का सबूत... आज तक नहीं मिला।",
+      "ambient": "fog",
+      "visual_description": "an empty night sky over the mountains",
+      "search_query": "night sky mountains",
+      "image_prompts": [
+        "a quiet starry night sky over dark snowy mountains, nobody around",
+        "a question mark drawn in the snow, nobody around"
+      ]
+    },
+    {
+      "scene_number": 60,
+      "narration": "चौथी थ्योरी कहती है... तेज़ हवा पहाड़ पर एक ऐसी आवाज़ पैदा कर सकती है, जो सुनाई नहीं देती।",
+      "ambient": "dust",
+      "visual_description": "wind swirling over a bare mountain top",
+      "search_query": "wind mountain",
+      "image_prompts": [
+        "swirling winds whipping snow over a bare rounded mountain top, visible wind currents, nobody around",
+        "ripples of wind-blown snow across a slope at night, nobody around"
+      ]
+    },
+    {
+      "scene_number": 61,
+      "narration": "पर वो इंसान के मन में... अजीब घबराहट पैदा कर देती है।",
+      "ambient": "fog",
+      "visual_description": "a frightened hiker inside the tent",
+      "search_query": "scared face",
+      "image_prompts": [
+        "a frightened young hiker sitting up inside a dark tent, eyes wide, covering his ears",
+        "the inside of a dark tent shaking in the wind, lantern swinging"
+      ]
+    },
+    {
+      "scene_number": 62,
+      "narration": "क्या उसी डर ने उन्हें... टेंट से बाहर भगा दिया?",
+      "ambient": "dust",
+      "visual_description": "hikers bursting out of the tent",
+      "search_query": "panic escape tent",
+      "image_prompts": [
+        "young hikers in socks and sweaters cutting their way out of a tent at night in panic",
+        "dark figures stumbling down a snowy slope at night away from a tent"
+      ]
+    },
+    {
+      "scene_number": 63,
+      "narration": "2019 में... रूस ने ये केस दोबारा खोला।",
+      "ambient": "none",
+      "visual_description": "a modern Russian investigator opening the old file",
+      "search_query": "investigator file",
+      "image_prompts": [
+        "a modern Russian investigator in a suit opening an old dusty file in a bright office",
+        "old black and white photos of the hikers spread on a modern desk"
+      ]
+    },
+    {
+      "scene_number": 64,
+      "narration": "और 2020 में सरकारी जाँच ने कहा... वजह थी बर्फ़ का खिसकना, यानी हिमस्खलन।",
+      "ambient": "dust",
+      "visual_description": "a slab of snow sliding down a slope",
+      "search_query": "avalanche",
+      "image_prompts": [
+        "a slab of snow breaking away and sliding down a bare mountain slope, nobody around",
+        "a Russian official at a press conference with a map of the mountain behind him"
+      ]
+    },
+    {
+      "scene_number": 65,
+      "narration": "2021 में स्विट्ज़रलैंड के दो वैज्ञानिकों ने... इसे कंप्यूटर पर परखा।",
+      "ambient": "none",
+      "visual_description": "two scientists with a snow simulation",
+      "search_query": "scientists computer",
+      "image_prompts": [
+        "two Swiss scientists in a modern lab looking at a 3D computer simulation of a snowy slope",
+        "a glowing computer screen showing a simulated snow slab sliding onto a tent"
+      ]
+    },
+    {
+      "scene_number": 66,
+      "narration": "उन्होंने एक एनिमेशन फ़िल्म की... बर्फ़ बनाने वाली तकनीक तक का इस्तेमाल किया।",
+      "ambient": "none",
+      "visual_description": "animated snow on a computer screen",
+      "search_query": "animated snow",
+      "image_prompts": [
+        "a computer screen showing beautiful animated falling snow particles, a scientist watching",
+        "close-up of simulated snow crystals rendered on a screen"
+      ]
+    },
+    {
+      "scene_number": 67,
+      "narration": "उनके हिसाब से, टेंट के लिए काटी गई ढलान ने... बर्फ़ को कमज़ोर कर दिया।",
+      "ambient": "dust",
+      "visual_description": "a cut in the slope above the tent",
+      "search_query": "snow slope cut",
+      "image_prompts": [
+        "cross-section view of a snowy slope with a ledge cut into it and a long low canvas ridge tent pitched on a bare snowy mountain slope on the ledge, heavy snow above",
+        "close-up of layers of snow on a slope with a crack forming"
+      ]
+    },
+    {
+      "scene_number": 68,
+      "narration": "तेज़ हवा ऊपर बर्फ़ जमा करती रही... और कई घंटे बाद, बर्फ़ की एक भारी परत टेंट पर आ गिरी।",
+      "ambient": "dust",
+      "visual_description": "a snow slab falling onto the tent at night",
+      "search_query": "snow slab tent",
+      "image_prompts": [
+        "at night, a heavy slab of snow breaking loose and sliding onto a canvas tent on a slope",
+        "the tent roof crushed under a heavy block of snow, wind blowing"
+      ]
+    },
+    {
+      "scene_number": 69,
+      "narration": "घबराए हुए लोग टेंट काटकर बाहर भागे... और अँधेरे में जंगल की ओर चले गए।",
+      "ambient": "dust",
+      "visual_description": "hikers escaping and walking toward the forest",
+      "search_query": "escape into darkness",
+      "image_prompts": [
+        "young hikers cutting through the tent wall and escaping into the snowy night",
+        "nine dark figures walking down the slope toward the black forest edge, seen from behind"
+      ]
+    },
+    {
+      "scene_number": 70,
+      "narration": "उनके मॉडल में, ऐसी परत से लगी चोटें... जाँच रिपोर्ट से मेल खाती हैं।",
+      "ambient": "none",
+      "visual_description": "a simulation matching the report",
+      "search_query": "simulation report",
+      "image_prompts": [
+        "a computer simulation of a snow block pressing on figures lying in a tent, next to an old report",
+        "a scientist comparing an old typed report with a computer graph"
+      ]
+    },
+    {
+      "scene_number": 71,
+      "narration": "पर वैज्ञानिक ख़ुद कहते हैं... उन्होंने पूरा रहस्य हल नहीं किया।",
+      "ambient": "none",
+      "visual_description": "a scientist looking thoughtful",
+      "search_query": "scientist thinking",
+      "image_prompts": [
+        "a scientist standing by a window looking out at snowy mountains, thoughtful",
+        "a half-solved puzzle of a snowy mountain picture on a table, missing pieces"
+      ]
+    },
+    {
+      "scene_number": 72,
+      "narration": "खोजी दल को वहाँ हिमस्खलन के... साफ़ निशान नहीं दिखे थे।",
+      "ambient": "fog",
+      "visual_description": "a smooth undisturbed slope",
+      "search_query": "smooth snow slope",
+      "image_prompts": [
+        "a smooth undisturbed snowy slope around the tent with no sign of avalanche debris, nobody around",
+        "searchers in 1959 looking up the slope above the tent, puzzled"
+      ]
+    },
+    {
+      "scene_number": 73,
+      "narration": "और सवाल अब भी बाकी हैं... इतनी बुरी चोटों के साथ वो डेढ़ किलोमीटर कैसे चले?",
+      "ambient": "fog",
+      "visual_description": "a long distance between the tent and the forest",
+      "search_query": "long snow distance",
+      "image_prompts": [
+        "a very long snowy slope between a tiny tent and a far-away forest edge, nobody around",
+        "a trail of footprints vanishing into blowing snow, nobody around"
+      ]
+    },
+    {
+      "scene_number": 74,
+      "narration": "और आसमान के वो नारंगी गोले... वो क्या थे?",
+      "ambient": "none",
+      "visual_description": "orange lights over the mountains again",
+      "search_query": "orange lights night",
+      "image_prompts": [
+        "faint glowing orange spheres hanging over the dark mountain at night, nobody around",
+        "the dark mountain under a strange orange glow in the clouds, nobody around"
+      ]
+    },
+    {
+      "scene_number": 75,
+      "narration": "आज उस जगह को उनके लीडर के नाम पर... डायटलॉव पास कहा जाता है।",
+      "ambient": "fog",
+      "visual_description": "the remote mountain pass today",
+      "search_query": "mountain pass",
+      "image_prompts": [
+        "wide view of a remote snowy mountain pass in the northern Urals today, low clouds, nobody around",
+        "a rocky snowy ridge at sunset, nobody around"
+      ]
+    },
+    {
+      "scene_number": 76,
+      "narration": "वहाँ उन 9 लोगों की याद में... एक पत्थर पर तख़्ती लगी है।",
+      "ambient": "fog",
+      "visual_description": "a memorial plaque on a rock",
+      "search_query": "memorial plaque",
+      "image_prompts": [
+        "a memorial plaque fixed to a big rock on a snowy mountain, nine names engraved, nobody around",
+        "close-up of a memorial plaque with frost on it, fresh flowers in the snow"
+      ]
+    },
+    {
+      "scene_number": 77,
+      "narration": "9 दोस्त... एक कटा हुआ टेंट... और 60 साल से भी पुराना सवाल।",
+      "ambient": "dust",
+      "visual_description": "the empty tent in the snow at dusk",
+      "search_query": "tent in snow",
+      "image_prompts": [
+        "a long low canvas ridge tent pitched on a bare snowy mountain slope alone at dusk, a long slash in its wall, snow drifting, nobody around",
+        "nine pairs of boots standing in a row in the snow at dusk, nobody around"
+      ]
+    },
+    {
+      "scene_number": 78,
+      "narration": "क्या ये सिर्फ़ बर्फ़ थी... या कुछ और? आपको क्या लगता है?",
+      "ambient": "fog",
+      "visual_description": "the dark mountain under a starry sky",
+      "search_query": "dark mountain stars",
+      "image_prompts": [
+        "the dark rounded snowy mountain under a starry night sky, a faint orange light far away, nobody around",
+        "footprints leading away into the dark snowy night, nobody around"
+      ]
+    }
+  ]
+}

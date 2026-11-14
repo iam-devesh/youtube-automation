@@ -78,7 +78,8 @@ description's YouTube timestamps can be filled in after Prepare, when real timin
   the shot, or "nobody around" for empty places. No style words (style is added automatically).
 - `ambient`: one of `rain | storm | fog | dust | embers | none`.
 - `visual_description`, `search_query` (English) on every scene.
-- Fixed fields: `"lang": "hi"`, `"template": "mystery"`, `"style": "animated_3d"`,
+- `"style"`: `"anime"` for Ansuljhe Rahasya (the user chose anime for long videos),
+  `"animated_3d"` for Bhootiya Bharat. Fixed fields: `"lang": "hi"`, `"template": "mystery"`,
   `"voice": "gemini"`, `"privacy": "private"`, `"auto_upload": false`.
 
 Long videos also get:

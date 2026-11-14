@@ -19,7 +19,8 @@ from pipeline import qa  # noqa: E402
 WPS = 2.3                 # measured narrator pace, words per second
 SEC_PER_IMAGE = 77        # Z-Image Turbo on this Mac
 AMBIENTS = {"rain", "storm", "fog", "dust", "embers", "none"}
-FIXED = {"lang": "hi", "template": "mystery", "style": "animated_3d", "voice": "gemini"}
+FIXED = {"lang": "hi", "template": "mystery", "voice": "gemini"}
+STYLES = {"animated_3d", "anime", "comic"}
 
 
 class DryChecklist(qa.Checklist):
@@ -43,6 +44,7 @@ def main(path):
     S = "Writer"
     for k, v in FIXED.items():
         cl.check(S, f'"{k}" is "{v}"', script.get(k) == v, f"got {script.get(k)!r}")
+    cl.check(S, "style is one of " + "/".join(sorted(STYLES)), script.get("style") in STYLES, str(script.get("style")))
     cl.check(S, "setting present", bool((script.get("setting") or "").strip()))
     cl.check(S, "hook_text ≤5 words", 0 < len((script.get("hook_text") or "").split()) <= 5)
     title = script.get("title") or ""

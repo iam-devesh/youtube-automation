@@ -477,7 +477,7 @@ def check_final(cl, out_path, raw_path, look, ass_path, spans, audio, margin, w,
     # captions really burned in: same frame with vs. without the caption layer must differ in
     # the caption band far more than elsewhere (the grade alone changes the frame uniformly)
     if burn_checked_per_chapter:
-        cl.check(S, "captions burned into the picture", True, "checked in every chapter")
+        cl.check(S, "captions", True, "checked in every chapter")
     else:
         burned = []
         picks = [s for s in spans if s[1] - s[0] >= 0.4][:: max(len(spans) // 4, 1)][:4]
@@ -496,7 +496,7 @@ def check_final(cl, out_path, raw_path, look, ass_path, spans, audio, margin, w,
 
 
 # ─── Chapter check (long videos) ──────────────────────────────────────────────
-def check_chapter(cl, k, out_path, raw_path, look, spans, audio, starts, w, h):
+def check_chapter(cl, k, out_path, raw_path, look, spans, audio, starts, w, h, captions_burned=True):
     """One chapter of a long video, before it is accepted and saved: picture, no black frames,
     every word audible + nothing repeated in each scene, captions burned in."""
     S = f"5 Chapter {k}"
@@ -520,6 +520,10 @@ def check_chapter(cl, k, out_path, raw_path, look, spans, audio, starts, w, h):
            for i, (sc, m) in enumerate(verify_words([a.get("narration") or "" for a in audio], segs,
                                                     min_recall=ISOLATED_MIN)) if sc < ISOLATED_MIN]
     cl.check(S, "every word audible, nothing repeated", not bad, "; ".join(bad))
+    if not captions_burned:                       # long video: captions go to YouTube as a track
+        cl.check(S, "captions uploaded as a YouTube caption track (not burned in)", True)
+        cl.gate(S)
+        return
     burned = []
     for a_, b_ in [s_ for s_ in spans if s_[1] - s_[0] >= 0.4][:: max(len(spans) // 3, 1)][:3]:
         fin = _frame(out_path, (a_ + b_) / 2)

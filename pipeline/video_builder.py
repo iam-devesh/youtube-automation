@@ -560,14 +560,18 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
         t += audio_results[i]["duration"] + tpl["tail"] - overlap
     total = t + overlap
     numbered = range(1, n - 1) if n >= 4 else range(1, n)
-    print(f"  📚 {len(chapters)} chapters for {n} scenes (~{total / 60:.1f} min)", flush=True)
+    # long videos: captions go to YouTube as an exact caption track (captions.srt), not into the
+    # picture; Shorts (people watch muted) keep burned-in captions. Override with script["captions"].
+    cap_mode = (script.get("captions") or ("upload" if video_type != "short" else "burn")).lower()
+    print(f"  📚 {len(chapters)} chapters for {n} scenes (~{total / 60:.1f} min), captions: "
+          f"{'uploaded to YouTube' if cap_mode == 'upload' else 'burned in'}", flush=True)
 
     done_paths = []
     for k, (a, b) in enumerate(chapters):
         mp4 = os.path.join(ch_dir, f"ch_{k + 1:02d}.mp4")
         meta_path = mp4[:-4] + ".json"
         key = _fingerprint({
-            "v": CHAPTER_VERSION, "w": w, "h": h, "tpl": template_name, "k": k, "first": k == 0,
+            "v": CHAPTER_VERSION, "w": w, "h": h, "tpl": template_name, "k": k, "first": k == 0, "cap": cap_mode,
             "offset": round(starts[a], 3), "total": round(total, 3),
             "scenes": [{"text": audio_results[i].get("narration") or scenes[i].get("narration", ""),
                         "audio": _file_sig(audio_results[i]["audio_path"]),
@@ -626,9 +630,16 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
                            logger=None)
         ch.close()
         look = T.ffmpeg_look(tpl, w, h, total, offset=starts[a])
-        _burn_subtitles(raw, ass_path, mp4, look, normalize=False)
+        burn_ass = ass_path
+        if cap_mode == "upload":                   # keep the hook banner etc., drop the word captions
+            burn_ass = mp4[:-4] + "_nocap.ass"
+            with open(burn_ass, "w", encoding="utf-8") as f:
+                f.writelines(l for l in open(ass_path, encoding="utf-8")
+                             if not l.startswith("Dialogue:") or ",Caption," not in l)
+        _burn_subtitles(raw, burn_ass, mp4, look, normalize=False)
         try:
-            qa.check_chapter(checklist, k + 1, mp4, raw, look, spans, sub, local_starts, w, h)
+            qa.check_chapter(checklist, k + 1, mp4, raw, look, spans, sub, local_starts, w, h,
+                             captions_burned=cap_mode != "upload")
         except qa.ChecklistFailed:
             os.replace(mp4, mp4[:-4] + "_rejected.mp4")
             raise
@@ -680,6 +691,14 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
     except qa.ChecklistFailed:
         os.replace(out_path, os.path.join(out_dir, "_rejected.mp4"))
         raise
+    if cap_mode == "upload":
+        srt = os.path.join(out_dir, "captions.srt")
+        cues = write_srt(audio_results[:n], starts, srt)
+        said = sum(len((a.get("narration") or "").split()) for a in audio_results[:n])
+        in_srt = sum(len(c.split()) for c in cues)
+        checklist.check("5 Final video", "YouTube caption file: every spoken word, in order",
+                        in_srt == said and cues, f"{len(cues)} captions, {in_srt}/{said} words")
+        checklist.gate("5 Final video")
     print(f"  📋 Checklist: all {len(checklist.items)} checks passed", flush=True)
     if video_type != "short":
         try:                                       # never fails a finished, checked video
@@ -690,6 +709,34 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
         _add_chapter_times(script, starts)
     print(f"  ✅ Video saved: {out_path}")
     return out_path
+
+
+def write_srt(audio_results, starts, path, max_words=7):
+    """Exact Hindi captions for YouTube (uploaded as a caption track, see youtube_uploader):
+    the script's own words, timed by the voice alignment, in lines of up to max_words that
+    break at pauses ("...", ",", "।"). Returns the caption texts."""
+    def ts(t):
+        ms = int(round(max(t, 0) * 1000))
+        return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d},{ms % 1000:03d}"
+    cues = []
+    for a, st in zip(audio_results, starts):
+        words = a.get("words") or _proportional_words(a.get("narration") or "", a["duration"])
+        line = []
+        for k, (ws, we, wd) in enumerate(words):
+            line.append((st + ws, st + we, wd))
+            end_here = k == len(words) - 1 or len(line) >= max_words or \
+                (len(line) >= 3 and wd.rstrip().endswith(("...", "…", ",", "।", "?", "!")))
+            if end_here:
+                cues.append((line[0][0], min(line[-1][1] + 0.25, st + a["duration"]),
+                             " ".join(w for _, _, w in line)))
+                line = []
+    for i in range(len(cues) - 1):                 # never overlap the next line
+        if cues[i][1] > cues[i + 1][0]:
+            cues[i] = (cues[i][0], cues[i + 1][0], cues[i][2])
+    with open(path, "w", encoding="utf-8") as f:
+        for i, (a, b, text) in enumerate(cues, 1):
+            f.write(f"{i}\n{ts(a)} --> {ts(b)}\n{text}\n\n")
+    return [c[2] for c in cues]
 
 
 def _add_chapter_times(script, starts):

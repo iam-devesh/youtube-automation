@@ -166,6 +166,8 @@ def generate_clips_for_script(script: dict, job_id: str, video_type: str = "shor
         results.append(path)
 
     ai_image.unload_local()
+    from pipeline.upscale import upscale_all                    # after the image model is unloaded
+    upscale_all(results, style, log)
     log(f"🎬 Visuals ready — Veo clips: {counts['veo']}, AI images: {counts['image']}, "
         f"stock scenes: {counts['stock']}")
     from pipeline import qa

@@ -37,7 +37,7 @@ STYLES = {
     "animated_3d": ("3D animated feature film style, stylized like a modern animated movie, "
                     "soft global illumination, detailed animated movie frame"),
     "anime": ("anime film style, hand-painted detailed backgrounds, dramatic cel-shaded lighting, "
-              "expressive characters, cinematic anime movie frame"),
+              "cinematic anime movie frame"),
     "comic": ("graphic-novel illustration style, bold ink outlines, dramatic shadows, "
               "limited moody colour palette, cinematic comic panel"),
 }
@@ -56,10 +56,14 @@ MOODS = {
     "story": "Mood: warm, emotional, cinematic golden light.",
     "facts": "Mood: bright, clean, vivid and clear.",
 }
-PEOPLE = ("person", "people", "man", "men", "woman", "women", "boy", "girl", "child", "children", "kid",
+# whole words only (a plain substring test matched "he " inside "the …" and put people in every shot)
+PEOPLE = ("person", "people", "man", "men", "woman", "women", "boy", "girl", "child", "children", "kid", "kids",
           "villager", "fisherman", "fishermen", "soldier", "crowd", "family", "priest", "king", "queen",
           "prince", "princess", "tantric", "ranger", "scientist", "traveller", "traveler", "pilgrim",
-          "figure", "silhouette", "character", "he ", "she ", "they ")
+          "figure", "silhouette", "character", "he", "she", "they", "hiker", "searcher", "student",
+          "doctor", "investigator", "official", "herder", "hunter", "mother", "father", "friend", "group",
+          "captain", "sailor", "crew", "keeper", "passenger", "guard", "face", "hand", "hands")
+_PEOPLE_RE = __import__("re").compile(r"\b(" + "|".join(PEOPLE) + r")s?\b")
 
 
 def style_prompt(style: str, shot: str, characters: str = "", setting: str = "", aspect: str = "9:16",
@@ -69,7 +73,7 @@ def style_prompt(style: str, shot: str, characters: str = "", setting: str = "",
     text = f" {shot.lower()} "
     for neg in ("no people", "no one", "nobody", "no person", "no humans", "without people", "deserted", "empty"):
         text = text.replace(neg, " ")
-    has_people = any(k in text for k in PEOPLE)
+    has_people = bool(_PEOPLE_RE.search(text))
     if has_people:
         chars = f" Recurring characters (keep identical): {characters}." if characters else ""
     else:                                   # Z-Image adds people unless told the scene is empty

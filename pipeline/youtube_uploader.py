@@ -204,6 +204,20 @@ def upload_video(video_path: str, script: dict,
         except Exception as e:
             print(f"  ⚠️  Thumbnail upload failed: {e}")
 
+    # Exact Hindi captions (long videos write captions.srt instead of burning them in)
+    srt = os.path.join(os.path.dirname(video_path), "captions.srt")
+    if os.path.exists(srt):
+        try:
+            youtube.captions().insert(
+                part="snippet",
+                body={"snippet": {"videoId": video_id, "language": "hi", "name": "Hindi", "isDraft": False}},
+                media_body=MediaFileUpload(srt, mimetype="application/octet-stream"),
+            ).execute()
+            print("  💬 Hindi captions uploaded")
+        except Exception as e:
+            print(f"  ⚠️  Caption upload failed ({str(e)[:160]}). Upload {srt} in YouTube Studio → "
+                  f"Subtitles → Hindi → Upload file")
+
     return {
         "video_id": video_id,
         "video_url": video_url,
