@@ -267,6 +267,8 @@ def align_take(x, texts):
                  and not any(ch.isdigit() for ch in hyp[j][2])
                  and not (hyp_c[j] and len(hyp_c[j]) >= 2 and hyp_c[j] in own)]
         n_extra = len(loose) - len(missing[si])
-        extra.append(loose if n_extra > max(3, 0.3 * len(scored[si])) else [])
+        # numbers written as digits are often heard as words (10 → दस, 1959 → उन्नीस सौ उनसठ)
+        digits = sum(1 for i in idx[si] if any(ch.isdigit() for ch in ref[i][1]))
+        extra.append(loose if n_extra > max(3, 0.3 * len(scored[si])) + 4 * digits else [])
     return {"cuts": cuts, "scores": scores, "missing": missing, "words": words, "heard": len(hyp),
             "extra": extra}
