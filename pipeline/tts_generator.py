@@ -5,6 +5,7 @@ falling back to Microsoft Edge neural voices per scene. One MP3 per scene + word
 """
 
 import os
+import numpy as np
 import sys
 from typing import List, Tuple
 
@@ -155,6 +156,54 @@ def generate_tts_for_script(script: dict, job_id: str, lang: str = "en") -> List
     return results
 
 
+def _voice_groups(script, max_scenes=14):
+    """Long videos are voiced chapter by chapter: [(first scene index, last+1)], or None for
+    Shorts. Gemini skipped whole lines in one 7-minute take (Dyatlov Pass) but has never done so
+    on ~1-minute takes, and a bad chapter is re-recorded on its own."""
+    scenes = script.get("scenes", [])
+    n = len(scenes)
+    if script.get("video_type", "short") == "short" or n <= max_scenes:
+        return None
+    marks = sorted({int(c.get("scene", 1)) for c in script.get("chapter_titles") or []} | {1})
+    bounds = [m - 1 for m in marks if 1 <= m <= n] if len(marks) > 1 else list(range(0, n, 10))
+    bounds = sorted(set(bounds)) + [n]
+    groups = []
+    for a, b in zip(bounds, bounds[1:]):
+        while b - a > max_scenes:                  # very long chapter: split it
+            groups.append((a, a + 10))
+            a += 10
+        groups.append((a, b))
+    return groups
+
+
+def _gemini_parts(script, job_id):
+    """Voice a long video in chapter-sized takes (each with the full word check, patching and
+    quota waits of _gemini_only), saved under <job>/voice_parts/part_NN/ and reused on later
+    runs. Also writes the joined narration to <job>/audio/narration.wav for the records."""
+    import wave
+    from pipeline import gemini_voice as gv
+    groups = _voice_groups(script)
+    results, wavs = [], []
+    for g, (a, b) in enumerate(groups, 1):
+        sub = dict(script)
+        sub["scenes"] = script["scenes"][a:b]
+        part = os.path.join(job_id, "voice_parts", f"part_{g:02d}")
+        print(f"  🎙️  Voice part {g}/{len(groups)}: scenes {a + 1}-{b}", flush=True)
+        results += _gemini_only(sub, part)
+        wavs.append(os.path.join(OUTPUT_DIR, part, "audio", "narration.wav"))
+    audio_dir = os.path.join(OUTPUT_DIR, job_id, "audio")
+    os.makedirs(audio_dir, exist_ok=True)
+    x = np.concatenate([gv._pcm(w) for w in wavs])
+    with wave.open(os.path.join(audio_dir, "narration.wav"), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(gv.SR)
+        w.writeframes((np.clip(x, -1, 1) * 32767).astype(np.int16).tobytes())
+    print(f"  🎙️  Narration ready: {len(groups)} parts, {len(x) / gv.SR / 60:.1f} min, "
+          f"{len(results)} scenes (each part word-checked)", flush=True)
+    return results
+
+
 def _gemini_only(script, job_id, max_wait_min=120):
     """Episode set to "voice": "gemini" (same narrator as the rest of the series): never fall
     back to Edge. When a take fails the word check on a FEW scenes, only those scenes are
@@ -212,6 +261,8 @@ def _generate_tts_for_script(script: dict, job_id: str, lang: str = "en",
         List of dicts: [{scene_number, audio_path, duration}, ...]
     """
     if TTS_ENGINE != "edge" and not force_edge and script.get("voice") == "gemini":
+        if _voice_groups(script):
+            return _gemini_parts(script, job_id)
         return _gemini_only(script, job_id)
     if TTS_ENGINE != "edge" and not force_edge:
         try:
