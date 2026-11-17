@@ -343,6 +343,7 @@ script = {
     "privacy": "private",
     "auto_upload": False,
     "voice": "gemini",
+    "voice_model": "gemini-2.5-flash-preview-tts",
     "series": "Ansuljhe Rahasya",
     "episode": 1,
     "title": "Dyatlov Pass 😱 9 Log, Ek Kata Hua Tent | Ansuljhe Rahasya Ep 1",

@@ -75,13 +75,16 @@ def _ff(args):
         raise RuntimeError(r.stderr[-300:])
 
 
+_MODEL = [None]       # per-script override: script["voice_model"] (each Gemini TTS model has its own free quota)
+
+
 def _speak(text_block: str, template: str, wav_path: str):
     from google.genai import types as t
     client = _client(180)
     prompt = (f"{DIRECTION.get(template, DIRECTION['mystery'])}\n"
               f"Read the following Hindi narration exactly as written, nothing added:\n\n{text_block}")
     r = client.models.generate_content(
-        model=GEMINI_TTS_MODEL, contents=prompt,
+        model=_MODEL[0] or GEMINI_TTS_MODEL, contents=prompt,
         config=t.GenerateContentConfig(
             response_modalities=["AUDIO"],
             speech_config=t.SpeechConfig(voice_config=t.VoiceConfig(
@@ -545,6 +548,7 @@ def record_patch(script: dict, job_id: str, scene_idx, template: str = "mystery"
     # each failed scene is recorded WITH its neighbours: a 1-line request makes the voice model
     # read its instructions aloud (seen), and context keeps the delivery like the full take.
     # Neighbours are only spare copies; splice_takes picks the best recording of every scene.
+    _MODEL[0] = script.get("voice_model")
     n = len(script["scenes"])
     scene_idx = sorted({j for i in scene_idx for j in (i - 1, i, i + 1) if 0 <= j < n})
     texts = [(script["scenes"][i].get("narration") or "").strip() for i in scene_idx]
@@ -573,6 +577,7 @@ def narrate_script(script: dict, job_id: str, template: str = "mystery", log=pri
     re-recorded. The final narration + scene cut points are saved, so later re-renders and
     remixes reuse exactly the same audio.
     """
+    _MODEL[0] = script.get("voice_model")
     scenes = script.get("scenes", [])
     texts = [(s.get("narration") or "").strip() for s in scenes]
     if not texts or not all(texts):
@@ -589,7 +594,7 @@ def narrate_script(script: dict, job_id: str, template: str = "mystery", log=pri
     else:
         tts = _tts_texts(texts, log)
         if not (os.path.exists(raw) and os.path.getsize(raw) > 10000):
-            log(f"  🎙️  Gemini TTS ({GEMINI_TTS_MODEL}, voice {GEMINI_TTS_VOICE}) — one take for all scenes...")
+            log(f"  🎙️  Gemini TTS ({_MODEL[0] or GEMINI_TTS_MODEL}, voice {GEMINI_TTS_VOICE}) — one take for all scenes...")
             _speak_retry("\n\n".join(tts), template, raw, log)
         _process(raw, full)
         x = _pcm(full)
