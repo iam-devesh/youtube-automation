@@ -36,8 +36,11 @@ except ImportError:
 STYLES = {
     "animated_3d": ("3D animated feature film style, stylized like a modern animated movie, "
                     "soft global illumination, detailed animated movie frame"),
-    "anime": ("anime film style, hand-painted detailed backgrounds, dramatic cel-shaded lighting, "
-              "cinematic anime movie frame"),
+    # strong wording on purpose: with the dark "mystery" mood and real-person descriptions, a plain
+    # "anime film style" drifted to semi-realistic painted stills (tested on Dyatlov Pass)
+    "anime": ("2D hand-drawn anime film still, Japanese animated feature film, cel animation with clean "
+              "ink line art and flat cel shading, hand-painted anime background art, anime character "
+              "design with large expressive eyes, not photorealistic, not 3D"),
     "comic": ("graphic-novel illustration style, bold ink outlines, dramatic shadows, "
               "limited moody colour palette, cinematic comic panel"),
 }
