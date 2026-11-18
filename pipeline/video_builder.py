@@ -704,6 +704,10 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
     try:
         qa.check_final(checklist, out_path, None, "", None, [], audio_results[:n], margin, w, h, starts,
                        burn_checked_per_chapter=True)
+        # strict: every script word heard in the FINAL mix (see CLAUDE.md, pipeline/word_check.py)
+        from pipeline.word_check import check_final as every_word_clear
+        print("  🔎 Checking every word of every scene in the final video...", flush=True)
+        every_word_clear(checklist, out_path, audio_results[:n], starts)
     except qa.ChecklistFailed:
         os.replace(out_path, os.path.join(out_dir, "_rejected.mp4"))
         raise
