@@ -15,6 +15,7 @@ import numpy as np
 
 SR = 24000
 WHISPER_MODEL = os.getenv("WHISPER_MODEL", "mlx-community/whisper-large-v3-turbo")
+MAX_WORD = 1.5             # seconds; a longer Whisper "word" is a timing glitch
 
 
 def _whisper_pass(x, offset=0.0):
@@ -73,6 +74,10 @@ def _whisper_words(x):
     out = []
     for a, b in _chunks(x):                 # long takes: ~60 s pieces, where Whisper is reliable
         out += [w for w in _whisper_pass(x[int(a * SR): int(b * SR)], a) if w[0] < b]
+    # Whisper sometimes stretches the word before a skipped stretch over the whole hole
+    # (seen: one word 17.3 → 29.8 s, hiding 12 s of speech). No word lasts > MAX_WORD s: such a
+    # word is shortened to 0.3 s so the hole after it (with the rest of its line) is heard again.
+    out = [(s, e if e - s <= MAX_WORD else s + 0.3, t) for s, e, t in out]
     edges = [0.0] + [t for w in out for t in (w[0], w[1])] + [dur]
     holes = [(edges[i], edges[i + 1]) for i in range(0, len(edges) - 1, 2)
              if edges[i + 1] - edges[i] > 2.5 and _speech_in(x, edges[i], edges[i + 1]) > 1.0]
