@@ -18,7 +18,7 @@ from pipeline import qa  # noqa: E402
 
 WPS = 2.3                 # measured narrator pace, words per second
 SEC_PER_IMAGE = 77        # Z-Image Turbo on this Mac
-AMBIENTS = {"rain", "storm", "fog", "dust", "embers", "none"}
+AMBIENTS = {"rain", "storm", "fog", "dust", "embers", "snow", "blizzard", "flicker", "none"}
 FIXED = {"lang": "hi", "template": "mystery", "voice": "gemini"}
 STYLES = {"animated_3d", "anime", "comic"}
 

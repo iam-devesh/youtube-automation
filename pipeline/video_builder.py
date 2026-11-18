@@ -122,7 +122,7 @@ def _shots(media, total, video_type):
 
 def build_scene_clip(tpl, media, audio_path, duration, w, h, index, video_type="short",
                      ambient=None):
-    total = duration + tpl["tail"]
+    total = duration + tpl["tail"] + tpl.get("dissolve", 0.0)   # dissolve: the next scene fades in over this
     card = tpl["layout"] == "card"
     bg = T.FactsBackground(w, h, index) if card else None
     sw, sh = (bg.cw, bg.ch) if card else (w, h)
@@ -132,7 +132,7 @@ def build_scene_clip(tpl, media, audio_path, duration, w, h, index, video_type="
         layer = _media_layer(m, sw, sh, seg, index * 7 + k, offset)
         is_still = bool(m) and not m.lower().endswith(VIDEO_EXTS)
         hook_shot = index == 0 and k == 0
-        layer = layer.transform(T.motion(sw, sh, seg, punch=True,
+        layer = layer.transform(T.motion(sw, sh, seg, punch=tpl.get("punch", True),
                                          shake=0.012 if hook_shot else 0.0,
                                          drift=0.0 if is_still else 0.07,
                                          seed=index * 7 + k))
@@ -151,7 +151,11 @@ def build_scene_clip(tpl, media, audio_path, duration, w, h, index, video_type="
 
     audio = AudioFileClip(audio_path)
     audio = audio.subclipped(0, min(duration, audio.duration))
-    return clip.with_audio(CompositeAudioClip([audio]).with_duration(total))
+    layers = [audio]
+    if ambient in ("snow", "blizzard") and tpl.get("dissolve"):          # long videos: wind under the scene
+        storm = ambient == "blizzard"
+        layers.append(_stereo(T.wind(total, seed=index, storm=storm), 0.10 if storm else 0.05))
+    return clip.with_audio(CompositeAudioClip(layers).with_duration(total))
 
 
 # ─── Audio bed + sfx ──────────────────────────────────────────────────────────
@@ -345,9 +349,10 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     base, hi = cap["base"], cap["hi"]
     first_end = scenes_info[0]["start"] + scenes_info[0]["duration"] if scenes_info else 3
     hook_end = min(max(first_end, 1.8), 2.8)
-    ev.append(f"Dialogue: 2,{_ass_time(0)},{_ass_time(hook_end)},Hook,,0,0,0,,"
-              f"{{\\fscx40\\fscy40\\frz-3\\t(0,150,\\fscx112\\fscy112)\\t(150,260,\\fscx100\\fscy100)"
-              f"\\fad(0,200)}}{_esc(hook_text or title)}")
+    if tpl.get("hook_banner", True):
+        ev.append(f"Dialogue: 2,{_ass_time(0)},{_ass_time(hook_end)},Hook,,0,0,0,,"
+                  f"{{\\fscx40\\fscy40\\frz-3\\t(0,150,\\fscx112\\fscy112)\\t(150,260,\\fscx100\\fscy100)"
+                  f"\\fad(0,200)}}{_esc(hook_text or title)}")
 
     for s in scenes_info:
         if s.get("number"):
@@ -499,7 +504,7 @@ def master_loudness(path, target=-14.0):
 # only the soundtrack (music + loudness) is processed for the whole video.
 
 CHAPTER_SECONDS = float(os.getenv("CHAPTER_SECONDS", "55"))
-CHAPTER_VERSION = "1"            # bump when chapter rendering changes → old chapters are rebuilt
+CHAPTER_VERSION = "2"            # bump when chapter rendering changes → old chapters are rebuilt
 
 
 def plan_chapters(script, audio_results, tpl):
@@ -543,6 +548,8 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
     template_name = (script.get("template") or T.DEFAULT_TEMPLATE).lower()
     tpl = T.get_template(template_name)
     video_type = script.get("video_type", "long")
+    if video_type != "short":
+        tpl = T.cinematic(tpl, script.get("style"))
     title = script.get("title", "Untitled Video")
     scenes = script.get("scenes", [])
     w, h = _dims(video_type)
@@ -599,19 +606,27 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
                 raise RuntimeError(f"scene {i + 1} media failed: {e}")
             if clips and overlap > 0:
                 clip = clip.with_effects([vfx.CrossFadeIn(overlap)])
-            clips.append(clip)
+            if clips and tpl.get("dissolve"):
+                clip = clip.with_effects([vfx.CrossFadeIn(tpl["dissolve"])])
+            clips.append(clip.with_start(cursor) if tpl.get("dissolve") else clip)
             info.append({"start": cursor, "duration": au["duration"], "words": au.get("words") or [],
                          "narration": au.get("narration") or scenes[i].get("narration", ""),
                          "number": (i if tpl["layout"] == "card" and i in numbered else None)})
-            cursor += clip.duration - overlap
-        ch = concatenate_videoclips(clips, method="compose", padding=-overlap if overlap else 0)
+            cursor += clip.duration - overlap - tpl.get("dissolve", 0.0)
+        if tpl.get("dissolve"):
+            # each scene's picture runs `dissolve` s past its end, under the next one fading in;
+            # its sound stops on time, so the voice timeline is the same as without dissolves
+            from moviepy import CompositeVideoClip
+            ch = CompositeVideoClip(clips, size=(w, h)).with_duration(cursor)
+        else:
+            ch = concatenate_videoclips(clips, method="compose", padding=-overlap if overlap else 0)
         local_starts = [s_["start"] for s_ in info]
         layers = [ch.audio]
-        if k == 0:
+        if k == 0 and tpl["sfx"] != "none":
             layers.append(_stereo(T.impact(), 0.30).with_start(0))
         sfx = T.whoosh() if tpl["sfx"] == "whoosh" else T.pop()
         for j, st in enumerate(local_starts):
-            if j == 0 and k == 0:
+            if tpl["sfx"] == "none" or (j == 0 and k == 0):
                 continue
             lead = 0.28 if tpl["sfx"] == "whoosh" else 0.0
             layers.append(_stereo(sfx, 0.12 if tpl["sfx"] == "whoosh" else 0.18).with_start(max(st - lead, 0)))

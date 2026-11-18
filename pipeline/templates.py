@@ -58,6 +58,18 @@ def get_template(name):
     return TEMPLATES.get((name or "").lower(), TEMPLATES[DEFAULT_TEMPLATE])
 
 
+def cinematic(tpl, style=None):
+    """Long videos: a film, not a Short. No progress bar, title banners, whooshes, zoom punches
+    or flash cuts (they read as Shorts tics and the whoosh masked each scene's first syllable);
+    soft dissolves between scenes; anime keeps its colours (the mystery grade washed it grey)."""
+    t = dict(tpl)
+    t.update({"cut_fx": "none", "sfx": "none", "bar": None, "punch": False, "hook_banner": False,
+              "dissolve": 0.5, "grain": 2})
+    if (style or "").lower() == "anime":
+        t.update({"grade": "anime", "vignette": 0.45})
+    return t
+
+
 # ─── Per-frame look (done by ffmpeg filters at the final encode — fast, in C) ──
 
 def ffmpeg_look(tpl, w, h, total, offset=0.0):
@@ -66,6 +78,9 @@ def ffmpeg_look(tpl, w, h, total, offset=0.0):
     if tpl["grade"] == "mystery":
         parts += ["eq=contrast=1.15:brightness=-0.04:saturation=0.6",
                   "colorbalance=rs=-0.06:bs=0.07:rh=0.05:bh=-0.04"]
+    elif tpl["grade"] == "anime":                  # keep the painted colours, cool night shadows
+        parts += ["eq=contrast=1.06:brightness=-0.01:saturation=0.95",
+                  "colorbalance=bs=0.04:bm=0.02:rh=0.02"]
     elif tpl["grade"] == "warm":
         parts += ["eq=contrast=1.06:saturation=1.15",
                   "colorbalance=rm=0.04:bm=-0.04:rh=0.03"]
@@ -73,6 +88,8 @@ def ffmpeg_look(tpl, w, h, total, offset=0.0):
         parts.append(f"vignette=angle={tpl['vignette']:.2f}")
     if tpl["grain"]:
         parts.append(f"noise=alls={tpl['grain']}:allf=t")
+    if not tpl.get("bar"):
+        return ",".join(parts)
     r, g, b = tpl["bar"]
     bar_h = max(6, h // 240)
     # offset: where this piece starts in the whole video (chapters) — the bar runs across all of it
@@ -174,6 +191,43 @@ class AmbientFX:
             img = Image.fromarray((small * 255).astype(np.uint8)).resize((w * 2, h), Image.BICUBIC)
             self.tex = np.asarray(img.filter(ImageFilter.GaussianBlur(w * 0.03)), np.float32)[..., None] / 255
             self.speed = w * 0.04
+        elif self.kind in ("snow", "blizzard"):
+            # two depth layers (far: small + slow, near: big, soft + fast) tiled 2w x 2h so the
+            # flakes can drift sideways with the wind as they fall
+            storm = self.kind == "blizzard"
+            self.layers = []
+            for n, r0, r1, blur, speed, wind in (
+                    (900 if storm else 520, 0.0008, 0.0016, 0.6, 0.10, 0.05),
+                    (260 if storm else 120, 0.0018, 0.0040, 1.6, 0.22, 0.10)):
+                layer = Image.new("L", (w * 2, h * 2), 0)
+                d = ImageDraw.Draw(layer)
+                for _ in range(n * 4):
+                    r = rng.uniform(r0, r1) * w
+                    x, y = rng.uniform(0, w * 2), rng.uniform(0, h * 2)
+                    if storm:                      # streaks along the wind
+                        d.line([x, y, x + r * 7, y + r * 3], fill=int(rng.uniform(120, 240)),
+                               width=max(1, int(r)))
+                    else:
+                        d.ellipse([x - r, y - r, x + r, y + r], fill=int(rng.uniform(140, 250)))
+                tex = np.asarray(layer.filter(ImageFilter.GaussianBlur(blur * w / 1280)), np.float32) / 255
+                k = 3.2 if storm else 1.0
+                self.layers.append((tex[..., None], h * speed * k, w * wind * k * (3 if storm else 1)))
+            self.tex = True
+            if storm:                              # drifting white-out haze, pulsing with the gusts
+                small = rng.uniform(0, 1, (10, 12)).astype(np.float32)
+                img = Image.fromarray((small * 255).astype(np.uint8)).resize((w * 2, h), Image.BICUBIC)
+                self.haze = np.asarray(img.filter(ImageFilter.GaussianBlur(w * 0.03)), np.float32)[..., None] / 255
+        elif self.kind == "flicker":
+            # lamp / torch light: smooth random brightness wobble with a warm tint
+            n = 600
+            noise = rng.normal(0, 1, n).astype(np.float32)
+            ker = np.exp(-np.linspace(-2, 2, 9) ** 2)
+            self.wobble = np.convolve(noise, ker / ker.sum(), "same")
+            self.wobble /= np.abs(self.wobble).max() + 1e-6
+            yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+            glow = np.exp(-(((xx - w * 0.5) / (w * 0.6)) ** 2 + ((yy - h * 0.55) / (h * 0.7)) ** 2))
+            self.glow = glow[..., None]
+            self.tex = True
         elif self.kind in ("dust", "embers"):
             layer = Image.new("L", (w, h * 2), 0)
             d = ImageDraw.Draw(layer)
@@ -203,6 +257,23 @@ class AmbientFX:
             off = int((t * self.speed) % w)
             fog = self.tex[:, off: off + w]
             out = out * (1 - fog * 0.45) + 200 * fog * 0.45
+        elif self.kind in ("snow", "blizzard"):
+            for tex, vy, vx in self.layers:
+                oy = int((t * vy) % h)
+                ox = int((t * vx) % w)
+                sl = tex[h - oy: 2 * h - oy, w - ox: 2 * w - ox] if vx >= 0 else tex[h - oy: 2 * h - oy, :w]
+                out = out + (245 - out) * sl * 0.85
+            if self.kind == "blizzard":
+                gust = 0.5 + 0.5 * np.sin(t * 1.7) * np.sin(t * 0.63 + 1)
+                off = int((t * w * 0.35) % w)
+                hz = self.haze[:, w - off: 2 * w - off] if off else self.haze[:, w:2 * w]
+                a = hz * (0.25 + 0.30 * gust)
+                out = out * (1 - a) + 225 * a
+        elif self.kind == "flicker":
+            v = self.wobble[int(t * 12) % len(self.wobble)]
+            g = 1.0 + 0.07 * v
+            out = out * (1 - self.glow * 0.25) + out * self.glow * 0.25 * g
+            out = out * np.array([1.0 + 0.03 * v, 1.0, 1.0 - 0.03 * v], np.float32)
         elif self.kind in ("dust", "embers"):
             # embers rise, dust drifts down slowly
             off = int((t * self.speed) % h)
@@ -278,6 +349,25 @@ class FactsBackground:
 
 
 # ─── Audio: sfx + ambience (synthesized, royalty-free) ───────────────────────
+
+def wind(dur, seed=0, storm=False):
+    """Wind / blizzard ambience: band-limited noise with slow gusts (synthesized, royalty-free)."""
+    n = int(SR * dur)
+    if n < 10:
+        return np.zeros(max(n, 1), np.float32)
+    rng = np.random.default_rng(seed + 7)
+    spec = np.fft.rfft(rng.normal(0, 1, n))
+    f = np.fft.rfftfreq(n, 1 / SR)
+    lo, hi = (120, 1800) if storm else (80, 900)
+    shape = 1 / np.sqrt(np.maximum(f, 20)) * (f > lo * 0.5) * np.exp(-(f / hi) ** 2)
+    x = np.fft.irfft(spec * shape, n).astype(np.float32)
+    x /= np.abs(x).max() + 1e-6
+    t = np.arange(n, dtype=np.float32) / SR
+    ph = rng.uniform(0, 6.28, 2)
+    gust = 0.55 + 0.45 * np.sin(2 * np.pi * 0.11 * t + ph[0]) * np.sin(2 * np.pi * 0.047 * t + ph[1])
+    fade = np.minimum(1, np.minimum(t / 0.6, (dur - t) / 0.6))
+    return (x * gust * np.clip(fade, 0, 1)).astype(np.float32)
+
 
 def whoosh(dur=0.55):
     n = int(SR * dur)

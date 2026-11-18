@@ -76,7 +76,7 @@ description's YouTube timestamps can be filled in after Prepare, when real timin
 - `image_prompts` (English): 2 per Short scene; **for long videos 2–3 per scene** (one image
   per ~4 s of narration). First wide, then closer. Literal, filmable, era-accurate. Say who is in
   the shot, or "nobody around" for empty places. No style words (style is added automatically).
-- `ambient`: one of `rain | storm | fog | dust | embers | none`.
+- `ambient`: one of `rain | storm | fog | dust | embers | snow | blizzard | flicker | none`. Long videos: `snow` (outdoor snowy), `blizzard` (storm, adds wind sound), `flicker` (lamp-lit interiors, night indoors).
 - `visual_description`, `search_query` (English) on every scene.
 - `"style"`: `"anime"` for Ansuljhe Rahasya (the user chose anime for long videos),
   `"animated_3d"` for Bhootiya Bharat. Fixed fields: `"lang": "hi"`, `"template": "mystery"`,
