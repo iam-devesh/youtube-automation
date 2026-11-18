@@ -386,12 +386,12 @@ def check_captions(cl, ass_path, audio, total, starts=None, onset_tol=0.45):
         cl.check(S, "captions run to the end", last >= sum(a["duration"] for a in audio) * 0.85,
                  f"last caption ends {last:.1f}s")
         if starts:
-            check_sync(cl, S, spans, audio, starts)
+            check_sync(cl, S, spans, audio, starts, onset_tol=onset_tol)
     cl.gate(S)
     return spans if ok else []
 
 
-def check_sync(cl, S, spans, audio, starts, step=0.05):
+def check_sync(cl, S, spans, audio, starts, step=0.05, onset_tol=0.45):
     """Captions vs. voice: captions must be on screen while the words are spoken, and the
     first caption of each scene must start with the voice (not early / late)."""
     total = max(max((b for _, b in spans), default=0), starts[-1] + audio[-1]["duration"]) + 1
