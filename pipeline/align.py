@@ -221,7 +221,16 @@ def align_take(x, texts):
         if last and first and max(last) < min(first):
             # words in between (misheard / unmatched) belong to whichever side the scene break
             # pause puts them on → cut in the longest gap between consecutive words
-            gaps = [(hyp[j + 1][0] - hyp[j][1], j) for j in range(max(last), min(first))]
+            # A scene that starts (or ends) with a number: the number is spoken but never matched
+            # (Whisper writes digits) — keep that many unmatched words on its side of the cut
+            # (seen: "...साल के। | 23 जनवरी को" cut after "जनवरी को वो").
+            lead = next((n for n, i in enumerate(idx[si + 1]) if i in match), 0)
+            lead = sum(1 for i in idx[si + 1][:lead] if not ref[i][2])
+            tail = [i for i in idx[si] if i > max(i2 for i2 in idx[si] if i2 in match)]
+            trail = sum(1 for i in tail if not ref[i][2])
+            lo, hi = max(last) + trail, min(first) - 1 - lead
+            span = range(lo, hi + 1) if lo <= hi else range(max(last), min(first))
+            gaps = [(hyp[j + 1][0] - hyp[j][1], j) for j in span]
             g, j = max(gaps)
             a, b = hyp[j][1], hyp[j + 1][0]
             # cut just before the next scene's first word: the pause stays at the END of the
