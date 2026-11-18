@@ -928,5 +928,6 @@
         "footprints leading away into the dark snowy night, nobody around"
       ]
     }
-  ]
+  ],
+  "voice_model": "gemini-3.1-flash-tts-preview"
 }

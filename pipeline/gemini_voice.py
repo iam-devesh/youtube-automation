@@ -210,7 +210,7 @@ def _tts_texts(texts, log=print):
 
 
 # ─── Word-level QA: transcribe, compare with the script, re-record bad scenes ─
-NUMBER_WORDS = set("एक दो तीन चार पांच छह सात आठ नौ दस बीस तीस चालीस पचास साठ सत्तर अस्सी नब्बे सौ हज़ार हजार "
+NUMBER_WORDS = set("शून्य एक दो तीन चार पांच छह सात आठ नौ दस बीस तीस चालीस पचास साठ सत्तर अस्सी नब्बे सौ हज़ार हजार "
                    "लाख करोड़ करोड".split())
 
 
