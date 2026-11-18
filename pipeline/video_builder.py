@@ -623,7 +623,8 @@ def assemble_chapters(script: dict, image_paths: list, audio_results: list,
                               hook_text=script.get("hook_text") if k == 0 else None,
                               cta_line=None, template_name=template_name))
         sub = audio_results[a:b]
-        spans = qa.check_captions(checklist, ass_path, sub, ch_total, local_starts)
+        spans = qa.check_captions(checklist, ass_path, sub, ch_total, local_starts,
+                                  onset_tol=0.75 if cap_mode == "upload" else 0.45)   # YouTube track: timing is looser
         raw = mp4[:-4] + "_raw.mp4"
         ch.write_videofile(raw, fps=FPS, codec="libx264", audio_codec="aac", audio_bitrate="192k",
                            preset="veryfast", threads=4, ffmpeg_params=["-crf", "16", "-pix_fmt", "yuv420p"],

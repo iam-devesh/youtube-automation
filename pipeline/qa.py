@@ -360,7 +360,7 @@ def check_visuals(cl, script, media):
 
 
 # ─── Stage 4: captions ────────────────────────────────────────────────────────
-def check_captions(cl, ass_path, audio, total, starts=None):
+def check_captions(cl, ass_path, audio, total, starts=None, onset_tol=0.45):
     S = "4 Captions"
     ok = os.path.exists(ass_path)
     cl.check(S, "caption file written", ok)
@@ -423,7 +423,7 @@ def check_sync(cl, S, spans, audio, starts, step=0.05):
     for i, (st, on) in enumerate(zip(starts, onsets)):
         end = st + audio[i]["duration"]
         first = min((a for a, b in spans if st - 0.5 <= a < end), default=None)
-        if on is not None and first is not None and abs(first - on) > 0.45:
+        if on is not None and first is not None and abs(first - on) > onset_tol:
             off.append(f"scene {i + 1}: {first - on:+.2f}s")
     cl.check(S, "first caption of each scene starts with the voice", not off, "; ".join(off))
 
