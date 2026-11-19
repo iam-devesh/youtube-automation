@@ -163,7 +163,14 @@ def ig_reel(path, caption, cover_offset_ms=None, log=print):
     last = None
     for tok in [t for t in (env.get("META_PAGE_TOKEN"), env.get("META_ACCESS_TOKEN")) if t]:
         try:
-            return _ig_reel(ig, tok, path, caption, cover_offset_ms, log)
+            for attempt in range(3):
+                try:
+                    return _ig_reel(ig, tok, path, caption, cover_offset_ms, log)
+                except RuntimeError as e:  # seen: upload server "ProcessingFailedError", fine on retry
+                    if "ProcessingFailedError" not in str(e) or attempt == 2:
+                        raise
+                    log("  ↻ Instagram upload hiccup — retrying in 20 s")
+                    time.sleep(20)
         except RuntimeError as e:
             if "OAuthException" not in str(e) and "permission" not in str(e).lower():
                 raise
