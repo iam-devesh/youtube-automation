@@ -59,11 +59,12 @@ def _youtube(ids):
     yt = get_authenticated_service()
     res = {}
     for i in range(0, len(ids), 50):
-        r = yt.videos().list(part="statistics", id=",".join(ids[i:i + 50])).execute()
+        r = yt.videos().list(part="statistics,snippet", id=",".join(ids[i:i + 50])).execute()
         for it in r.get("items", []):
             s = it.get("statistics", {})
             res[it["id"]] = {"views": int(s.get("viewCount", 0)), "likes": int(s.get("likeCount", 0)),
-                             "comments": int(s.get("commentCount", 0))}
+                             "comments": int(s.get("commentCount", 0)),
+                             "published": it.get("snippet", {}).get("publishedAt")}
     return res
 
 
@@ -138,6 +139,8 @@ def collect(log=print):
     for v in vids:
         if v["youtube"]:
             v["youtube"].update(yts.get(v["youtube"]["id"], {}))
+            if v["youtube"].get("published"):          # real publish date (file times change on edits)
+                v["posted"] = v["youtube"]["published"]
         for name, fn in (("facebook", _facebook), ("instagram", _instagram)):
             if v[name] and tok:
                 try:
