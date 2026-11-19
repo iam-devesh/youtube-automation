@@ -1,0 +1,144 @@
+{
+  "lang": "hi",
+  "video_type": "short",
+  "template": "mystery",
+  "style": "animated_3d",
+  "privacy": "private",
+  "auto_upload": false,
+  "characters": "",
+  "series": "Mandir Ke Rahasya",
+  "episode": 1,
+  "title": "Paani Par Tairti Eentein 😱 | Ramappa Mandir | Mandir Ke Rahasya Ep 1",
+  "hook_text": "पानी पर तैरती ईंटें!",
+  "setting": "Ramappa (Rudreshwara) temple, Palampet, Mulugu district, Telangana, India; 13th-century Kakatiya era, sandstone temple with black dolerite sculptures beside Ramappa lake",
+  "description": "800 saal purane Ramappa mandir ki eentein paani mein doobti nahi, tairti hain!\n1213 mein bana ye mandir apne shilpkar ke naam par hai, aur iski neev mein ret bhari gayi thi — bhookamp ke jhatke sokhne ke liye. 2021 mein UNESCO World Heritage bana.\n\n#ramappatemple #MandirKeRahasya #telangana",
+  "tags": [
+    "ramappa temple",
+    "ramappa mandir",
+    "floating bricks",
+    "tairti eent",
+    "ramappa temple mystery",
+    "kakatiya temple",
+    "telangana temple",
+    "unesco world heritage india",
+    "ancient indian engineering",
+    "mandir ke rahasya",
+    "mandir rahasya",
+    "indian temple mystery",
+    "hindi mystery",
+    "rahasya"
+  ],
+  "voice": "gemini",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "narration": "एक मंदिर... जिसकी ईंटें पानी में डूबती नहीं, तैरती हैं।",
+      "ambient": "none",
+      "image_prompts": [
+        "an old reddish temple brick floating on the surface of clear water in a stone basin, ripples around it, nobody around",
+        "the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower reflected in still water at dawn, nobody around"
+      ],
+      "visual_description": "an old reddish temple brick floating on the surface of clear water in a stone basin, ripples around it, nobody around",
+      "search_query": "brick floating water"
+    },
+    {
+      "scene_number": 2,
+      "narration": "ये है रामप्पा मंदिर... तेलंगाना के पालमपेट गाँव में।",
+      "ambient": "dust",
+      "image_prompts": [
+        "wide view of the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower in green countryside of Telangana, a large lake and hills behind, nobody around",
+        "the carved stone entrance steps of the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower in warm morning light, nobody around"
+      ],
+      "visual_description": "wide view of the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower in green countryside of Telangana, a large lake and hills behind, nobody around",
+      "search_query": "ramappa temple"
+    },
+    {
+      "scene_number": 3,
+      "narration": "1213 में काकतीय सेनापति रेचर्ला रुद्र ने इसे बनवाया।",
+      "ambient": "dust",
+      "image_prompts": [
+        "a 13th-century South Indian Kakatiya army general in a turban and armour looking at temple plans on a cloth scroll beside stone blocks",
+        "hundreds of 13th-century Indian workers moving large sandstone blocks with ropes and wooden rollers at a temple construction site"
+      ],
+      "visual_description": "a 13th-century South Indian Kakatiya army general in a turban and armour looking at temple plans on a cloth scroll beside stone blocks",
+      "search_query": "ancient temple construction"
+    },
+    {
+      "scene_number": 4,
+      "narration": "और नाम रखा गया... इसे बनाने वाले शिल्पकार रामप्पा के नाम पर।",
+      "ambient": "dust",
+      "image_prompts": [
+        "a 13th-century Indian master sculptor carving a stone pillar with a chisel and hammer, stone dust in the air",
+        "a polished black stone sculpture of a dancing female figure on a temple bracket, close-up, nobody around"
+      ],
+      "visual_description": "a 13th-century Indian master sculptor carving a stone pillar with a chisel and hammer, stone dust in the air",
+      "search_query": "temple sculptor carving"
+    },
+    {
+      "scene_number": 5,
+      "narration": "असली रहस्य है... इसका ऊँचा शिखर, जो हल्की ईंटों से बना है।",
+      "ambient": "fog",
+      "image_prompts": [
+        "low-angle view up the tall pyramidal brick tower of the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower against a dramatic sky, nobody around",
+        "close-up of old reddish porous bricks in an ancient temple tower wall, weathered texture, nobody around"
+      ],
+      "visual_description": "low-angle view up the tall pyramidal brick tower of the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower against a dramatic sky, nobody around",
+      "search_query": "temple tower bricks"
+    },
+    {
+      "scene_number": 6,
+      "narration": "आम ईंट पानी से दोगुनी भारी होती है... पर ये ईंटें पानी से भी हल्की।",
+      "ambient": "none",
+      "image_prompts": [
+        "two bricks dropped into a glass water tank side by side, a red modern brick sinking to the bottom and an old porous brick floating on top",
+        "a hand gently placing an old porous reddish brick on water and it floats, close-up"
+      ],
+      "visual_description": "two bricks dropped into a glass water tank side by side, a red modern brick sinking to the bottom and an old porous brick floating on top",
+      "search_query": "brick floating test"
+    },
+    {
+      "scene_number": 7,
+      "narration": "मिट्टी में भूसा और लकड़ी मिलाई गई... ईंटें स्पंज जैसी बन गईं।",
+      "ambient": "dust",
+      "image_prompts": [
+        "13th-century Indian brick makers mixing clay with straw and wood fibre by hand in an open-air workshop",
+        "extreme close-up of a broken ancient brick showing many tiny air holes like a sponge"
+      ],
+      "visual_description": "13th-century Indian brick makers mixing clay with straw and wood fibre by hand in an open-air workshop",
+      "search_query": "ancient brick making"
+    },
+    {
+      "scene_number": 8,
+      "narration": "और नीचे नींव में रेत भरी गई... ताकि भूकंप के झटके सोख ले।",
+      "ambient": "dust",
+      "image_prompts": [
+        "cross-section illustration of an ancient temple standing on a deep pit filled with sand, earth layers around it",
+        "13th-century workers pouring sand into a deep rectangular foundation pit for a temple"
+      ],
+      "visual_description": "cross-section illustration of an ancient temple standing on a deep pit filled with sand, earth layers around it",
+      "search_query": "temple foundation sand"
+    },
+    {
+      "scene_number": 9,
+      "narration": "कहते हैं, 17वीं सदी के भूकंप में आसपास घर गिरे... पर मंदिर खड़ा रहा।",
+      "ambient": "dust",
+      "image_prompts": [
+        "an earthquake shaking a 17th-century Indian village at night, mud houses collapsing and dust rising, nobody visible",
+        "the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower standing intact among dust and ruined village houses after an earthquake, nobody around"
+      ],
+      "visual_description": "an earthquake shaking a 17th-century Indian village at night, mud houses collapsing and dust rising, nobody visible",
+      "search_query": "earthquake village ruins"
+    },
+    {
+      "scene_number": 10,
+      "narration": "800 साल पहले, बिना मशीनों के... ये ज्ञान आया कहाँ से?",
+      "ambient": "none",
+      "image_prompts": [
+        "the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower glowing in golden sunset light with birds flying over the lake, nobody around",
+        "night sky full of stars above the dark silhouette of the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower, nobody around"
+      ],
+      "visual_description": "the 13th-century Ramappa temple, a carved sandstone Kakatiya temple on a raised star-shaped platform with a tall pyramidal brick tower glowing in golden sunset light with birds flying over the lake, nobody around",
+      "search_query": "ancient temple sunset"
+    }
+  ]
+}

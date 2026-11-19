@@ -156,3 +156,27 @@ Sources: [Wikipedia (follow citations)](https://en.wikipedia.org/wiki/Sodder_chi
 
 Sources: [APS News](https://aps.org/apsnews/2018/06/tunguska-event) ·
 [Slate: eyewitness accounts](https://www.slate.com/blogs/the_vault/2013/02/15/tunguska_event_eyewitness_accounts_from_the_last_time_a_heavenly_body_burned.html)
+
+---
+
+## Market research: Shorts niches (2026-11-19, YouTube Data API)
+
+Recent Hindi Shorts (published since Mar 2026, relevanceLanguage=hi, pranks/vlogs filtered out),
+~40 videos per theme, view counts:
+
+| Theme | median | top 25% | top examples |
+|---|---|---|---|
+| Indian temple mysteries | 16,934 | 282,142 | Padmanabhaswamy 12,008 shaligram (3.9M), "10 chamatkari mandir" (3.8M), Maihar Devi (2.0M), Tungnath "12,000 ft par kaise tika" (1.8M) |
+| Fort / palace secrets | 2,685 | 64,169 | Hawa Mahal (7.7M), Amer fort engineering (3.0M) |
+| Cursed / haunted India | 2,611 | 46,974 | Kuldhara (21M, 9M), Bhangarh (13M) |
+| Ancient engineering | 2,669 | 27,798 | Hampi water system (11.2M) |
+| Unsolved crimes | 146 | 1,665 | weak in Hindi Shorts |
+
+Our own Bhootiya Bharat Shorts (13 Nov 2026): Kuldhara 1,086 · Bhangarh 990 · Dhanushkodi 421 ·
+Jatinga 25 · Roopkund 18. Winners = famous Indian place + curse/forbidden + one-line shock hook;
+losers = nature puzzles (birds, skeleton lake).
+
+Pattern in the top temple Shorts: a specific number or impossible-sounding fact in the title
+("12,000 फीट पर कैसे टिका है?", "12,008 शालिग्राम"), the temple's name, one emoji.
+Respect rule for this niche: belief is framed as "मान्यता है / कहते हैं", science or history
+as fact with sources, never mock a belief, avoid disputed/communal sites.
