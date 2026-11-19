@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="/static/logo.svg" />
   <link rel="apple-touch-icon" href="/static/logo.svg" />
-  <link rel="stylesheet" href="/static/styles.css?v=20261119a" />
+  <link rel="stylesheet" href="/static/styles.css?v=20261119b" />
 </head>
 <body>
 
@@ -446,6 +446,19 @@
 
     <div class="card" style="margin-top: 24px;">
       <div class="card-header">
+        <div class="card-icon">📊</div>
+        <div>
+          <h2 class="card-title">Views per Video</h2>
+          <p class="card-desc" id="viewsUpdated">YouTube, Facebook and Instagram</p>
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-left:auto" onclick="loadViews(true, this)">↻ Refresh</button>
+      </div>
+      <div id="viewsNote"></div>
+      <div class="views-wrap" id="viewsTable"><div class="loading-pulse">Loading views...</div></div>
+    </div>
+
+    <div class="card" style="margin-top: 24px;">
+      <div class="card-header">
         <div class="card-icon">🎬</div>
         <h2 class="card-title">Recent Videos</h2>
       </div>
@@ -599,7 +612,7 @@ PEXELS_API_KEY=your_key_here</pre>
 <!-- ═══ TOAST ═════════════════════════════════════════════════════════════════ -->
 <div class="toast-container" id="toastContainer"></div>
 
-<script src="/static/app.js?v=20261119b"></script>
+<script src="/static/app.js?v=20261119d"></script>
 <!-- ═══ EPISODE PLAYER ════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="playerModal" style="display:none" onclick="if(event.target===this) closePlayer()">
   <div class="player-box">

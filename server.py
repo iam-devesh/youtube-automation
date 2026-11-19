@@ -535,6 +535,27 @@ def api_channel_stats():
     return jsonify(stats)
 
 
+@app.route("/api/views", methods=["GET"])
+def api_views():
+    """Views per video on YouTube, Facebook and Instagram (cached 15 min; ?refresh=1 to fetch now)."""
+    from pipeline import stats
+    try:
+        return jsonify(stats.get(force=request.args.get("refresh") == "1"))
+    except Exception as e:
+        return jsonify({"error": str(e), "videos": [], "totals": {}}), 500
+
+
+def _cached_views(job):
+    """This job's views from the last stats fetch, without calling any API."""
+    try:
+        from pipeline import stats
+        d = json.load(open(stats.CACHE, encoding="utf-8"))
+        v = next((v for v in d["videos"] if v["job"] == job), None)
+        return {p: (v[p] or {}).get("views") for p in ("youtube", "facebook", "instagram")} if v else None
+    except Exception:
+        return None
+
+
 @app.route("/api/download/<job_id>", methods=["GET"])
 def api_download_video(job_id):
     """Download the generated video."""
@@ -640,6 +661,7 @@ def _episode_info(series_id, path):
         "youtube_url": (uploaded or {}).get("video_url"),
         "upload_pct": up["progress"] if up else None,
         "social": _social_status(job),
+        "views": _cached_views(job),
     }
 
 

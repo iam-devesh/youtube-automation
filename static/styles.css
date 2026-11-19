@@ -1346,3 +1346,18 @@ input:checked + .slider::before { transform: translateX(22px); background: white
 .upload-hint { font-size: 13px; color: var(--text-secondary); margin-top: -4px; }
 .upload-share { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--text-secondary); cursor: pointer; }
 .upload-share input:disabled + * { opacity: .5; }
+
+/* Views per video */
+.views-wrap { overflow-x: auto; }
+.views-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.views-table th { text-align: right; font-size: 12px; font-weight: 600; color: var(--text-secondary); padding: 8px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.views-table th:first-child { text-align: left; }
+.views-table td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.views-table tr:last-child td { border-bottom: none; }
+.vt-title { color: var(--text-primary); font-weight: 600; min-width: 220px; }
+.vt-num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.vt-num a { color: var(--text-primary); text-decoration: none; }
+.vt-num a:hover { text-decoration: underline; }
+.vt-total { color: var(--accent-2); font-size: 15px; }
+.vt-sub { font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
+.views-note { font-size: 12px; color: var(--text-secondary); background: var(--bg-glass); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }

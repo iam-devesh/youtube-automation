@@ -65,7 +65,7 @@ function showSection(sectionId, navEl) {
   };
   document.getElementById('pageTitle').textContent = titles[sectionId] || sectionId;
 
-  if (sectionId === 'analytics') loadChannelStats();
+  if (sectionId === 'analytics') { loadChannelStats(); loadViews(); }
   if (sectionId === 'jobs') loadJobs();
   if (sectionId === 'series') loadSeries();
   if (sectionId === 'social') loadSocial();
@@ -890,10 +890,57 @@ async function confirmUpload(goBtn) {
 }
 
 // ─── Facebook & Instagram ────────────────────────────────────────────────────
+function fmtCount(n) {
+  if (n === null || n === undefined) return '—';
+  return n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(1)}K` : `${n}`;
+}
+
+async function loadViews(refresh = false, btn = null) {
+  const box = document.getElementById('viewsTable');
+  if (btn) setButtonLoading(btn, true, 'Fetching…');
+  try {
+    const d = await (await fetch(`${API}/api/views${refresh ? '?refresh=1' : ''}`)).json();
+    if (d.error) throw new Error(d.error);
+    const t = d.totals || {};
+    document.getElementById('viewsUpdated').innerHTML =
+      `Total <b>${fmtCount(t.all || 0)}</b> views · ▶️ ${fmtCount(t.youtube || 0)} · 📘 ${fmtCount(t.facebook || 0)} · 📸 ${fmtCount(t.instagram || 0)}`
+      + ` <span class="muted">· updated ${new Date(d.updated).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>`;
+    const miss = d.missing_permissions || [];
+    document.getElementById('viewsNote').innerHTML = miss.length
+      ? `<div class="views-note">ℹ️ Facebook Reel plays and Instagram views need the Meta permission${miss.length > 1 ? 's' : ''}
+         <code>${miss.join('</code>, <code>')}</code>. Until then those show “n/a” with likes and comments only.</div>`
+      : '';
+    const cell = (p, partialHint) => {
+      if (!p) return '<td class="vt-num muted">—</td>';
+      if (p.error) return `<td class="vt-num muted" title="${escHtml(p.error)}">⚠️</td>`;
+      const sub = `❤️ ${fmtCount(p.likes ?? 0)} · 💬 ${fmtCount(p.comments ?? 0)}`;
+      const main = p.views === null || p.views === undefined ? '<span class="muted" title="' + partialHint + '">n/a</span>' : fmtCount(p.views);
+      return `<td class="vt-num"><a href="${escHtml(p.url || '#')}" target="_blank">${main}</a><div class="vt-sub">${sub}</div></td>`;
+    };
+    const rows = (d.videos || []).map(v => `
+      <tr>
+        <td class="vt-title"><div>${escHtml(v.title)}</div>
+          <div class="vt-sub">${v.video_type === 'long' ? '🎞️ Long video' : '📱 Short'}${v.posted ? ' · ' + new Date(v.posted).toLocaleDateString([], { day: 'numeric', month: 'short' }) : ''}</div></td>
+        ${cell(v.youtube)}${cell(v.facebook, 'needs read_insights')}${cell(v.instagram, 'needs instagram_manage_insights')}
+        <td class="vt-num vt-total">${fmtCount(v.total)}</td>
+      </tr>`).join('');
+    box.innerHTML = rows ? `<table class="views-table">
+      <thead><tr><th>Video</th><th>▶️ YouTube</th><th>📘 Facebook</th><th>📸 Instagram</th><th>Total</th></tr></thead>
+      <tbody>${rows}</tbody></table>` : '<div class="empty-state small">No published videos yet.</div>';
+    if (refresh) showToast('📊 Views updated', 'success');
+  } catch (e) {
+    box.innerHTML = `<div class="empty-state small">⚠️ Could not load views: ${escHtml(e.message)}</div>`;
+  }
+  if (btn) setButtonLoading(btn, false);
+}
+
 function platformChips(ep) {
   const so = ep.social || {};
+  const vw = ep.views || {};
+  const key = { YouTube: 'youtube', Facebook: 'facebook', Instagram: 'instagram' };
   const chip = (icon, label, url) => url
-    ? `<a class="pchip on" href="${escHtml(url)}" target="_blank" title="Open on ${label}">${icon} ${label} ↗</a>`
+    ? `<a class="pchip on" href="${escHtml(url)}" target="_blank" title="Open on ${label}">${icon} ${label}${
+        vw[key[label]] !== null && vw[key[label]] !== undefined ? ` · 👁️ ${fmtCount(vw[key[label]])}` : ''} ↗</a>`
     : `<span class="pchip" title="Not on ${label} yet">${icon} ${label}</span>`;
   if (!ep.youtube_url && !so.facebook && !so.instagram) return '';
   const share = (!so.facebook || (!so.instagram && so.video_type !== 'long')) && ep.youtube_url
