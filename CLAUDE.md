@@ -6,7 +6,7 @@ The owner listens closely and catches a single masked syllable. A video is not d
 every word of every scene is clearly heard **in the final mixed video** (voice + music +
 ambience + sound effects), not just in the voice recording.
 
-- `pipeline/word_check.py` runs automatically after every long-video render. It transcribes
+- `pipeline/word_check.py` runs automatically after every render (long videos and Shorts). It transcribes
   each scene of the finished video alone and checks every script word, including each scene's
   first word. A failure stops the render; don't loosen it to get a video through.
 - Never place a sound effect (whoosh, boom, impact) on or near the start of a spoken line.

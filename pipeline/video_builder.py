@@ -168,14 +168,9 @@ def _stereo(x, gain):
 def _mix_audio(final, tpl, template_name, scene_starts):
     layers = [final.audio]
     total = final.duration
-    layers.append(_stereo(T.impact(), 0.30).with_start(0))          # boom on the hook
-    sfx = T.whoosh() if tpl["sfx"] == "whoosh" else T.pop()
-    for i, st in enumerate(scene_starts):
-        if i == 0:
-            continue
-        lead = 0.28 if tpl["sfx"] == "whoosh" else 0.0
-        layers.append(_stereo(sfx, 0.12 if tpl["sfx"] == "whoosh" else 0.18)
-                      .with_start(max(st - lead, 0)))
+    # No hook boom and no per-scene whoosh/pop: each one landed on the first word of a scene and
+    # masked it (Ramappa Short: the first word of 5 scenes lost; see CLAUDE.md). The visual cut
+    # effect keeps the energy; sound effects never go on a voice onset.
     if SHOW_CTA:
         layers.append(_stereo(T.pop(), 0.22).with_start(max(total - CTA_SECONDS + 0.15, 0)))  # CTA pop
     # music is mixed at the final encode with ducking (see _burn_subtitles)
@@ -908,6 +903,10 @@ def assemble_video(script: dict, image_paths: list, audio_results: list,
     try:
         qa.check_final(checklist, out_path, raw_path, T.ffmpeg_look(tpl, w, h, total), ass_path, spans,
                        audio_results[:len(info)], margin, w, h, starts)
+        # strict: every script word heard in the FINAL mix (see CLAUDE.md, pipeline/word_check.py)
+        from pipeline.word_check import check_final as every_word_clear
+        print("  🔎 Checking every word of every scene in the final video...", flush=True)
+        every_word_clear(checklist, out_path, audio_results[:len(info)], starts)
     except qa.ChecklistFailed:
         # never leave a failed video where it could be mistaken for a finished one
         os.replace(out_path, os.path.join(out_dir, "_rejected.mp4"))
