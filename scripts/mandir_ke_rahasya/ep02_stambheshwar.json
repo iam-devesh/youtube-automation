@@ -35,10 +35,10 @@
       "narration": "ये शिवलिंग... दिन में दो बार समुद्र में डूब जाता है... और लौट आता है।",
       "ambient": "fog",
       "image_prompts": [
-        "a black stone Shivling with flowers as sea water rushes over it, close-up, misty grey light, foam swirling around it",
+        "a Shiva lingam: one smooth plain polished black stone with a rounded dome top, like an upright egg, no carvings, rising from a flat round black stone base with a short spout channel pointing to one side, three horizontal white ash stripes and a red dot painted on the rounded stone, orange marigolds and green bel leaves on the base, sea water rushing over the base, close-up, misty grey light, foam swirling around it",
         "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, only its spire above grey sea water, wide shot, misty overcast dusk, waves washing over the roof"
       ],
-      "visual_description": "a black stone Shivling with flowers as sea water rushes over it, close-up, misty grey light, foam swirling around it",
+      "visual_description": "a Shiva lingam: one smooth plain polished black stone with a rounded dome top, like an upright egg, no carvings, rising from a flat round black stone base with a short spout channel pointing to one side, three horizontal white ash stripes and a red dot painted on the rounded stone, orange marigolds and green bel leaves on the base, sea water rushing over the base, close-up, misty grey light, foam swirling around it",
       "search_query": "temple in sea"
     },
     {
@@ -58,7 +58,7 @@
       "ambient": "none",
       "image_prompts": [
         "devotees in Indian clothes walking barefoot across wet sand toward a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, wide shot, bright morning sun, reflections in puddles",
-        "a black stone Shivling decorated with flowers inside a small sea-side shrine, close-up, warm morning light, a devotee pouring water on it"
+        "a Shiva lingam: one smooth plain polished black stone with a rounded dome top, like an upright egg, no carvings, rising from a flat round black stone base with a short spout channel pointing to one side, three horizontal white ash stripes and a red dot painted on the rounded stone, orange marigolds and green bel leaves on the base, inside a small open sea-side shrine, close-up, warm morning light, a devotee's hand pouring water from a copper pot onto it"
       ],
       "visual_description": "devotees in Indian clothes walking barefoot across wet sand toward a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, wide shot, bright morning sun, reflections in puddles",
       "search_query": "devotees walking sand"
@@ -101,8 +101,8 @@
       "narration": "मान्यता है, कार्तिकेय ने तारकासुर को हराकर... यहीं शिवलिंग स्थापित किया।",
       "ambient": "flicker",
       "image_prompts": [
-        "a young divine warrior with a spear standing over a defeated giant demon on a seashore, mythic painting style scene, wide shot, dramatic fiery sky",
-        "a young divine warrior kneeling and placing a black stone Shivling on the seashore, close-up, glowing dawn light, reverent pose"
+        "Kartikeya, a young male Hindu warrior god with a youthful boyish face, golden crown, bare chest with ornaments, holding a long spear, a peacock beside him, standing over a defeated a huge dark-skinned demon king with fangs, wild hair, heavy black crown and armour lying on a seashore, wide shot, dramatic fiery sky",
+        "Kartikeya, a young male Hindu warrior god with a youthful boyish face, golden crown, bare chest with ornaments, holding a long spear, a peacock beside him, kneeling on a seashore and placing a small Shiva lingam, one smooth plain polished black stone with a rounded dome top, like an upright egg, no carvings, rising from a flat round black stone base with a short spout channel pointing to one side, three horizontal white ash stripes and a red dot painted on the rounded stone, orange marigolds and green bel leaves on the base, medium shot, glowing dawn light"
       ],
       "visual_description": "a young divine warrior with a spear standing over a defeated giant demon on a seashore, mythic painting style scene, wide shot, dramatic fiery sky",
       "search_query": "kartikeya legend"
@@ -112,10 +112,10 @@
       "narration": "लेकिन तारकासुर भी शिव का भक्त था... इसलिए कार्तिकेय पछतावे से भर गए।",
       "ambient": "flicker",
       "image_prompts": [
-        "a giant demon king praying with folded hands before a Shivling in a cave, medium shot, flickering lamp light, devotion on his face",
-        "a young divine warrior with bowed head and sad face beside the sea, close-up, dim blue evening light, wind in his hair"
+        "Tarakasura, a huge muscular demon king with grey-green skin, two long curved white tusks, thick curled black moustache, glowing red eyes, a dark horned crown and spiked iron armour, kneeling with folded hands before a small black stone lingam on a flat base with a spout, side view, medium shot, inside a rough dark sea cave lit by one oil lamp, nothing else in the cave, no statues, no idols, devotion on his fierce face",
+        "Kartikeya, a young male Hindu warrior god with a youthful boyish face, golden crown, bare chest with ornaments, holding a long spear, a peacock beside him, head bowed with a sad face beside the sea, close-up, dim blue evening light, wind in his hair"
       ],
-      "visual_description": "a giant demon king praying with folded hands before a Shivling in a cave, medium shot, flickering lamp light, devotion on his face",
+      "visual_description": "Tarakasura, a huge dark-skinned demon king with fangs, wild hair, heavy black crown and armour, kneeling with folded hands in prayer before a small Shiva lingam in a dark cave, medium shot, flickering oil lamp light, devotion on his face",
       "search_query": "tarakasura devotee"
     },
     {
@@ -134,10 +134,10 @@
       "narration": "इसलिए भक्त कहते हैं... समुद्र ख़ुद, दिन में दो बार, महादेव को जल चढ़ाता है।",
       "ambient": "fog",
       "image_prompts": [
-        "a sea wave washing gently over a black stone Shivling with flowers on it, close-up, warm sunset light, spray in the air",
+        "a Shiva lingam: one smooth plain polished black stone with a rounded dome top, like an upright egg, no carvings, rising from a flat round black stone base with a short spout channel pointing to one side, three horizontal white ash stripes and a red dot painted on the rounded stone, orange marigolds and green bel leaves on the base, a gentle sea wave washing over the base, close-up, warm sunset light, spray in the air",
         "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea half covered by golden sunset sea water with a saffron flag waving on the spire, wide shot, peaceful glow"
       ],
-      "visual_description": "a sea wave washing gently over a black stone Shivling with flowers on it, close-up, warm sunset light, spray in the air",
+      "visual_description": "a Shiva lingam: one smooth plain polished black stone with a rounded dome top, like an upright egg, no carvings, rising from a flat round black stone base with a short spout channel pointing to one side, three horizontal white ash stripes and a red dot painted on the rounded stone, orange marigolds and green bel leaves on the base, a gentle sea wave washing over the base, close-up, warm sunset light, spray in the air",
       "search_query": "sea abhishek"
     }
   ]
