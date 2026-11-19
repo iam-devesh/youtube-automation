@@ -64,6 +64,8 @@ description's YouTube timestamps can be filled in after Prepare, when real timin
   Short spoken sentences, "..." for pauses, simple words people actually say
   ("लोग", "अचानक", "ख़त्म", "पता नहीं"). Address the viewer as "आप".
 - Numbers in normal digits (1959, 9, 200). Foreign names in Devanagari (डायटलॉव, मैरी सेलेस्ट).
+  No digit ordinals ("17वीं सदी", "2रा"): Gemini misreads them (seen: "17वीं सदी के भूकंप" read as
+  "सत्रवीं अर्थक्वेक"). Write the ordinal in words, or avoid it ("सदियों पहले").
 - English words: write them in Devanagari (ट्रेन, रेडियो). Latin letters in narration must be a
   known loanword in `LOANWORDS` (`pipeline/gemini_voice.py`), otherwise preflight fails.
   Unusual foreign names are the #1 cause of the voice skipping words: keep them short,
