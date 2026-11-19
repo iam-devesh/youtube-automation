@@ -190,7 +190,9 @@ def upload_video(video_path: str, script: dict,
         progress_callback(100, total, total)
 
     video_id = response.get("id")
-    video_url = f"https://www.youtube.com/watch?v={video_id}"
+    is_short = (script or {}).get("video_type", "short") != "long"
+    video_url = (f"https://www.youtube.com/shorts/{video_id}" if is_short
+                 else f"https://www.youtube.com/watch?v={video_id}")   # Shorts open in the Shorts player
     print(f"  ✅ Upload complete: {video_url}")
 
     # Set thumbnail if provided
