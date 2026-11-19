@@ -13,6 +13,8 @@ so research first, write second, validate always.
 Before writing, read `references/faceless-best-practices.md` (rules learned from the Krea and
 Higgsfield faceless-video skills) and `references/narration-craft.md` (hook, open loop,
 but/therefore, re-hooks, specificity, payoff — run its self-check on every script).
+For long videos also read `references/long-video-craft.md` (beat sheet, teasers every 60–90 s,
+midpoint twist, visual variety, on-screen text) and run its self-check.
 
 ## 1. Pick the story
 
