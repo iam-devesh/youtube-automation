@@ -1,0 +1,144 @@
+{
+  "lang": "hi",
+  "video_type": "short",
+  "template": "mystery",
+  "style": "animated_3d",
+  "privacy": "private",
+  "auto_upload": false,
+  "characters": "",
+  "series": "Mandir Ke Rahasya",
+  "episode": 2,
+  "title": "Samundar Mein Gayab Hota Mandir 😱 | Stambheshwar | Mandir Ke Rahasya 2",
+  "hook_text": "समुद्र में ग़ायब होता मंदिर!",
+  "setting": "Stambheshwar Mahadev temple at Kavi Kamboi, Jambusar, Bharuch district, Gujarat, India, on the tidal mudflats of the Gulf of Khambhat near the Mahisagar river mouth; present day",
+  "description": "Gujarat ka Stambheshwar Mahadev mandir din mein do baar samundar mein doob jaata hai — aur paani utarte hi phir bahar aa jaata hai!\nMaanyata hai Kartikeya ne Tarakasur ko haraakar yahan Shivling sthapit kiya. Vigyan kehta hai: Khambhat ki khaadi ke ooche jwaar.\n\n#stambheshwarmahadev #MandirKeRahasya #gujarat",
+  "tags": [
+    "stambheshwar mahadev",
+    "stambheshwar temple",
+    "kavi kamboi",
+    "disappearing temple",
+    "gayab hone wala mandir",
+    "samundar mein mandir",
+    "gujarat temple",
+    "shiv mandir rahasya",
+    "gulf of khambhat",
+    "kartikeya tarakasur",
+    "mandir ke rahasya",
+    "indian temple mystery",
+    "hindi mystery",
+    "rahasya"
+  ],
+  "voice": "gemini",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "narration": "एक मंदिर... जो दिन में दो बार समुद्र में ग़ायब हो जाता है।",
+      "ambient": "fog",
+      "image_prompts": [
+        "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, only its spire above grey sea water, wide shot, misty overcast dusk, waves washing over the roof",
+        "the tip of a white temple spire poking out of rising sea water, close-up, dim evening light, a wave rolling past it"
+      ],
+      "visual_description": "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, only its spire above grey sea water, wide shot, misty overcast dusk, waves washing over the roof",
+      "search_query": "temple in sea"
+    },
+    {
+      "scene_number": 2,
+      "narration": "ये है स्तंभेश्वर महादेव... गुजरात में, समुद्र के अंदर बना मंदिर।",
+      "ambient": "none",
+      "image_prompts": [
+        "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, aerial view, the village shoreline and wide grey gulf behind it, soft morning light, gulls flying over",
+        "a coastal Gujarat village road leading to the sea with a temple flag in the distance, wide shot, morning haze, people walking toward the shore"
+      ],
+      "visual_description": "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, aerial view, the village shoreline and wide grey gulf behind it, soft morning light, gulls flying over",
+      "search_query": "gujarat coast temple"
+    },
+    {
+      "scene_number": 3,
+      "narration": "सुबह पानी उतरा होता है... लोग पैदल चलकर शिवलिंग तक जाते हैं।",
+      "ambient": "none",
+      "image_prompts": [
+        "devotees in Indian clothes walking barefoot across wet sand toward a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, wide shot, bright morning sun, reflections in puddles",
+        "a black stone Shivling decorated with flowers inside a small sea-side shrine, close-up, warm morning light, a devotee pouring water on it"
+      ],
+      "visual_description": "devotees in Indian clothes walking barefoot across wet sand toward a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, wide shot, bright morning sun, reflections in puddles",
+      "search_query": "devotees walking sand"
+    },
+    {
+      "scene_number": 4,
+      "narration": "फिर दोपहर बाद समुद्र का पानी धीरे-धीरे चढ़ने लगता है।",
+      "ambient": "fog",
+      "image_prompts": [
+        "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea with shallow sea water creeping in around its base, wide shot, hazy afternoon light, small waves advancing over the sand",
+        "seawater slowly flowing over wet stone steps of a temple, low-angle close-up, grey afternoon light, foam swirling"
+      ],
+      "visual_description": "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea with shallow sea water creeping in around its base, wide shot, hazy afternoon light, small waves advancing over the sand",
+      "search_query": "tide rising"
+    },
+    {
+      "scene_number": 5,
+      "narration": "कुछ ही घंटों में पूरा मंदिर डूब जाता है... बस शिखर दिखता है।",
+      "ambient": "fog",
+      "image_prompts": [
+        "only a temple spire with a saffron flag above open choppy sea water, wide shot, stormy twilight, waves crashing around it",
+        "underwater view of a submerged temple doorway with seawater filling it, dim green light, sand drifting"
+      ],
+      "visual_description": "only a temple spire with a saffron flag above open choppy sea water, wide shot, stormy twilight, waves crashing around it",
+      "search_query": "submerged temple"
+    },
+    {
+      "scene_number": 6,
+      "narration": "और पानी उतरते ही... मंदिर फिर से समुद्र से बाहर आ जाता है।",
+      "ambient": "none",
+      "image_prompts": [
+        "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea emerging as the sea water drains away around it, wide shot, golden sunrise light, water streaming off the walls",
+        "wet temple walls glistening as the tide goes out, close-up, early sun, puddles and seaweed on the stones"
+      ],
+      "visual_description": "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea emerging as the sea water drains away around it, wide shot, golden sunrise light, water streaming off the walls",
+      "search_query": "temple emerging"
+    },
+    {
+      "scene_number": 7,
+      "narration": "मान्यता है, कार्तिकेय ने तारकासुर को हराकर यहाँ शिवलिंग स्थापित किया।",
+      "ambient": "flicker",
+      "image_prompts": [
+        "a young divine warrior with a spear standing over a defeated giant demon on a seashore, mythic painting style scene, wide shot, dramatic fiery sky",
+        "a young divine warrior kneeling and placing a black stone Shivling on the seashore, close-up, glowing dawn light, reverent pose"
+      ],
+      "visual_description": "a young divine warrior with a spear standing over a defeated giant demon on a seashore, mythic painting style scene, wide shot, dramatic fiery sky",
+      "search_query": "kartikeya legend"
+    },
+    {
+      "scene_number": 8,
+      "narration": "कहते हैं, तारकासुर भी शिव भक्त था... ये जानकर कार्तिकेय दुखी हुए।",
+      "ambient": "flicker",
+      "image_prompts": [
+        "a giant demon king praying with folded hands before a Shivling in a cave, medium shot, flickering lamp light, devotion on his face",
+        "a young divine warrior with bowed head and sad face beside the sea, close-up, dim blue evening light, wind in his hair"
+      ],
+      "visual_description": "a giant demon king praying with folded hands before a Shivling in a cave, medium shot, flickering lamp light, devotion on his face",
+      "search_query": "tarakasura devotee"
+    },
+    {
+      "scene_number": 9,
+      "narration": "विज्ञान कहता है, ये चाँद का खेल है... यहाँ ज्वार बहुत ऊँचा आता है।",
+      "ambient": "none",
+      "image_prompts": [
+        "a full moon rising over a wide sea gulf at night with high tide water reaching a lone temple, wide shot, silver moonlight",
+        "a simple glowing diagram of the moon pulling the ocean water toward it around the earth, centered, dark blue background, arrows of water"
+      ],
+      "visual_description": "a full moon rising over a wide sea gulf at night with high tide water reaching a lone temple, wide shot, silver moonlight",
+      "search_query": "moon tides"
+    },
+    {
+      "scene_number": 10,
+      "narration": "भक्त कहते हैं... समुद्र ख़ुद दिन में दो बार महादेव का अभिषेक करता है।",
+      "ambient": "fog",
+      "image_prompts": [
+        "a sea wave washing gently over a black stone Shivling with flowers on it, close-up, warm sunset light, spray in the air",
+        "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea half covered by golden sunset sea water with a saffron flag waving on the spire, wide shot, peaceful glow"
+      ],
+      "visual_description": "a sea wave washing gently over a black stone Shivling with flowers on it, close-up, warm sunset light, spray in the air",
+      "search_query": "sea abhishek"
+    }
+  ]
+}
