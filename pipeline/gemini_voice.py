@@ -445,6 +445,20 @@ def _sources(job_id):
     return out
 
 
+def _distrust_bleeds(res):
+    """A scene that holds the START of the next line (or the END of the previous one) was cut in
+    the wrong place: that neighbour, in this same recording, is missing those words even if it
+    scored well alone. Seen: Ramappa scene 9 garbled → its cut swallowed scene 10's "800 साल पहले",
+    and splicing scene 10 from that take lost them."""
+    res = [list(r) for r in res]
+    for k, (sc, miss) in enumerate([tuple(r) for r in res]):
+        notes = " ".join(map(str, miss))
+        for nb, bad in ((k + 1, "has the start of scene"), (k - 1, "repeats end of scene")):
+            if bad in notes and 0 <= nb < len(res) and res[nb][0] > 0:
+                res[nb] = [0.0, list(res[nb][1]) + ["(its edge was cut into the neighbouring scene)"]]
+    return [tuple(r) for r in res]
+
+
 def _check_source(x, texts, wav_path, log=print):
     """Per-scene (score, missing) + cuts of one recording, against ITS texts. A scene counts
     only if both the whole-take alignment and the scene heard alone pass (as _alignment_ok).
@@ -456,7 +470,7 @@ def _check_source(x, texts, wav_path, log=print):
     try:
         c = json.load(open(cache))
         if c.get("key") == key:
-            return c["cuts"], [tuple(r) for r in c["res"]]
+            return c["cuts"], _distrust_bleeds(c["res"])
     except Exception:
         pass
     from pipeline.align import align_take
@@ -472,7 +486,7 @@ def _check_source(x, texts, wav_path, log=print):
         res.append((max(s, iso[i][0]) if ok else 0.0,
                     m if ok else (m + iso[i][1] + ([f"[extra speech: {' '.join(extra[:6])}]"] if extra else []))))
     json.dump({"key": key, "cuts": cuts, "res": res}, open(cache, "w"), ensure_ascii=False)
-    return cuts, res
+    return cuts, _distrust_bleeds(res)
 
 
 def splice_missing(job_id):
