@@ -272,6 +272,20 @@ def enqueue(job, platforms=("facebook", "instagram"), video=None):
     return q
 
 
+def _cleanup_posted(job, log=print):
+    """The owner's rule: delete a video from this Mac once it is on YouTube AND posted to
+    Facebook/Instagram (nothing else will need the file). Images and voice stay, for re-renders."""
+    job_dir = os.path.join(ROOT, "static", "outputs", job)
+    if not os.path.exists(os.path.join(job_dir, "upload_result.json")):
+        return                                    # not on YouTube yet: keep it
+    if any(i["job"] == job for i in _load_queue().get("items", [])):
+        return                                    # another post of it is still queued
+    for f in os.listdir(job_dir):
+        if f.endswith(".mp4"):
+            os.remove(os.path.join(job_dir, f))
+            log(f"  🧹 Deleted local video (on YouTube + posted): {job}/{f}")
+
+
 def run_due(log=print):
     """Post the next queued item if it's past today's posting time (local clock = IST) and
     nothing was posted today. Runs the upload in a thread; returns True if one started."""
@@ -301,6 +315,7 @@ def run_due(log=print):
         q2 = _load_queue()
         if entry["ok"]:
             q2["items"] = [i for i in q2["items"] if i != item]
+            _cleanup_posted(item["job"], log)
         q2.setdefault("log", []).append(entry)
         _save_queue(q2)
         _busy[0] = False
