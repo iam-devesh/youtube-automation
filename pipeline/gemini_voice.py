@@ -627,9 +627,17 @@ def narrate_script(script: dict, job_id: str, template: str = "mystery", log=pri
         sub = _drop_breaths(seg, _speech_regions(seg))
         mp3 = os.path.join(audio_dir, f"scene_{scene.get('scene_number', si + 1):02d}.mp3")
         # -ss/-t BEFORE -i: the slice starts at t=0, so the fade-out time is relative to the scene
+        new = mp3[:-4] + ".new.mp3"
         _ff(["-ss", f"{a:.3f}", "-t", f"{b - a:.3f}", "-i", full, "-af",
              f"afade=t=in:d=0.02,afade=t=out:st={max(b - a - 0.04, 0):.3f}:d=0.04",
-             "-ar", "44100", "-b:a", "192k", mp3])
+             "-ar", "44100", "-b:a", "192k", new])
+        # keep an identical file untouched: its timestamp is part of the chapter fingerprint, so
+        # rewriting it made every chapter re-render on every run (encoding is deterministic)
+        import filecmp
+        if os.path.exists(mp3) and filecmp.cmp(new, mp3, shallow=False):
+            os.remove(new)
+        else:
+            os.replace(new, mp3)
         lvl = _pcm(mp3)
         if len(lvl) == 0 or np.sqrt((lvl ** 2).mean()) < 1e-3:
             raise RuntimeError(f"scene {si + 1} narration clip is silent after splitting")
