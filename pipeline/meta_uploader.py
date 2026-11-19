@@ -236,6 +236,73 @@ def post_job(job_dir, platforms=("facebook", "instagram"), video=None, log=print
     return res
 
 
+# ─── Daily queue (one post a day, 7 PM IST) ──────────────────────────────────
+# static/outputs/.social_queue.json:
+#   {"time": "19:00", "items": [{"job": "<job folder>", "platforms": [...], "video": optional}],
+#    "last_day": "YYYY-MM-DD", "log": [...]}
+# The server's dispatcher calls run_due() every few seconds; it posts at most one item a day.
+
+QUEUE = os.path.join(ROOT, "static", "outputs", ".social_queue.json")
+_busy = [False]
+
+
+def _load_queue():
+    try:
+        return json.load(open(QUEUE, encoding="utf-8"))
+    except Exception:
+        return {"time": "19:00", "items": [], "log": []}
+
+
+def _save_queue(q):
+    json.dump(q, open(QUEUE, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+
+
+def enqueue(job, platforms=("facebook", "instagram"), video=None):
+    q = _load_queue()
+    if not any(i["job"] == job and i.get("video") == video for i in q["items"]):
+        q["items"].append({"job": job, "platforms": list(platforms), **({"video": video} if video else {})})
+        _save_queue(q)
+    return q
+
+
+def run_due(log=print):
+    """Post the next queued item if it's past today's posting time (local clock = IST) and
+    nothing was posted today. Runs the upload in a thread; returns True if one started."""
+    if _busy[0]:
+        return False
+    q = _load_queue()
+    if not q.get("items"):
+        return False
+    today = time.strftime("%Y-%m-%d")
+    if q.get("last_day") == today or time.strftime("%H:%M") < q.get("time", "19:00"):
+        return False
+    item = q["items"][0]
+    _busy[0] = True
+    q["last_day"] = today                      # claim today before posting: never two in a day
+    _save_queue(q)
+
+    def work():
+        try:
+            job_dir = os.path.join(ROOT, "static", "outputs", item["job"])
+            video = os.path.join(job_dir, item["video"]) if item.get("video") else None
+            res = post_job(job_dir, item.get("platforms") or ("facebook", "instagram"), video, log)
+            entry = {"day": today, "job": item["job"], "ok": True,
+                     "urls": {k: v.get("url") for k, v in res.items() if isinstance(v, dict)}}
+        except Exception as e:
+            entry = {"day": today, "job": item["job"], "ok": False, "error": str(e)[:300]}
+            log(f"  ❌ Social post failed for {item['job']}: {e}")
+        q2 = _load_queue()
+        if entry["ok"]:
+            q2["items"] = [i for i in q2["items"] if i != item]
+        q2.setdefault("log", []).append(entry)
+        _save_queue(q2)
+        _busy[0] = False
+
+    import threading
+    threading.Thread(target=work, daemon=True).start()
+    return True
+
+
 if __name__ == "__main__":
     import sys
     print(json.dumps(post_job(sys.argv[1], sys.argv[2:] or ("facebook", "instagram")),

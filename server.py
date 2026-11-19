@@ -598,6 +598,11 @@ def _dispatcher():
                 threading.Thread(target=_series_render_worker, args=(pend,), daemon=True).start()
         except Exception as e:
             print(f"⚠️ render dispatcher: {e}")
+        try:                                     # Facebook + Instagram: one queued post a day, 7 PM
+            from pipeline import meta_uploader
+            meta_uploader.run_due(log=lambda m: print(m, flush=True))
+        except Exception as e:
+            print(f"⚠️ social queue: {e}")
 
 
 def _episode_info(series_id, path):
