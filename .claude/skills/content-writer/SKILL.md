@@ -72,6 +72,9 @@ description's YouTube timestamps can be filled in after Prepare, when real timin
   Devanagari (डायटलॉव, मैरी सेलेस्ट).
   No digit ordinals ("17वीं सदी", "2रा"): Gemini misreads them (seen: "17वीं सदी के भूकंप" read as
   "सत्रवीं अर्थक्वेक"). Write the ordinal in words, or avoid it ("सदियों पहले").
+  Gemini swaps some formal Hindi words for the everyday English loanword in fact/science lines
+  (seen: भूकंप → "अर्थक्वेक", विज्ञान → "साइंस"). Prefer the word people actually say ("साइंस",
+  "टेक्नोलॉजी"); if a take keeps swapping a word, change the script to the spoken word.
 - English words: write them in Devanagari (ट्रेन, रेडियो). Latin letters in narration must be a
   known loanword in `LOANWORDS` (`pipeline/gemini_voice.py`), otherwise preflight fails.
   Unusual foreign names are the #1 cause of the voice skipping words: keep them short,
