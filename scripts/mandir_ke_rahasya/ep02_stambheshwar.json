@@ -32,18 +32,18 @@
   "scenes": [
     {
       "scene_number": 1,
-      "narration": "एक मंदिर... जो दिन में दो बार समुद्र में ग़ायब हो जाता है।",
+      "narration": "ये शिवलिंग... दिन में दो बार समुद्र में डूब जाता है... और लौट आता है।",
       "ambient": "fog",
       "image_prompts": [
-        "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, only its spire above grey sea water, wide shot, misty overcast dusk, waves washing over the roof",
-        "the tip of a white temple spire poking out of rising sea water, close-up, dim evening light, a wave rolling past it"
+        "a black stone Shivling with flowers as sea water rushes over it, close-up, misty grey light, foam swirling around it",
+        "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, only its spire above grey sea water, wide shot, misty overcast dusk, waves washing over the roof"
       ],
-      "visual_description": "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, only its spire above grey sea water, wide shot, misty overcast dusk, waves washing over the roof",
+      "visual_description": "a black stone Shivling with flowers as sea water rushes over it, close-up, misty grey light, foam swirling around it",
       "search_query": "temple in sea"
     },
     {
       "scene_number": 2,
-      "narration": "ये है स्तंभेश्वर महादेव... गुजरात में, समुद्र के अंदर बना मंदिर।",
+      "narration": "गुजरात का स्तंभेश्वर महादेव... किनारे पर नहीं, समुद्र के अंदर बना है।",
       "ambient": "none",
       "image_prompts": [
         "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, aerial view, the village shoreline and wide grey gulf behind it, soft morning light, gulls flying over",
@@ -54,7 +54,7 @@
     },
     {
       "scene_number": 3,
-      "narration": "सुबह पानी उतरा होता है... लोग पैदल चलकर शिवलिंग तक जाते हैं।",
+      "narration": "सुबह पानी दूर होता है... लोग गीली रेत पर चलकर पूजा करते हैं।",
       "ambient": "none",
       "image_prompts": [
         "devotees in Indian clothes walking barefoot across wet sand toward a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea, wide shot, bright morning sun, reflections in puddles",
@@ -65,7 +65,7 @@
     },
     {
       "scene_number": 4,
-      "narration": "फिर दोपहर बाद समुद्र का पानी धीरे-धीरे चढ़ने लगता है।",
+      "narration": "पर दोपहर ढलते ही... समुद्र चुपचाप लौटने लगता है।",
       "ambient": "fog",
       "image_prompts": [
         "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea with shallow sea water creeping in around its base, wide shot, hazy afternoon light, small waves advancing over the sand",
@@ -76,7 +76,7 @@
     },
     {
       "scene_number": 5,
-      "narration": "कुछ ही घंटों में पूरा मंदिर डूब जाता है... बस शिखर दिखता है।",
+      "narration": "पहले रास्ता डूबता है... फिर गर्भगृह... और आख़िर में बस शिखर बचता है।",
       "ambient": "fog",
       "image_prompts": [
         "only a temple spire with a saffron flag above open choppy sea water, wide shot, stormy twilight, waves crashing around it",
@@ -87,18 +87,18 @@
     },
     {
       "scene_number": 6,
-      "narration": "और पानी उतरते ही... मंदिर फिर से समुद्र से बाहर आ जाता है।",
-      "ambient": "none",
+      "narration": "पर ऐसा होता क्यों है? भक्तों के पास इसका एक जवाब है...",
+      "ambient": "flicker",
       "image_prompts": [
-        "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea emerging as the sea water drains away around it, wide shot, golden sunrise light, water streaming off the walls",
-        "wet temple walls glistening as the tide goes out, close-up, early sun, puddles and seaweed on the stones"
+        "devotees with oil lamps standing on the shore at dusk looking at a temple spire in the sea, wide shot, warm lamplight against blue dusk, waves lapping",
+        "an old priest holding a brass oil lamp near the sea, close-up, flickering warm light on his face, the dark sea behind him"
       ],
-      "visual_description": "a small white Shiva temple with a short pointed spire standing in a tidal mudflat of the sea emerging as the sea water drains away around it, wide shot, golden sunrise light, water streaming off the walls",
+      "visual_description": "devotees with oil lamps standing on the shore at dusk looking at a temple spire in the sea, wide shot, warm lamplight against blue dusk, waves lapping",
       "search_query": "temple emerging"
     },
     {
       "scene_number": 7,
-      "narration": "मान्यता है, कार्तिकेय ने तारकासुर को हराकर यहाँ शिवलिंग स्थापित किया।",
+      "narration": "मान्यता है, कार्तिकेय ने तारकासुर को हराकर... यहीं शिवलिंग स्थापित किया।",
       "ambient": "flicker",
       "image_prompts": [
         "a young divine warrior with a spear standing over a defeated giant demon on a seashore, mythic painting style scene, wide shot, dramatic fiery sky",
@@ -109,7 +109,7 @@
     },
     {
       "scene_number": 8,
-      "narration": "कहते हैं, तारकासुर भी शिव भक्त था... ये जानकर कार्तिकेय दुखी हुए।",
+      "narration": "लेकिन तारकासुर भी शिव का भक्त था... इसलिए कार्तिकेय पछतावे से भर गए।",
       "ambient": "flicker",
       "image_prompts": [
         "a giant demon king praying with folded hands before a Shivling in a cave, medium shot, flickering lamp light, devotion on his face",
@@ -120,7 +120,7 @@
     },
     {
       "scene_number": 9,
-      "narration": "विज्ञान कहता है, ये चाँद का खेल है... यहाँ ज्वार बहुत ऊँचा आता है।",
+      "narration": "और विज्ञान का जवाब है... चाँद। खंभात की खाड़ी में ज्वार बहुत ऊँचे आते हैं।",
       "ambient": "none",
       "image_prompts": [
         "a full moon rising over a wide sea gulf at night with high tide water reaching a lone temple, wide shot, silver moonlight",
@@ -131,7 +131,7 @@
     },
     {
       "scene_number": 10,
-      "narration": "भक्त कहते हैं... समुद्र ख़ुद दिन में दो बार महादेव का अभिषेक करता है।",
+      "narration": "इसलिए भक्त कहते हैं... समुद्र ख़ुद, दिन में दो बार, महादेव को जल चढ़ाता है।",
       "ambient": "fog",
       "image_prompts": [
         "a sea wave washing gently over a black stone Shivling with flowers on it, close-up, warm sunset light, spray in the air",

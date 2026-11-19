@@ -11,7 +11,8 @@ without a re-render. A wrong fact or a script that fails preflight costs hours o
 so research first, write second, validate always.
 
 Before writing, read `references/faceless-best-practices.md` (rules learned from the Krea and
-Higgsfield faceless-video skills).
+Higgsfield faceless-video skills) and `references/narration-craft.md` (hook, open loop,
+but/therefore, re-hooks, specificity, payoff — run its self-check on every script).
 
 ## 1. Pick the story
 
