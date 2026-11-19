@@ -35,17 +35,39 @@ def _sounds_heard(word, hyp):
 
 
 def _missing(text, clip, tries):
-    """Script words not heard in `clip`: the best of `tries` transcriptions (Whisper varies)."""
+    """Script words not heard in `clip`: the best of `tries` transcriptions (Whisper varies).
+    Numbers count too: the transcriber never matches digits word by word, so a scene that STARTS
+    with a number must start with a spoken number ("800" → "आठ सौ" or "800"), and a scene with
+    numbers must have some number in it (seen: Ramappa scene 10 lost "800 साल" and passed)."""
     from pipeline import qa
+    from pipeline.align import _numberish
     from pipeline.gemini_voice import _transcribe
+    raw = text.split()
+    # numbers written as digits ("800") or as words ("आठ सौ") — both are skipped by the word
+    # matcher, so they are checked here
+    lead_num = bool(raw) and _numberish(raw[0])
+    has_num = any(_numberish(w) for w in raw)
     best = None
     for _ in range(tries):
-        sc, miss = qa.heard_words(text, _transcribe([clip])[0])
+        hyp = _transcribe([clip])[0]
+        sc, miss = qa.heard_words(text, hyp)
+        miss = list(miss)
+        words = [w for w in hyp.split() if w.strip(" ,.?!।…")]
+        if lead_num and not (words and any(_numberish(w) for w in words[:2])):
+            miss.insert(0, raw[0])
+        elif has_num and not any(_numberish(w) for w in words):
+            miss.append(next(w for w in raw if _numberish(w)))
         if best is None or len(miss) < len(best):
             best = miss
         if not best:
             break
     return best
+
+
+def _edge_words(text):
+    """The first two and last two spoken words of a line: where a misplaced cut bites."""
+    toks = text.split()
+    return set(toks[:2] + toks[-2:])
 
 
 def check_final(cl, video_path, audio_results, starts, tries=3, log=print):
@@ -64,7 +86,10 @@ def check_final(cl, video_path, audio_results, starts, tries=3, log=print):
         if not final_miss:
             continue
         voice_miss = _missing(text, _pcm(au["audio_path"]), tries)
-        real = [w for w in final_miss if w not in voice_miss]
+        # missing from the clean voice too = the transcriber's limit... unless it's a word at the
+        # scene's edge: then the voice clip itself was cut in the wrong place (a real loss)
+        edges = _edge_words(text)
+        real = [w for w in final_miss if w not in voice_miss or w in edges]
         if real:
             # second hearing: a wider window (a tight edge clips Whisper's context) and Hindi
             # sound-alike spellings Whisper drifts between (जनवरी ↔ चनवरी, थ्योरीज ↔ थेरीज)

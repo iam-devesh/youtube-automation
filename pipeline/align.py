@@ -100,13 +100,37 @@ def _quietest(x, a, b, frame=0.02):
     return a + (int(np.argmin(rms)) + 0.5) * frame
 
 
-def _cut_before_onset(x, a, b, frame=0.02, lead=0.12):
+_NUM_WORDS = None
+_HINDI_11_99 = """ग्यारह बारह तेरह चौदह पंद्रह सोलह सत्रह अठारह उन्नीस इक्कीस बाईस तेईस चौबीस पच्चीस
+छब्बीस सत्ताईस अट्ठाईस उनतीस इकतीस बत्तीस तैंतीस चौंतीस पैंतीस छत्तीस सैंतीस अड़तीस उनतालीस इकतालीस
+बयालीस तैंतालीस चवालीस पैंतालीस छियालीस सैंतालीस अड़तालीस उनचास इक्यावन बावन तिरपन चौवन पचपन छप्पन
+सत्तावन अट्ठावन उनसठ इकसठ बासठ तिरसठ चौंसठ पैंसठ छियासठ सड़सठ अड़सठ उनहत्तर इकहत्तर बहत्तर तिहत्तर
+चौहत्तर पचहत्तर छिहत्तर सतहत्तर अठहत्तर उनासी इक्यासी बयासी तिरासी चौरासी पचासी छियासी सत्तासी अट्ठासी
+नवासी इक्यानवे बानवे तिरानवे चौरानवे पचानवे छियानवे सत्तानवे अट्ठानवे निन्यानवे
+पहला पहली दूसरा दूसरी तीसरा तीसरी चौथा चौथी पाँचवाँ पाँचवीं सत्रहवीं""".replace("ँ", "ं").replace("\u093c", "")
+
+
+def _numberish(word):
+    """A transcribed word that is (part of) a spoken number: digits, or a Hindi number word."""
+    global _NUM_WORDS
+    if _NUM_WORDS is None:
+        from pipeline.gemini_voice import NUMBER_WORDS
+        _NUM_WORDS = {w.replace("\u093c", "").replace("ँ", "ं") for w in NUMBER_WORDS} | {
+            "सो", "सौ", "हज़ार", "हजार", "लाख", "करोड़", "डेढ़", "ढाई", "साढ़े", "सवा", "पौने"} | set(
+            _HINDI_11_99.split())
+    w = word.strip(" ,.?!।…").replace("\u093c", "").replace("ँ", "ं")
+    return bool(w) and (any(ch.isdigit() for ch in w) or w in _NUM_WORDS)
+
+
+def _cut_before_onset(x, a, b, frame=0.02, lead=0.12, limit=None):
     """Cut point for a scene break: Whisper says the previous scene ends at ~a and the next
     starts at ~b (its word starts are often early). Find the longest silence around there in
     the AUDIO and cut `lead` seconds before the voice comes back — so the next scene (and its
     first caption) starts with the voice and the pause stays at the end of the previous one."""
     n = int(frame * SR)
     lo, hi = max(a - 0.2, 0), min(b + 1.0, len(x) / SR)
+    if limit is not None:              # never past the end of the next scene's first word: a
+        hi = max(min(hi, limit), b + 0.05)   # later pause (seen: after "800 साल पहले,") is not the break
     seg = x[int(lo * SR): int(hi * SR)]
     k = len(seg) // n
     if k < 3:
@@ -228,6 +252,18 @@ def align_take(x, texts):
             lead = sum(1 for i in idx[si + 1][:lead] if not ref[i][2])
             tail = [i for i in idx[si] if i > max(i2 for i2 in idx[si] if i2 in match)]
             trail = sum(1 for i in tail if not ref[i][2])
+            # a number is spoken as several words ("800" → "आठ सौ"): also give the number's side
+            # every number-word Whisper heard next to it (seen: cut between "आठ" and "सौ")
+            if lead:
+                k = min(first) - 1
+                while k > max(last) and _numberish(hyp[k][2]):
+                    k -= 1
+                lead = max(lead, min(first) - 1 - k)
+            if trail:
+                k = max(last) + 1
+                while k < min(first) and _numberish(hyp[k][2]):
+                    k += 1
+                trail = max(trail, k - max(last) - 1)
             lo, hi = max(last) + trail, min(first) - 1 - lead
             span = range(lo, hi + 1) if lo <= hi else range(max(last), min(first))
             gaps = [(hyp[j + 1][0] - hyp[j][1], j) for j in span]
@@ -235,7 +271,7 @@ def align_take(x, texts):
             a, b = hyp[j][1], hyp[j + 1][0]
             # cut just before the next scene's first word: the pause stays at the END of the
             # previous scene, so each scene (and its first caption) starts with the voice
-            cut = _cut_before_onset(x, a, b)
+            cut = _cut_before_onset(x, a, b, limit=hyp[j + 1][1])
         elif last and first:                       # overlapping stamps: split the difference
             cut = (hyp[max(last)][1] + hyp[min(first)][0]) / 2
         else:                                      # scene not heard at all: proportional guess

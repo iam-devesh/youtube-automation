@@ -10,6 +10,9 @@ You are the channel's researcher and scriptwriter. The output is a script JSON i
 without a re-render. A wrong fact or a script that fails preflight costs hours of Prepare time,
 so research first, write second, validate always.
 
+Before writing, read `references/faceless-best-practices.md` (rules learned from the Krea and
+Higgsfield faceless-video skills).
+
 ## 1. Pick the story
 
 - Check `references/story-bank.md` first: stories already researched, ranked, with sources.
@@ -63,7 +66,9 @@ description's YouTube timestamps can be filled in after Prepare, when real timin
 - `narration`: Hindi, Devanagari. **3–24 words per scene** (aim 10–18 for long videos).
   Short spoken sentences, "..." for pauses, simple words people actually say
   ("लोग", "अचानक", "ख़त्म", "पता नहीं"). Address the viewer as "आप".
-- Numbers in normal digits (1959, 9, 200). Foreign names in Devanagari (डायटलॉव, मैरी सेलेस्ट).
+- **Numbers spelled out in words** ("आठ सौ साल", "बारह सौ तेरह में", "नौ लोग"). Digits made Gemini
+  misread lines and broke scene cuts (see references/faceless-best-practices.md). Foreign names in
+  Devanagari (डायटलॉव, मैरी सेलेस्ट).
   No digit ordinals ("17वीं सदी", "2रा"): Gemini misreads them (seen: "17वीं सदी के भूकंप" read as
   "सत्रवीं अर्थक्वेक"). Write the ordinal in words, or avoid it ("सदियों पहले").
 - English words: write them in Devanagari (ट्रेन, रेडियो). Latin letters in narration must be a
@@ -75,7 +80,9 @@ description's YouTube timestamps can be filled in after Prepare, when real timin
 - `hook_text`: Hindi, max 5 words.
 - `setting`: English place + region + era, added to every image ("Ural Mountains, Soviet
   Russia, winter 1959"). `characters`: a fixed English look for recurring named people, or "".
-- `image_prompts` (English): 2 per Short scene; **for long videos 2–3 per scene** (one image
+- **One clear action per scene**: the scene shows one thing happening and its line is about it.
+- `image_prompts` (English): written as SUBJECT · CAMERA · LIGHT · ACTION (e.g. "a stone temple
+  tower, low-angle shot, golden dawn light, mist drifting past it"). 2 per Short scene; **for long videos 2–3 per scene** (one image
   per ~4 s of narration). First wide, then closer. Literal, filmable, era-accurate. Say who is in
   the shot, or "nobody around" for empty places. No style words (style is added automatically).
 - `ambient`: one of `rain | storm | fog | dust | embers | snow | blizzard | flicker | none`. Long videos: `snow` (outdoor snowy), `blizzard` (storm, adds wind sound), `flicker` (lamp-lit interiors, night indoors).
