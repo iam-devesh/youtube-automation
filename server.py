@@ -34,7 +34,7 @@ import time
 import json
 import re
 import traceback
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
@@ -639,7 +639,19 @@ def _episode_info(series_id, path):
         "description": meta.get("description", ""), "tags": meta.get("tags", []),
         "youtube_url": (uploaded or {}).get("video_url"),
         "upload_pct": up["progress"] if up else None,
+        "social": _social_status(job),
     }
+
+
+def _social_status(job):
+    """Where a job is on Facebook / Instagram: {facebook: url|None, instagram: url|None, queued: bool}."""
+    from pipeline import meta_uploader as _mu
+    p = os.path.join(OUTPUT_DIR, job, "meta_result.json")
+    res = json.load(open(p)) if os.path.exists(p) else {}
+    return {"job": job, "video_type": _job_title(job)[1],
+            "facebook": (res.get("facebook") or {}).get("url"),
+            "instagram": (res.get("instagram") or {}).get("url"),
+            "queued": any(i["job"] == job for i in _mu._load_queue().get("items", []))}
 
 
 def _series_render_worker(paths):
@@ -892,7 +904,9 @@ def api_series_upload(series_id, episode_id):
         return jsonify({"error": "Render the episode first"}), 400
     meta_path = os.path.join(out_dir, "upload_meta.json")
     meta = json.load(open(meta_path if os.path.exists(meta_path) else path, encoding="utf-8"))
-    privacy = (request.get_json(silent=True) or {}).get("privacy", "private")
+    body = request.get_json(silent=True) or {}
+    privacy = body.get("privacy", "private")
+    share = bool(body.get("share")) and privacy == "public"
     if _active_upload(sid, eid):
         return jsonify({"error": "This episode is already uploading"}), 409
 
@@ -903,14 +917,117 @@ def api_series_upload(series_id, episode_id):
             add_to_playlist(res["playlist_id"], res["video_id"], meta.get("episode"))
             res["playlist_url"] = f"https://www.youtube.com/playlist?list={res['playlist_id']}"
             json.dump(res, open(os.path.join(out_dir, "upload_result.json"), "w"))
-            return [f"📃 Added to playlist: {res['playlist_url']}"]
+            msgs = [f"📃 Added to playlist: {res['playlist_url']}"]
         except Exception as e:
-            return [f"⚠️ Playlist step failed: {e}"]
+            msgs = [f"⚠️ Playlist step failed: {e}"]
+        if share:                       # Facebook + Instagram: into the daily posting queue
+            try:
+                from pipeline import meta_uploader as _mu
+                long_ = meta.get("video_type", "short") != "short"
+                _mu.enqueue(f"{sid}_{eid}", ["facebook"] if long_ else ["facebook", "instagram"])
+                msgs.append("🗓️ Queued for Facebook & Instagram (daily post)")
+            except Exception as e:
+                msgs.append(f"⚠️ Could not queue for Facebook/Instagram: {e}")
+        return msgs
 
     job_id = _start_upload(f"EP {meta.get('episode', '')} — {meta.get('title', eid)}", vids[0], meta, privacy,
                            series={"series_id": sid, "episode_id": eid, "title": meta.get("title")},
                            on_done=after)
     return jsonify({"success": True, "job_id": job_id})
+
+
+# ─── Social (Facebook Page + Instagram) ───────────────────────────────────────
+
+def _job_title(job):
+    for name in ("upload_meta.json",):
+        p = os.path.join(OUTPUT_DIR, job, name)
+        if os.path.exists(p):
+            m = json.load(open(p, encoding="utf-8"))
+            return m.get("title") or job, m.get("video_type", "short")
+    return job, "short"
+
+
+@app.route("/api/social", methods=["GET"])
+def api_social():
+    from pipeline import meta_uploader as mu
+    try:
+        mu._env()
+        connected, why = True, ""
+    except Exception as e:
+        connected, why = False, str(e)
+    q = mu._load_queue()
+    items = []
+    for i in q.get("items", []):
+        title, vtype = _job_title(i["job"])
+        items.append({**i, "title": title, "video_type": vtype})
+    # next posting moment: today at q.time if nothing posted today and it's still ahead, else tomorrow
+    hh, mm = (q.get("time") or "19:00").split(":")
+    now = datetime.now()
+    nxt = now.replace(hour=int(hh), minute=int(mm), second=0, microsecond=0)
+    if q.get("last_day") == now.strftime("%Y-%m-%d"):
+        nxt += timedelta(days=1)                 # today's post is done → tomorrow
+    elif nxt <= now:
+        nxt = now                                # due now: goes out within a minute
+    history = []
+    for h in reversed(q.get("log", [])[-30:]):
+        title, _ = _job_title(h.get("job", ""))
+        if h.get("ok") and not any((h.get("urls") or {}).values()):
+            st = _social_status(h.get("job", ""))           # links from the job's meta_result.json
+            h = {**h, "urls": {"facebook": st["facebook"], "instagram": st["instagram"]}}
+        history.append({**h, "title": title})
+    return jsonify({"connected": connected, "error": why, "page": "The Faceless Hindi",
+                    "instagram": "@thefacelesshindi", "time": q.get("time", "19:00"),
+                    "next_at": nxt.isoformat() if items else None, "posting_now": mu._busy[0],
+                    "items": items, "history": history})
+
+
+@app.route("/api/social/<action>", methods=["POST"])
+def api_social_action(action):
+    from pipeline import meta_uploader as mu
+    data = request.get_json(silent=True) or {}
+    q = mu._load_queue()
+    items = q.get("items", [])
+    i = data.get("index")
+    if action == "add":
+        job = os.path.basename(data.get("job", ""))
+        if not os.path.exists(os.path.join(OUTPUT_DIR, job, "upload_meta.json")):
+            return jsonify({"error": "Upload this video to YouTube first (its title and description are reused)"}), 400
+        _, vtype = _job_title(job)
+        plats = data.get("platforms") or (["facebook", "instagram"] if vtype == "short" else ["facebook"])
+        mu.enqueue(job, plats)
+        return jsonify({"success": True})
+    if action == "time":
+        t = (data.get("time") or "").strip()
+        if not re.fullmatch(r"([01]\d|2[0-3]):[0-5]\d", t):
+            return jsonify({"error": "Use HH:MM, e.g. 19:00"}), 400
+        q["time"] = t
+        mu._save_queue(q)
+        return jsonify({"success": True})
+    if not isinstance(i, int) or not 0 <= i < len(items):
+        return jsonify({"error": "No such queue item"}), 400
+    if action == "remove":
+        items.pop(i)
+    elif action == "move":
+        j = i + (-1 if data.get("dir") == "up" else 1)
+        if 0 <= j < len(items):
+            items[i], items[j] = items[j], items[i]
+    elif action == "post-now":
+        if mu._busy[0]:
+            return jsonify({"error": "A post is already being published"}), 409
+        items.insert(0, items.pop(i))
+        q["items"], q["last_day"] = items, None          # let run_due take it right away
+        q["time"], keep_time = "00:00", q.get("time", "19:00")
+        mu._save_queue(q)
+        started = mu.run_due(log=lambda m: print(m, flush=True))
+        q2 = mu._load_queue()
+        q2["time"] = keep_time                             # restore the daily posting time
+        mu._save_queue(q2)
+        return jsonify({"success": started})
+    else:
+        return jsonify({"error": f"Unknown action {action}"}), 400
+    q["items"] = items
+    mu._save_queue(q)
+    return jsonify({"success": True})
 
 
 def _series_playlist(series_id):

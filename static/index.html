@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="/static/logo.svg" />
   <link rel="apple-touch-icon" href="/static/logo.svg" />
-  <link rel="stylesheet" href="/static/styles.css?v=20261113d" />
+  <link rel="stylesheet" href="/static/styles.css?v=20261119a" />
 </head>
 <body>
 
@@ -35,6 +35,11 @@
       <span class="nav-icon">📺</span>
       <span>Series</span>
     </a>
+    <a href="#" class="nav-item" data-section="social" onclick="showSection('social', this)">
+      <span class="nav-icon">📣</span>
+      <span>Social</span>
+      <span class="nav-badge" id="socialBadge" style="display:none">0</span>
+    </a>
     <a href="#" class="nav-item" data-section="jobs" onclick="showSection('jobs', this)">
       <span class="nav-icon">📋</span>
       <span>Job Queue</span>
@@ -49,6 +54,8 @@
       <span>Settings</span>
     </a>
   </nav>
+
+  <div class="sidebar-next" id="sidebarNext" style="display:none" onclick="showSection('social', document.querySelector('[data-section=social]'))"></div>
 
   <div class="sidebar-stats" id="sidebarStats">
     <div class="stat-mini">
@@ -361,6 +368,44 @@
     </div>
   </section>
 
+  <!-- ── SOCIAL SECTION ─────────────────────────────────────────────────── -->
+  <section class="section" id="section-social" style="display:none">
+    <div class="jobs-header">
+      <h2 class="section-title">Facebook &amp; Instagram</h2>
+      <button class="btn btn-ghost" onclick="loadSocial()">↻ Refresh</button>
+    </div>
+
+    <div class="social-top">
+      <div class="card social-conn" id="socialConn"><div class="loading-pulse">Checking connection…</div></div>
+      <div class="card social-next" id="socialNext"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🗓️</div>
+        <div>
+          <h2 class="card-title">Posting queue</h2>
+          <p class="card-desc">One post a day at the time below. Reorder with ▲▼, or post one right away.</p>
+        </div>
+        <label class="social-time">Daily at
+          <input type="time" id="socialTime" class="form-input" onchange="setSocialTime(this.value)" />
+        </label>
+      </div>
+      <div id="socialQueue" class="social-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">✅</div>
+        <div>
+          <h2 class="card-title">Posted</h2>
+          <p class="card-desc">Every post, newest first.</p>
+        </div>
+      </div>
+      <div id="socialHistory" class="social-list"></div>
+    </div>
+  </section>
+
   <!-- ── JOB QUEUE SECTION ──────────────────────────────────────────────── -->
   <section class="section" id="section-jobs" style="display:none">
     <div class="jobs-header">
@@ -527,10 +572,34 @@ PEXELS_API_KEY=your_key_here</pre>
   </div>
 </div>
 
+<!-- ═══ UPLOAD DIALOG ═════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="uploadModal" style="display:none" onclick="if(event.target===this) closeUploadDialog()">
+  <div class="modal upload-modal">
+    <button class="modal-close" onclick="closeUploadDialog()">✕</button>
+    <div class="modal-header"><h2 class="modal-title">Upload to YouTube</h2></div>
+    <div class="modal-body">
+      <p class="upload-title" id="uploadTitle"></p>
+      <div class="form-label">Who can see it?</div>
+      <div class="toggle-group privacy-choice" id="privacyChoice">
+        <button class="toggle-btn active" data-v="public" onclick="pickPrivacy(this)">🌍 Public</button>
+        <button class="toggle-btn" data-v="unlisted" onclick="pickPrivacy(this)">🔗 Unlisted</button>
+        <button class="toggle-btn" data-v="private" onclick="pickPrivacy(this)">🔒 Private</button>
+      </div>
+      <p class="upload-hint" id="privacyHint">Everyone can find and watch it.</p>
+      <label class="upload-share"><input type="checkbox" id="uploadShare" checked />
+        Also share to Facebook &amp; Instagram (added to the daily posting queue)</label>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeUploadDialog()">Cancel</button>
+        <button class="btn btn-primary" id="uploadGo" onclick="confirmUpload(this)">⬆ Upload</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ TOAST ═════════════════════════════════════════════════════════════════ -->
 <div class="toast-container" id="toastContainer"></div>
 
-<script src="/static/app.js?v=20261113d"></script>
+<script src="/static/app.js?v=20261119b"></script>
 <!-- ═══ EPISODE PLAYER ════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="playerModal" style="display:none" onclick="if(event.target===this) closePlayer()">
   <div class="player-box">

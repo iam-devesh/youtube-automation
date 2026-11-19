@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadChannelStats();
   loadJobs();
   setInterval(loadJobs, 10000);
+  loadSocialSummary();
+  setInterval(loadSocialSummary, 60000);
 
   // Start with 3 empty scenes in Story Studio
   addScene('', '', false);
@@ -56,6 +58,7 @@ function showSection(sectionId, navEl) {
   const titles = {
     create: 'Create Video',
     series: 'Series',
+    social: 'Facebook & Instagram',
     jobs: 'Job Queue',
     analytics: 'Analytics',
     settings: 'Settings',
@@ -65,6 +68,7 @@ function showSection(sectionId, navEl) {
   if (sectionId === 'analytics') loadChannelStats();
   if (sectionId === 'jobs') loadJobs();
   if (sectionId === 'series') loadSeries();
+  if (sectionId === 'social') loadSocial();
 
   return false;
 }
@@ -770,7 +774,7 @@ function renderSeries(data) {
 
 function episodeCard(se, ep, busy) {
   if (ep.status === 'rendering' && window.__seriesPaused) ep.status = 'paused';
-  const badge = { rendered: 'Rendered ✅', uploaded: 'On YouTube ✅', rendering: 'Rendering…', paused: 'Paused ⏸️', queued: 'Queued',
+  const badge = { rendered: ep.youtube_url ? 'On YouTube ✅' : 'Rendered ✅', uploaded: 'On YouTube ✅', rendering: 'Rendering…', paused: 'Paused ⏸️', queued: 'Queued',
                   ready: ep.prepared ? 'Voice + art ready ✅' : 'Script ready',
                   uploading: `Uploading ${ep.upload_pct ?? 0}%` }[ep.status] || ep.status;
   if (ep.status === 'uploading') {
@@ -789,7 +793,7 @@ function episodeCard(se, ep, busy) {
     ? `<button class="btn btn-ghost btn-sm" onclick='openPlayer(${JSON.stringify(ep.video_url)}, ${JSON.stringify(ep.title)})'>▶ Watch</button>
        ${ep.youtube_url
          ? `<a class="btn btn-outline btn-sm" href="${escHtml(ep.youtube_url)}" target="_blank">On YouTube ↗</a>`
-         : `<button class="btn btn-outline btn-sm" onclick="uploadEpisode('${se.id}', '${ep.id}', this)">⬆ Upload</button>`}`
+         : `<button class="btn btn-outline btn-sm" onclick='uploadEpisode(${JSON.stringify(se.id)}, ${JSON.stringify(ep.id)}, this, ${JSON.stringify(ep.title || ep.id)})'>⬆ Upload</button>`}`
     : ep.status === 'ready'
       ? `<button class="btn btn-ghost btn-sm" onclick="renderSeriesEp('${se.id}', '${ep.id}', this)">🎬 ${busy ? 'Add to queue' : 'Render'}</button>`
       : '';
@@ -799,6 +803,7 @@ function episodeCard(se, ep, busy) {
       <div class="ep-hook">${escHtml(ep.hook || '')}</div>
       <div class="ep-title">${escHtml(ep.title || ep.id)}</div>
       <div class="ep-meta">${ep.scenes} scenes · ${(ep.tags || []).length} tags</div>
+      ${platformChips(ep)}
       <div class="ep-actions">${actions}</div>
     </div>`;
 }
@@ -832,25 +837,190 @@ async function renderSeriesEp(seriesId, episodeId, btn) {
   loadSeries();
 }
 
-async function uploadEpisode(seriesId, episodeId, btn) {
-  const privacy = prompt('Upload to YouTube as: private, unlisted or public?', 'private');
-  if (!privacy) return;
-  if (!['private', 'unlisted', 'public'].includes(privacy.trim())) { showToast('Use private, unlisted or public', 'error'); return; }
-  if (!confirm(`Upload this episode to The Faceless as ${privacy.trim().toUpperCase()}?`)) return;
-  setButtonLoading(btn, true, 'Uploading…');
+// ─── Upload dialog (replaces the old typed prompt) ───────────────────────────
+let uploadTarget = null;
+const PRIVACY_HINT = {
+  public: 'Everyone can find and watch it.',
+  unlisted: 'Only people with the link can watch it.',
+  private: 'Only you can see it — make it public later in YouTube Studio.',
+};
+
+function uploadEpisode(seriesId, episodeId, btn, title) {
+  uploadTarget = { seriesId, episodeId, btn };
+  document.getElementById('uploadTitle').textContent = title || episodeId;
+  pickPrivacy(document.querySelector('#privacyChoice [data-v="public"]'));
+  document.getElementById('uploadShare').checked = true;
+  document.getElementById('uploadModal').style.display = 'flex';
+}
+
+function pickPrivacy(btn) {
+  document.querySelectorAll('#privacyChoice .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('privacyHint').textContent = PRIVACY_HINT[btn.dataset.v];
+  const share = document.getElementById('uploadShare');
+  share.disabled = btn.dataset.v !== 'public';          // only public videos are shared
+  if (share.disabled) share.checked = false;
+}
+
+function closeUploadDialog() {
+  document.getElementById('uploadModal').style.display = 'none';
+  uploadTarget = null;
+}
+
+async function confirmUpload(goBtn) {
+  if (!uploadTarget) return;
+  const { seriesId, episodeId, btn } = uploadTarget;
+  const privacy = document.querySelector('#privacyChoice .toggle-btn.active').dataset.v;
+  const share = document.getElementById('uploadShare').checked;
+  closeUploadDialog();
+  if (btn) setButtonLoading(btn, true, 'Uploading…');
   try {
     const res = await fetch(`${API}/api/series/${seriesId}/${episodeId}/upload`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ privacy: privacy.trim() }),
+      body: JSON.stringify({ privacy, share }),
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    showToast('⬆️ Upload started — live progress in Job Queue', 'success');
+    showToast(`⬆️ Uploading as ${privacy}${share ? ' — then queued for Facebook & Instagram' : ''}. Progress in Job Queue.`, 'success');
   } catch (e) {
     showToast(`Upload failed: ${e.message}`, 'error');
   }
   loadSeries();
   loadJobs();
+}
+
+// ─── Facebook & Instagram ────────────────────────────────────────────────────
+function platformChips(ep) {
+  const so = ep.social || {};
+  const chip = (icon, label, url) => url
+    ? `<a class="pchip on" href="${escHtml(url)}" target="_blank" title="Open on ${label}">${icon} ${label} ↗</a>`
+    : `<span class="pchip" title="Not on ${label} yet">${icon} ${label}</span>`;
+  if (!ep.youtube_url && !so.facebook && !so.instagram) return '';
+  const share = (!so.facebook || (!so.instagram && so.video_type !== 'long')) && ep.youtube_url
+    ? (so.queued ? '<span class="pchip queued" title="Waiting in the Social posting queue">🗓️ Queued</span>'
+                 : `<button class="pchip pchip-btn" onclick="shareJob('${escHtml(so.job)}', this)">＋ Share to FB + IG</button>`)
+    : '';
+  return `<div class="ep-platforms">${chip('▶️', 'YouTube', ep.youtube_url)}${chip('📘', 'Facebook', so.facebook)}${chip('📸', 'Instagram', so.instagram)}${share}</div>`;
+}
+
+async function shareJob(job, btn) {
+  if (btn) setButtonLoading(btn, true, 'Adding…');
+  try {
+    const res = await fetch(`${API}/api/social/add`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    showToast('🗓️ Added to the Facebook & Instagram queue', 'success');
+  } catch (e) { showToast(e.message, 'error'); }
+  loadSeries();
+  loadSocialSummary();
+}
+
+function fmtWhen(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso), now = new Date();
+  const mins = Math.round((d - now) / 60000);
+  const t = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  if (mins <= 1) return 'any moment now';
+  const day = d.toDateString() === now.toDateString() ? 'today'
+    : d.toDateString() === new Date(now.getTime() + 864e5).toDateString() ? 'tomorrow'
+    : d.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
+  const left = mins < 60 ? `${mins} min` : `${Math.floor(mins / 60)} h ${mins % 60} min`;
+  return `${day} at ${t} <span class="muted">(in ${left})</span>`;
+}
+
+async function loadSocialSummary() {
+  try {
+    const d = await (await fetch(`${API}/api/social`)).json();
+    const el = document.getElementById('sidebarNext');
+    const badge = document.getElementById('socialBadge');
+    badge.textContent = d.items.length;
+    badge.style.display = d.items.length ? '' : 'none';
+    if (d.items.length && d.next_at) {
+      el.innerHTML = `<div class="sn-label">📣 Next post</div><div class="sn-title">${escHtml(shortTitle(d.items[0].title))}</div><div class="sn-when">${fmtWhen(d.next_at)}</div>`;
+      el.style.display = '';
+    } else el.style.display = 'none';
+    return d;
+  } catch (e) { return null; }
+}
+
+function shortTitle(t) { return (t || '').split('|').slice(0, 2).join('·').trim(); }
+
+async function loadSocial() {
+  const d = await loadSocialSummary();
+  if (!d) {
+    document.getElementById('socialConn').innerHTML = '<p>⚠️ Could not reach the app server.</p>';
+    return;
+  }
+  document.getElementById('socialConn').innerHTML = d.connected
+    ? `<div class="sc-row"><span class="sc-dot ok"></span><b>Connected</b></div>
+       <div class="sc-acc">📘 ${escHtml(d.page)}</div><div class="sc-acc">📸 ${escHtml(d.instagram)}</div>`
+    : `<div class="sc-row"><span class="sc-dot"></span><b>Not connected</b></div><p class="card-desc">${escHtml(d.error)}</p>`;
+  document.getElementById('socialNext').innerHTML = d.items.length
+    ? `<div class="sn-label">Next post</div><div class="sn-big">${escHtml(shortTitle(d.items[0].title))}</div>
+       <div class="sn-when">${d.posting_now ? '⏳ Posting right now…' : fmtWhen(d.next_at)}</div>`
+    : `<div class="sn-label">Next post</div><div class="sn-big">Queue is empty</div>
+       <div class="sn-when">Use “＋ Share to FB + IG” on an episode in Series.</div>`;
+  document.getElementById('socialTime').value = d.time;
+  const plat = p => (p || []).map(x => x === 'facebook' ? '📘 Facebook' : '📸 Instagram').join(' + ');
+  document.getElementById('socialQueue').innerHTML = d.items.length ? d.items.map((it, i) => `
+    <div class="social-item">
+      <div class="si-num">${i + 1}</div>
+      <div class="si-main"><div class="si-title">${escHtml(it.title)}</div>
+        <div class="si-meta">${plat(it.platforms)} · ${it.video_type === 'long' ? 'full video' : 'Reel'}</div></div>
+      <div class="si-actions">
+        <button class="btn btn-ghost btn-sm" ${i === 0 ? 'disabled' : ''} title="Move up" onclick="socialAction('move', ${i}, {dir:'up'})">▲</button>
+        <button class="btn btn-ghost btn-sm" ${i === d.items.length - 1 ? 'disabled' : ''} title="Move down" onclick="socialAction('move', ${i}, {dir:'down'})">▼</button>
+        <button class="btn btn-outline btn-sm" ${d.posting_now ? 'disabled' : ''} onclick="postNow(${i}, this)">Post now</button>
+        <button class="btn btn-ghost btn-sm" title="Remove from queue" onclick="socialAction('remove', ${i})">✕</button>
+      </div>
+    </div>`).join('')
+    : '<div class="empty-state small"><p>Nothing queued.</p></div>';
+  const link = (u, l) => u ? `<a href="${escHtml(u)}" target="_blank">${l} ↗</a>` : '';
+  document.getElementById('socialHistory').innerHTML = d.history.length ? d.history.map(h => `
+    <div class="social-item ${h.ok ? '' : 'failed'}">
+      <div class="si-num">${h.ok ? '✅' : '⚠️'}</div>
+      <div class="si-main"><div class="si-title">${escHtml(h.title)}</div>
+        <div class="si-meta">${escHtml(h.day)} · ${h.ok
+          ? [link((h.urls || {}).facebook, '📘 Facebook'), link((h.urls || {}).instagram, '📸 Instagram')].filter(Boolean).join(' · ') || 'posted'
+          : 'failed — will retry next day: ' + escHtml(h.error || '')}</div></div>
+    </div>`).join('')
+    : '<div class="empty-state small"><p>No posts yet.</p></div>';
+  clearTimeout(window.__socialPoll);
+  if (document.getElementById('section-social').style.display !== 'none')
+    window.__socialPoll = setTimeout(loadSocial, d.posting_now ? 5000 : 30000);
+}
+
+async function socialAction(action, index, extra = {}) {
+  try {
+    const res = await fetch(`${API}/api/social/${action}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ index, ...extra }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+  } catch (e) { showToast(e.message, 'error'); }
+  loadSocial();
+}
+
+async function postNow(index, btn) {
+  if (!confirm('Post this now on Facebook & Instagram? It counts as today\'s post.')) return;
+  setButtonLoading(btn, true, 'Posting…');
+  await socialAction('post-now', index);
+  showToast('📣 Posting — takes about a minute', 'success');
+}
+
+async function setSocialTime(t) {
+  try {
+    const res = await fetch(`${API}/api/social/time`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ time: t }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    showToast(`🗓️ Daily posting time: ${t}`, 'success');
+  } catch (e) { showToast(e.message, 'error'); }
+  loadSocial();
 }
 
 function openPlayer(url, title) {
