@@ -32,7 +32,9 @@ CLIENT_SECRETS_FILE = os.getenv("CLIENT_SECRETS_FILE", "client_secrets.json")
 YOUTUBE_SCOPES = ["https://www.googleapis.com/auth/youtube.upload",
                   "https://www.googleapis.com/auth/youtube.readonly",
                   # manage playlists (series → playlist automation)
-                  "https://www.googleapis.com/auth/youtube"]
+                  "https://www.googleapis.com/auth/youtube",
+                  # caption tracks (captions().insert needs force-ssl; without it the upload 403s)
+                  "https://www.googleapis.com/auth/youtube.force-ssl"]
 OAUTH_TOKEN_FILE = "token.json"
 
 # ─── Channel Info ─────────────────────────────────────────────────────────────
